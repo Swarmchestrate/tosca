@@ -1,0 +1,4 @@
+{
+  "name": "TOSCA Test",
+  "image": "ubuntu:22.04"
+}
