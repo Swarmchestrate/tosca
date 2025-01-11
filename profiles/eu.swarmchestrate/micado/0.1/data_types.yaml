@@ -1,0 +1,33 @@
+##########################################################################
+# This file contains MiCADO Profile data type
+# definitions.
+##########################################################################
+
+tosca_definitions_version: tosca_2_0
+
+metadata:
+  template_name: data_types.yaml
+  template_author: University of Westminster
+  template_version: 0.1
+
+description: >
+  MiCADO Profile data type definitions
+
+data_types:
+
+  context_type:
+    description: >-
+      The context_type type defines data for cloud-init contextualisation
+    properties:
+      cloud_config:
+        type: string
+        required: false
+      append:
+        type: boolean
+        required: false
+      insert:
+        type: boolean
+        required: false
+      path:
+        type: string
+        required: false

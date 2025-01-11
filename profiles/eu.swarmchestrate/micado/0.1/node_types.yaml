@@ -1,0 +1,39 @@
+##########################################################################
+# This file contains MiCADO Profile node type
+# definitions.
+##########################################################################
+
+tosca_definitions_version: tosca_2_0
+
+metadata:
+  template_name: node_types.yaml
+  template_author: University of Westminster
+  template_version: 0.1
+
+description: >
+  MiCADO Profile node type definitions
+
+imports:
+  - url: ../../../org.oasis-open/simple/2.0/node_types.yaml
+    namespace: tosca
+  - url: ../../../org.oasis-open/simple/2.0/capability_types.yaml
+    namespace: tosca
+  - data_types.yaml
+
+node_types:
+
+  Compute:
+    description: >
+      The MiCADO Compute node represents a virtual machine in the cloud.
+    derived_from: tosca:Compute
+    properties:
+      context:
+        type: context_type
+        required: false
+    capabilities:
+      host:
+        type: tosca:Compute
+      os:
+        type: tosca:OperatingSystem
+      scalable:
+        type: tosca:Scalable
