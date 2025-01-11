@@ -28,3 +28,13 @@ interface_types:
     description: >-
       Interface for managing cloud resources using Terraform.
     derived_from: tosca:Lifecycle.Standard
+
+  Kubernetes:
+    description: >-
+      Interface for managing containers using Kubernetes.
+    derived_from: tosca:Lifecycle.Standard
+
+  Swarm:
+    description: >-
+      Interface for managing containers using Docker Swarm.
+    derived_from: tosca:Lifecycle.Standard
