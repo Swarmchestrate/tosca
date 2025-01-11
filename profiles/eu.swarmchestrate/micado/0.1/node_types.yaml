@@ -31,13 +31,22 @@ node_types:
       context:
         type: context_type
         required: false
+        description: >
+          Custom context or metadata associated with the compute node, such as user-defined configuration or runtime data.
     capabilities:
       host:
         type: tosca:Compute
+        description: >
+          Provides hosting capabilities, allowing other components to be deployed on this compute node.
       os:
         type: tosca:OperatingSystem
+        description: >
+          Specifies the operating system running on this compute node.
       scalable:
         type: tosca:Scalable
+        description: >
+          Defines how the compute node can scale (e.g., number of instances, scaling policies).
+
   Compute.EC2:
     description: >
       An EC2 compute node.
