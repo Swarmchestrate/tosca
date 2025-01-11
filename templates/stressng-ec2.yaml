@@ -5,6 +5,18 @@ imports:
 
 service_template:
   node_templates:
+
+    stressng:
+      type: Container.OCI
+      properties:
+        image: lorel/docker-stress-ng
+        args: ['--cpu', '0', '--cpu-method', 'pi', '-l', '20']
+        resources:
+          requests:
+            cpu: "900m"
+      requirements:
+        - host: worker-node
+
     worker-node:
       type: Compute.EC2
       properties:
