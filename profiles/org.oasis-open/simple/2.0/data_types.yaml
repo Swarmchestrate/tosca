@@ -43,6 +43,11 @@ data_types:
       Markup Language (XML) format.
     derived_from: string
 
+  version:
+    description: >-
+      The version type defines strings that contain data in version formats.
+    derived_from: string
+
   Credential:
     description: >-
       The Credential type describes authorization credentials used to

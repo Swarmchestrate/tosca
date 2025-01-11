@@ -144,7 +144,13 @@ capability_types:
     properties:
       # Change network_name to use the default public network for the node
       # this capability will be declared in.
-      network_name: PUBLIC
+      network_name:
+        description: >-
+          The optional name (or ID) of the network to which this
+          endpoint should be bound.
+        type: string
+        required: false
+        default: PUBLIC
       floating:
         description: >
           Indicates that the public address should be allocated from
@@ -166,7 +172,13 @@ capability_types:
     derived_from: Endpoint
     # Change Endpoint secure indicator to true from its default of false
     properties:
-      secure: true
+      secure:
+        description: >-
+          If set, the endpoint accepts only secure connections (using
+          credentials supplied on the ConnectsTo relationship).
+        type: boolean
+        required: false
+        default: true
 
   Endpoint.Database:
     description: >-

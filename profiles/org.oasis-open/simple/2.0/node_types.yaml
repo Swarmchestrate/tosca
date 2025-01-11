@@ -36,7 +36,6 @@ node_types:
           capability: Node
           node: Root
           relationship: DependsOn
-          occurrences: [ 0, UNBOUNDED ]
     interfaces:
       Standard:
         type: Lifecycle.Standard
@@ -91,7 +90,6 @@ node_types:
           capability: Attachment
           node: Storage.BlockStorage
           relationship: AttachesTo
-          occurrences: [0, UNBOUNDED]
     capabilities:
       host:
         type: Compute
@@ -126,7 +124,6 @@ node_types:
           capability: Compute
           node: Compute
           relationship: HostedOn
-          occurrences: [ 0, 1 ]
 
   WebServer:
     description: >-
@@ -437,16 +434,9 @@ node_types:
         required: false
     requirements:
      - link:
-        description: >
-          Expresses the relationship between Port and Network
-          nodes. It indicates the network to which this port will connect.
         capability: Linkable
         relationship: LinksTo
      - binding:
-        description: >
-          Expresses the relationship between Port and
-          Compute nodes. Effectively it indicates that the Port will be
-          attached to a specific Compute node instance.
         capability: Bindable
         relationship: BindsTo
 
@@ -472,6 +462,3 @@ node_types:
       - application:
           capability: Endpoint
           relationship: RoutesTo
-          occurrences: [0, UNBOUNDED]
-          description: >
-            Connection to one or more load balanced applications.
