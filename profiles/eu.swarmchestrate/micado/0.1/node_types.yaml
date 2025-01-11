@@ -19,6 +19,7 @@ imports:
   - url: ../../../org.oasis-open/simple/2.0/capability_types.yaml
     namespace: tosca
   - data_types.yaml
+  - interface_types.yaml
 
 node_types:
 
@@ -37,3 +38,51 @@ node_types:
         type: tosca:OperatingSystem
       scalable:
         type: tosca:Scalable
+  Compute.EC2:
+    description: >
+      An EC2 compute node.
+    derived_from: Compute
+    properties:
+      region_name:
+        type: string
+        required: true
+        description: >
+          AWS region where the EC2 instance will be deployed (e.g., us-east-1, eu-west-1).
+      image_id:
+        type: string
+        required: true
+        description: >
+          The ID of the Amazon Machine Image (AMI) used to launch the EC2 instance.
+      instance_type:
+        type: string
+        required: true
+        description: >
+          The type of EC2 instance (e.g., t2.micro, m5.large) specifying compute resources.
+      key_name:
+        type: string
+        required: false
+        description: >
+          The name of the SSH key pair used to access the EC2 instance.
+      security_group_ids:
+        type: list
+        required: false
+        entry_schema: string
+        description: >
+          A list of security group IDs that control inbound and outbound traffic for the EC2 instance.
+      subnet_id:
+        type: string
+        required: false
+        description: >
+          The ID of the subnet in which to launch the EC2 instance.
+      tags:
+        type: map
+        required: false
+        entry_schema: string
+        description: >
+          Key-value pairs used to tag and categorise the EC2 instance (e.g., environment: production).
+
+    interfaces:
+      Occopus:
+        type: Occopus
+      Terraform:
+        type: Terraform
