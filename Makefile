@@ -19,7 +19,10 @@ parse:
 	echo "----------------------------"; \
 	echo "✅ Total Successful: $$success"; \
 	echo "❌ Total Failed: $$fail"; \
-	echo "----------------------------"
+	echo "----------------------------"; \
+	if [ $$fail -gt 0 ]; then \
+		exit 1; \
+	fi
 
 install:
 	wget https://github.com/tliron/puccini/releases/download/v0.22.6/puccini_0.22.6_linux_amd64.deb && \
