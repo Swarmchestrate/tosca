@@ -25,8 +25,9 @@ node_types:
 
   Compute:
     description: >
-      The MiCADO Compute node represents a virtual machine in the cloud.
-    derived_from: tosca:Compute
+      The MiCADO Compute node represents a virtual machine in the cloud
+      that supports a container runtime.
+    derived_from: tosca:Container.Runtime
     properties:
       context:
         type: context_type
