@@ -1,6 +1,7 @@
 from pathlib import Path
 import json
 from ruamel.yaml import YAML
+
 from .validation import validate_template
 from .requirements import tosca_to_ask_dict
 
@@ -38,7 +39,7 @@ class DotDict:
     def _to_json(self, indent=None, **kwargs):
         return json.dumps(self._to_dict(), indent=indent, **kwargs)
 
-class Floria(DotDict):
+class Sardou(DotDict):
     def __init__(self, path):
         path = Path(path)
         if not path.exists():

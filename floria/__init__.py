@@ -1,2 +1,0 @@
-from .floria import Floria
-

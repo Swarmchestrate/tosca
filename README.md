@@ -3,9 +3,9 @@
 This repository is home to TOSCA in the [Swarmchestrate](https://www.swarmchestrate.eu/) project, which will use TOSCA v2.0 to describe applications and capacities managed in a Swarmchestrate Universe.
 
 
-## Floria TOSCA Library
+## Sardou TOSCA Library
 
-Floria validates and extracts info from a Swarmchestrate TOSCA template.
+Sardou validates and extracts info from a Swarmchestrate TOSCA template.
 
 ### Prerequisites
 - Python 3.10+
@@ -29,17 +29,17 @@ pip install git+https://github.com/Swarmchestrate/tosca.git
 
 ### Usage
 
-Import the Floria TOSCA Library
+Import the Sardou TOSCA Library
 
 ```python
-from floria import Floria # note the uppercase F
+from sardou import Sardou # note the uppercase F
 ```
 
-Create a new `Floria` object, passing it the path to your Swarmchestrate TOSCA template.
+Create a new `Sardou` object, passing it the path to your Swarmchestrate TOSCA template.
 This will validate the template. If there are errors or warnings, they will be presented here.
 
 ```python
->>> tosca = Floria("my_app.yaml")
+>>> tosca = Sardou("my_app.yaml")
 Processed successfully: my_app.yaml 
 ```
 
