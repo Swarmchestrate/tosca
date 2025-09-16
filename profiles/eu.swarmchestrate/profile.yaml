@@ -1,0 +1,139 @@
+##########################################################################
+# This file contains MiCADO Profile type definitions.
+##########################################################################
+
+tosca_definitions_version: tosca_2_0
+
+profile: eu.swarmchestrate:0.1
+
+metadata:
+  template_name: profile.yaml
+  template_author: University of Westminster
+  template_version: 0.1
+
+description: MiCADO Profile type definitions
+
+node_types:
+
+  Swarm:
+    description: >
+      The Swarmchestrate Swarm node represents the resources that come
+      together to form a swarm.
+    properties:
+      name:
+        type: string
+        required: false
+        description: >
+          The name of the swarm.
+
+  Application:
+    description: >
+      The Swarmchestrate Application node represents a Kubernetes Deployment.
+    properties:
+      image:
+        type: string
+        required: false
+        description: >
+          The container image to deploy for this application.
+
+      env:
+        type: list
+        required: false
+        description: >
+          Environment variables to set in the container.
+        entry_schema:
+          type: map
+
+      ports:
+        type: list
+        required: false
+        description: >
+          List of ports to expose from the container.
+        entry_schema:
+          type: map
+    requirements:
+      - host:
+          capability: Resource
+          relationship: HostedOn
+      - volume:
+          capability: Volume
+          relationship: AttachedTo
+
+  Resource:
+    description: >
+      The Swarmchestrate Resource node represents a cloud or edge instance
+    properties:
+      image:
+        type: string
+        required: false
+        description: >
+          The container image to deploy for this application.
+
+  Volume.HostPath:
+    description: >
+      The MiCADO Compute node represents a virtual machine in the cloud
+      that supports a container runtime.
+    properties:
+      path:
+        type: string
+        required: false
+        description: >
+          The path on the host machine to mount as a volume.
+          
+policy_types:
+
+  QoS:
+    description: >
+      Quality of Service (QoS) policies for applications.
+    properties:
+      priority:
+        type: float
+        required: false
+        description: >
+          Priority level of the application (higher number means higher priority).
+      target:
+        type: integer
+        required: false
+        description: >
+          Target value for the QoS metric.
+
+  QoS.Energy.Budget:
+    description: >
+      Energy policy type
+    derived_from: QoS
+
+  QoS.Cost.Budget:
+    description: >
+      Cost policy type
+    derived_from: QoS
+
+  QoS.Performance.Bandwidth:
+    description: >
+      Bandwidth policy type
+    derived_from: QoS
+
+  QoS.Performance.Latency:
+    description: >
+      Latency policy type
+    derived_from: QoS
+
+
+relationship_types:
+
+  HostedOn:
+    description: >
+      This relationship indicates that a node is hosted on another node.
+
+  AttachedTo:
+    description: >
+      This relationship indicates that a volume is attached to a container.
+
+capability_types:
+
+  Resource:
+    description: >
+      This capability represents a resource that can host applications.
+
+  Volume:
+    description: >
+      This capability represents a volume that can be attached to a container.
