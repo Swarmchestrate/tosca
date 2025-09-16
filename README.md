@@ -9,7 +9,7 @@ Sardou validates and extracts info from a Swarmchestrate TOSCA template.
 
 ### Prerequisites
 - Python 3.10+
-- [Puccini](https://github.com/tliron/puccini)
+- [Puccini](https://github.com/tliron/puccini) 0.22.x
   - Minimum GLIBC 2.34 (Ubuntu 22.04 or higher)
   
 Install Puccini on Linux by:
