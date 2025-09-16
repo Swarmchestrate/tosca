@@ -62,7 +62,7 @@ def tosca_to_ask_dict(tosca_dict):
     for node_name, node_filter in nodes_with_filter.items():
         ask_entry = {
             'metadata': {
-                'created_by': 'floria-tosca-lib',
+                'created_by': 'sardou-tosca-lib',
                 'created_at': datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ'),
                 'description': f'Generated from node {node_name}',
                 'version': '1.0'
