@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-from validation import validate_template
+from floria.validation import validate_template
 
 def main():
     templates_dir = Path("templates")

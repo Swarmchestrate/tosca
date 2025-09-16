@@ -19,7 +19,6 @@ def prevalidate(file_path: Path) -> bool:
     try:
         with file_path.open('r') as f:
             data = yaml.load(f)
-            print(data)
     except Exception as e:
         print(f"Error reading YAML file {file_path}: {e}")
         return False
