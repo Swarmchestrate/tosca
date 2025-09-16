@@ -4,11 +4,12 @@ extract-resource-requirements
 Extracts nodes with node_filter keys from TOSCA YAML files and generates ask.yaml format
 """
 
-import yaml
+from ruamel.yaml import YAML
 import sys
 from datetime import datetime
 from pathlib import Path
 
+yaml = YAML()
 
 def extract_property_info(property_ref):
     """
@@ -28,7 +29,6 @@ def extract_property_info(property_ref):
             return capability_type, property_name
     
     return None, None
-
 
 def map_constraint_to_ask_format(constraint_func, args):
     """
@@ -53,7 +53,6 @@ def map_constraint_to_ask_format(constraint_func, args):
     else:
         # For any other function, preserve it as-is
         return {constraint_func: constraint_value}
-
 
 def convert_node_filter_to_capabilities(node_filter):
     """
@@ -91,7 +90,6 @@ def convert_node_filter_to_capabilities(node_filter):
     
     return capabilities
 
-
 def extract_nodes_with_filter(yaml_data):
     """
     Extract nodes that have node_filter key from node_templates section
@@ -114,7 +112,6 @@ def extract_nodes_with_filter(yaml_data):
                 
     return nodes_with_filter
 
-
 def generate_ask_yaml(nodes_with_filter, output_file):
     """
     Generate ask.yaml file from nodes with node_filter
@@ -129,7 +126,7 @@ def generate_ask_yaml(nodes_with_filter, output_file):
         # Create basic structure for each node
         ask_entry = {
             'metadata': {
-                'created_by': 'extract-reqs@script.com',
+                'created_by': 'floria-tosca-lib',
                 'created_at': datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ'),
                 'description': f'Generated from node {node_name}',
                 'version': '1.0'
@@ -146,8 +143,7 @@ def generate_ask_yaml(nodes_with_filter, output_file):
     
     # Write to YAML file
     with open(output_file, 'w') as f:
-        yaml.dump(ask_data, f, default_flow_style=False, sort_keys=False, indent=2)
-
+        yaml.dump(ask_data, f)
 
 def main():
     """Main function"""
@@ -169,7 +165,7 @@ def main():
     try:
         # Load input YAML
         with open(input_file, 'r') as f:
-            yaml_data = yaml.safe_load(f)
+            yaml_data = yaml.load(f)
         
         # Extract nodes with node_filter
         nodes_with_filter = extract_nodes_with_filter(yaml_data)
@@ -188,14 +184,9 @@ def main():
         print(f"Successfully generated '{output_file}'")
 
         
-    except yaml.YAMLError as e:
-        print(f"Error parsing YAML file: {e}")
-        sys.exit(1)
     except Exception as e:
         print(f"Error: {e}")
         sys.exit(1)
 
-
 if __name__ == "__main__":
     main()
-
