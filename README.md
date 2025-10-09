@@ -72,7 +72,7 @@ It is recommended that developers open a GitHub Codespace on this repository, wh
 
 ## TOSCA Template Validation with Puccini
 
-This is an added feature that provides a Python validation library and script to check whether TOSCA service templates are valid using the [Puccini](https://github.com/tliron/puccini) parser.
+This is an added feature that provides a Python validation library and script to check whether TOSCA service templates are valid using the [Go-Puccini](https://github.com/tliron/go-puccini) parser.
 
 ##### Validation Library (`lib/validation.py `)
 - A library that defines the `validate_template()` function to validate a single TOSCA YAML file.
