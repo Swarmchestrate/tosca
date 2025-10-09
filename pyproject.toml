@@ -2,6 +2,7 @@
 name = "Sardou"
 version = "0.2.2"
 description = "Sardou TOSCA Library"
+readme = "README.md"
 authors = [
     { name="Jay DesLauriers", email="j.deslauriers@westminster.ac.uk" }
 ]
