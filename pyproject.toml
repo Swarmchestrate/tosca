@@ -1,6 +1,6 @@
 [project]
 name = "Sardou"
-version = "0.1.0"
+version = "0.2.0"
 description = "Sardou TOSCA Library"
 authors = [
     { name="Jay DesLauriers", email="j.deslauriers@westminster.ac.uk" }
