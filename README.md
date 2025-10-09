@@ -21,10 +21,10 @@ rm -f puccini_0.22.7_linux_amd64.deb
 
 ### Installation
 
-Install using `pip` pointed at this GitHub repo. PyPI package coming soon.
+Install using the PyPi package
 
 ```bash
-pip install git+https://github.com/Swarmchestrate/tosca.git
+pip install Sardou
 ```
 
 ### Usage
