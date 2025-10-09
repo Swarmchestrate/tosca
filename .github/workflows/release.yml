@@ -5,7 +5,7 @@ on:
     types: [published]
   push:
     tags:
-      - 'v*.*.*'  # runs when you push tags like v1.0.0, v2.3.4, etc.
+      - 'v*.*.*'  #  v1.0.0, v2.0.1, etc.
 
 jobs:
   build-and-publish:
