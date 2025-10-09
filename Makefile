@@ -25,6 +25,6 @@ parse:
 	fi
 
 install:
-	wget https://github.com/tliron/puccini/releases/download/v0.22.6/puccini_0.22.6_linux_amd64.deb && \
+	wget https://github.com/tliron/go-puccini/releases/download/v0.22.6/puccini_0.22.6_linux_amd64.deb && \
 	sudo dpkg -i puccini_0.22.6_linux_amd64.deb || sudo apt --fix-broken install -y && \
 	rm -f puccini_0.22.6_linux_amd64.deb
