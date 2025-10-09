@@ -14,8 +14,8 @@ Sardou validates and extracts info from a Swarmchestrate TOSCA template.
   
 Install Puccini on Linux by:
 ```sh
-wget https://github.com/tliron/puccini/releases/download/v0.22.7/puccini_0.22.7_linux_amd64.deb
-sudo dpkg -i puccini_0.22.7_linux_amd64.deb || sudo apt --fix-broken install -y
+wget https://github.com/tliron/go-puccini/releases/download/v0.22.7/puccini_0.22.7_linux_amd64.deb && \
+sudo dpkg -i puccini_0.22.7_linux_amd64.deb || sudo apt --fix-broken install -y && \
 rm -f puccini_0.22.7_linux_amd64.deb
 ```
 
