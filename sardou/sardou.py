@@ -67,25 +67,57 @@ class Sardou(DotDict):
         return [p._to_dict() if isinstance(p, DotDict) else p for p in policies]
 
     def get_cluster(self):
-    
+  
+        def extract_values(obj):
+            if isinstance(obj, dict):
+                if "$primitive" in obj:
+                    return obj["$primitive"]
+                elif "$list" in obj:
+                    return [extract_values(i) for i in obj["$list"]]
+                elif "$map" in obj:
+                    return {
+                        i["$key"]["$primitive"]: extract_values(i)
+                        for i in obj["$map"]
+                    }
+                else:
+                    return {k: extract_values(v) for k, v in obj.items()}
+            elif isinstance(obj, list):
+                return [extract_values(i) for i in obj]
+            else:
+                return obj
+
         resources = {}
 
         for name, node in self.nodeTemplates._to_dict().items():
+            # If the node is a resource
             types = node.get("types", {})
             is_resource = any(
-                t.get("parent", "") == "eu.swarmchestrate:0.1::Resource" for t in types.values()
+                t.get("parent", "") == "eu.swarmchestrate:0.1::Resource"
+                or k.endswith("::Resource")
+                for k, t in types.items()
             )
             if not is_resource:
-                continue  # skip non-resource nodes like swarm or stressng
+                continue
 
-            props = {}
-            for k, v in node.get("properties", {}).items():
-                if "$primitive" in v:
-                    props[k] = v["$primitive"]
-                elif "$list" in v:
-                    props[k] = [i.get("$primitive", i) for i in v["$list"]]
-                elif "$map" in v:
-                    props[k] = {i["$key"]["$primitive"]: i["$primitive"] for i in v["$map"]}
-            resources[name] = props
+            resource_data = {}
+
+            # Core properties
+            if "properties" in node:
+                for k, v in node["properties"].items():
+                    resource_data[k] = extract_values(v)
+
+            # Capabilities as nested objects
+            if "capabilities" in node:
+                caps_data = {}
+                for cname, cap in node["capabilities"].items():
+                    if "properties" in cap:
+                        caps_data[cname] = {
+                            k: extract_values(v)
+                            for k, v in cap["properties"].items()
+                        }
+                if caps_data:
+                    resource_data["capabilities"] = caps_data
+
+            resources[name] = resource_data
 
         return json.dumps(resources, indent=2)
