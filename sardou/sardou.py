@@ -51,11 +51,14 @@ class Sardou(DotDict):
             raise ValueError(f"Validation failed for: {path}")
 
         with path.open('r') as f:
-            data = yaml.load(f)
-        super().__init__(**data)
+            raw = yaml.load(f)
+        self.raw = DotDict(**raw)._to_dict()
+
+        resolved = yaml.load(template.stdout)
+        super().__init__(**resolved)
 
     def get_requirements(self):
-        return tosca_to_ask_dict(self._to_dict())
+        return tosca_to_ask_dict(self.raw)
     
     def get_qos(self, indent=None, **kwargs):
         policies = self.service_template.policies
