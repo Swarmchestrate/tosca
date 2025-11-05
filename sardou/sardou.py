@@ -52,7 +52,7 @@ class Sardou(DotDict):
 
         with path.open('r') as f:
             raw = yaml.load(f)
-        self.raw = DotDict(**raw)._to_dict()
+        self.raw = DotDict(**raw)
 
         resolved = yaml.load(template.stdout)
         super().__init__(**resolved)
