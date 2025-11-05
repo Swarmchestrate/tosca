@@ -1,0 +1,27 @@
+tosca_definitions_version: tosca_2_0
+
+description: stressng on Swarmchestrate
+
+imports:
+- namespace: swch
+  url: file:///workspaces/tosca/profiles/eu.swarmchestrate/profile.yaml
+
+service_template:
+
+  node_templates:
+
+    swarm:
+      type: swch:Swarm
+      directives:
+      - substitute
+    
+    resource-1:
+      type: swch:EC2.micro.t3
+
+    stressng:
+      type: swch:Application
+      properties:
+        image: lorel/docker-stress-ng
+        args: ['--cpu', '0', '--cpu-method', 'pi', '-l', '20']
+      requirements:
+      - host: resource-1
