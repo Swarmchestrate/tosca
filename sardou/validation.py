@@ -55,13 +55,13 @@ def validate_template(file_path: Path) -> bool:
             )
             if result.returncode == 0:
                 print(f"Processed successfully: {file_path} \n")
-                return True
+                return result
             else:
                 print(f"Failed to process: {file_path} \n")
                 print("==== Error Output ====")
                 print(result.stderr.strip() or result.stdout.strip())
                 print("======================")
-                return False
+                return None
     
         except FileNotFoundError:
             print(f"Puccini not found at {PUCCINI_CMD}. Please install it first.")

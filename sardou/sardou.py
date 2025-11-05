@@ -44,7 +44,8 @@ class Sardou(DotDict):
         path = Path(path)
         if not path.exists():
             raise FileNotFoundError(f"File does not exist: {path}")
-        if not validate_template(path):
+        template = validate_template(path)
+        if not template:
             raise ValueError(f"Validation failed for: {path}")
         yaml = YAML(typ='safe')
         with path.open('r') as f:
