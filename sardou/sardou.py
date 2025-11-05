@@ -79,7 +79,6 @@ class Sardou(DotDict):
         node_templates = service_template.node_templates
 
         def convert(obj):
-            """Recursively convert DotDicts to plain dicts."""
             if isinstance(obj, DotDict):
                 return {k: convert(v) for k, v in obj.__dict__.items()}
             elif isinstance(obj, list):
