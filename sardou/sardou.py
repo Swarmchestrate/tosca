@@ -67,19 +67,26 @@ class Sardou(DotDict):
         return [p._to_dict() if isinstance(p, DotDict) else p for p in policies]
     
     def get_cluster(self):
-        
-        try:
-            node_templates = self.service_template["node_templates"]
-        except (AttributeError, KeyError):
-            raise ValueError("No 'service_template.node_templates' found in the YAML file.")
-        
-        cluster = {}
-        for node_name, node_data in node_templates.items():
-            node_info = {}
-            for k, v in node_data.items():
-                # relevant node parameters
-                if k in ("type", "directives", "properties", "requirements", "capabilities"):
-                    node_info[k] = v
-            cluster[node_name] = node_info
+       
+        if not hasattr(self.raw, "service_template"):
+            raise ValueError("No 'service_template' found in the YAML file.")
 
-        return cluster
+        service_template = self.raw.service_template
+
+        if not hasattr(service_template, "node_templates"):
+            raise ValueError("No 'node_templates' found under 'service_template'.")
+
+        node_templates = service_template.node_templates
+
+        def convert(obj):
+            """Recursively convert DotDicts to plain dicts."""
+            if isinstance(obj, DotDict):
+                return {k: convert(v) for k, v in obj.__dict__.items()}
+            elif isinstance(obj, list):
+                return [convert(i) for i in obj]
+            else:
+                return obj
+
+        cluster = {name: convert(node) for name, node in node_templates.__dict__.items()}
+
+        return json.dumps(cluster, indent=2)
