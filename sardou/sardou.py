@@ -5,6 +5,8 @@ from ruamel.yaml import YAML
 from .validation import validate_template
 from .requirements import tosca_to_ask_dict
 
+yaml = YAML(typ='safe')
+
 class DotDict:
     def __init__(self, **entries):
         for k, v in entries.items():
@@ -47,7 +49,7 @@ class Sardou(DotDict):
         template = validate_template(path)
         if not template:
             raise ValueError(f"Validation failed for: {path}")
-        yaml = YAML(typ='safe')
+
         with path.open('r') as f:
             data = yaml.load(f)
         super().__init__(**data)
