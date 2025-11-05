@@ -61,6 +61,8 @@ class Sardou(DotDict):
         return tosca_to_ask_dict(self.raw)
     
     def get_qos(self, indent=None, **kwargs):
-        policies = self.service_template.policies
+        if not hasattr(self.raw.service_template, 'policies'):
+            return []
+        policies = self.raw.service_template.policies
         return [p._to_dict() if isinstance(p, DotDict) else p for p in policies]
         
