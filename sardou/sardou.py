@@ -50,12 +50,12 @@ class Sardou(DotDict):
         if not template:
             raise ValueError(f"Validation failed for: {path}")
 
+        resolved = yaml.load(template.stdout)
+        super().__init__(**resolved)
+
         with path.open('r') as f:
             raw = yaml.load(f)
         self.raw = DotDict(**raw)
-
-        resolved = yaml.load(template.stdout)
-        super().__init__(**resolved)
 
     def get_requirements(self):
         return tosca_to_ask_dict(self.raw)
