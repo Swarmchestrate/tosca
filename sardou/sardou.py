@@ -65,4 +65,21 @@ class Sardou(DotDict):
             return []
         policies = self.raw.service_template.policies
         return [p._to_dict() if isinstance(p, DotDict) else p for p in policies]
+    
+    def get_cluster(self):
         
+        try:
+            node_templates = self.service_template["node_templates"]
+        except (AttributeError, KeyError):
+            raise ValueError("No 'service_template.node_templates' found in the YAML file.")
+        
+        cluster = {}
+        for node_name, node_data in node_templates.items():
+            node_info = {}
+            for k, v in node_data.items():
+                # relevant node parameters
+                if k in ("type", "directives", "properties", "requirements", "capabilities"):
+                    node_info[k] = v
+            cluster[node_name] = node_info
+
+        return cluster
