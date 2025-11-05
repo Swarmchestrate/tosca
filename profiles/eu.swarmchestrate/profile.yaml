@@ -51,6 +51,14 @@ node_types:
           List of ports to expose from the container.
         entry_schema:
           type: map
+
+      args:
+        type: list
+        required: false
+        description: >
+          List of ports to expose from the container.
+        entry_schema:
+          type: string
     requirements:
       - host:
           capability: Resource
