@@ -1,12 +1,12 @@
 from pathlib import Path
 import json
 from ruamel.yaml import YAML
-
+ 
 from .validation import validate_template
 from .requirements import tosca_to_ask_dict
-
+ 
 yaml = YAML(typ='safe')
-
+ 
 class DotDict:
     def __init__(self, **entries):
         for k, v in entries.items():
@@ -37,10 +37,10 @@ class DotDict:
             else:
                 result[key] = value
         return result
-
+ 
     def _to_json(self, indent=None, **kwargs):
         return json.dumps(self._to_dict(), indent=indent, **kwargs)
-
+ 
 class Sardou(DotDict):
     def __init__(self, path):
         path = Path(path)
@@ -49,14 +49,14 @@ class Sardou(DotDict):
         template = validate_template(path)
         if not template:
             raise ValueError(f"Validation failed for: {path}")
-
+ 
         resolved = yaml.load(template.stdout)
         super().__init__(**resolved)
-
+ 
         with path.open('r') as f:
             raw = yaml.load(f)
         self.raw = DotDict(**raw)
-
+ 
     def get_requirements(self):
         return tosca_to_ask_dict(self.raw)
     
@@ -65,27 +65,27 @@ class Sardou(DotDict):
             return []
         policies = self.raw.service_template.policies
         return [p._to_dict() if isinstance(p, DotDict) else p for p in policies]
-    
+
     def get_cluster(self):
-       
-        if not hasattr(self.raw, "service_template"):
-            raise ValueError("No 'service_template' found in the YAML file.")
+    
+        resources = {}
 
-        service_template = self.raw.service_template
+        for name, node in self.nodeTemplates._to_dict().items():
+            types = node.get("types", {})
+            is_resource = any(
+                t.get("parent", "") == "eu.swarmchestrate:0.1::Resource" for t in types.values()
+            )
+            if not is_resource:
+                continue  # skip non-resource nodes like swarm or stressng
 
-        if not hasattr(service_template, "node_templates"):
-            raise ValueError("No 'node_templates' found under 'service_template'.")
+            props = {}
+            for k, v in node.get("properties", {}).items():
+                if "$primitive" in v:
+                    props[k] = v["$primitive"]
+                elif "$list" in v:
+                    props[k] = [i.get("$primitive", i) for i in v["$list"]]
+                elif "$map" in v:
+                    props[k] = {i["$key"]["$primitive"]: i["$primitive"] for i in v["$map"]}
+            resources[name] = props
 
-        node_templates = service_template.node_templates
-
-        def convert(obj):
-            if isinstance(obj, DotDict):
-                return {k: convert(v) for k, v in obj.__dict__.items()}
-            elif isinstance(obj, list):
-                return [convert(i) for i in obj]
-            else:
-                return obj
-
-        cluster = {name: convert(node) for name, node in node_templates.__dict__.items()}
-
-        return json.dumps(cluster, indent=2)
+        return json.dumps(resources, indent=2)
