@@ -67,7 +67,7 @@ class Sardou(DotDict):
         return [p._to_dict() if isinstance(p, DotDict) else p for p in policies]
 
     def get_cluster(self):
-  
+ 
         def extract_values(obj):
             if isinstance(obj, dict):
                 if "$primitive" in obj:
@@ -85,9 +85,9 @@ class Sardou(DotDict):
                 return [extract_values(i) for i in obj]
             else:
                 return obj
-
+ 
         resources = {}
-
+ 
         for name, node in self.nodeTemplates._to_dict().items():
             # If the node is a resource
             types = node.get("types", {})
@@ -98,14 +98,14 @@ class Sardou(DotDict):
             )
             if not is_resource:
                 continue
-
+ 
             resource_data = {}
-
+ 
             # Core properties
             if "properties" in node:
                 for k, v in node["properties"].items():
                     resource_data[k] = extract_values(v)
-
+ 
             # Capabilities as nested objects
             if "capabilities" in node:
                 caps_data = {}
@@ -117,7 +117,7 @@ class Sardou(DotDict):
                         }
                 if caps_data:
                     resource_data["capabilities"] = caps_data
-
+ 
             resources[name] = resource_data
-
+ 
         return json.dumps(resources, indent=2)
