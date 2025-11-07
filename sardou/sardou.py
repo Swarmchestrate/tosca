@@ -120,4 +120,4 @@ class Sardou(DotDict):
 
             resources[name] = resource_data
 
-        return json.dumps(resources, indent=2)
+        return resources
