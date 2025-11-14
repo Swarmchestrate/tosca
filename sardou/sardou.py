@@ -67,57 +67,20 @@ class Sardou(DotDict):
         return [p._to_dict() if isinstance(p, DotDict) else p for p in policies]
 
     def get_cluster(self):
- 
-        def extract_values(obj):
-            if isinstance(obj, dict):
-                if "$primitive" in obj:
-                    return obj["$primitive"]
-                elif "$list" in obj:
-                    return [extract_values(i) for i in obj["$list"]]
-                elif "$map" in obj:
-                    return {
-                        i["$key"]["$primitive"]: extract_values(i)
-                        for i in obj["$map"]
-                    }
-                else:
-                    return {k: extract_values(v) for k, v in obj.items()}
-            elif isinstance(obj, list):
-                return [extract_values(i) for i in obj]
-            else:
-                return obj
- 
+     
         resources = {}
- 
+       
         for name, node in self.nodeTemplates._to_dict().items():
-            # If the node is a resource
-            types = node.get("types", {})
-            is_resource = any(
-                t.get("parent", "") == "eu.swarmchestrate:0.1::Resource"
-                or k.endswith("::Resource")
-                for k, t in types.items()
-            )
-            if not is_resource:
-                continue
- 
-            resource_data = {}
- 
-            # Core properties
-            if "properties" in node:
-                for k, v in node["properties"].items():
-                    resource_data[k] = extract_values(v)
- 
-            # Capabilities as nested objects
-            if "capabilities" in node:
-                caps_data = {}
-                for cname, cap in node["capabilities"].items():
-                    if "properties" in cap:
-                        caps_data[cname] = {
-                            k: extract_values(v)
-                            for k, v in cap["properties"].items()
-                        }
-                if caps_data:
-                    resource_data["capabilities"] = caps_data
- 
-            resources[name] = resource_data
+            # Only include nodes that have fully resolved properties
+            if "properties" in node and isinstance(node["properties"], dict):
+                # Check if the node is a Resource-type
+                types = node.get("types", {})
+                is_resource = any(
+                    t.get("parent", "").endswith("::Resource") or k.endswith("::Resource")
+                    for k, t in types.items()
+                )
+                if not is_resource:
+                    continue 
+                resources[name] = node
  
         return json.dumps(resources, indent=2)
