@@ -4,7 +4,7 @@ description: stressng on Swarmchestrate
 
 imports:
 - namespace: swch
-  url: file:///workspaces/tosca/profiles/eu.swarmchestrate/profile.yaml
+  url: https://raw.githubusercontent.com/Swarmchestrate/tosca/refs/heads/main/profiles/eu.swarmchestrate/profile.yaml
 
 service_template:
 

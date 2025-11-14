@@ -71,6 +71,7 @@ class Sardou(DotDict):
         resources = {}
        
         for name, node in self.nodeTemplates._to_dict().items():
+
             # Only include nodes that have fully resolved properties
             if "properties" in node and isinstance(node["properties"], dict):
                 # Check if the node is a Resource-type
