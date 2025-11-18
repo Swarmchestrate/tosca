@@ -1,6 +1,8 @@
+import os
 from pathlib import Path
 import json
 from ruamel.yaml import YAML
+
  
 from .validation import validate_template
 from .requirements import tosca_to_ask_dict
@@ -66,22 +68,31 @@ class Sardou(DotDict):
         policies = self.raw.service_template.policies
         return [p._to_dict() if isinstance(p, DotDict) else p for p in policies]
 
-    def get_cluster(self):
-     
+    def get_cluster(self, resource_suffix=None):
+ 
+        resource_suffix = (
+            resource_suffix
+            or os.getenv("TOSCA_RESOURCE_SUFFIX")
+            or "::Resource"
+        )
+ 
         resources = {}
-       
+ 
         for name, node in self.nodeTemplates._to_dict().items():
-
-            # Only include nodes that have fully resolved properties
+ 
+            # Include nodes with resolved properties
             if "properties" in node and isinstance(node["properties"], dict):
-                # Check if the node is a Resource-type
+ 
                 types = node.get("types", {})
                 is_resource = any(
-                    t.get("parent", "").endswith("::Resource") or k.endswith("::Resource")
+                    t.get("parent", "").endswith(resource_suffix) or
+                    k.endswith(resource_suffix)
                     for k, t in types.items()
                 )
+ 
                 if not is_resource:
-                    continue 
+                    continue
+ 
                 resources[name] = node
  
         return json.dumps(resources, indent=2)
