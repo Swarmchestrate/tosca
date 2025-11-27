@@ -222,6 +222,18 @@ node_types:
         type: string
         description: >
           A security group ID that controls inbound and outbound traffic for the instance.
+      custom_ingress_ports:
+        type: map
+        required: false
+        entry_schema: string
+        description: >
+          Key-value pairs (from, to, protocol, source)
+      custom_egress_ports:
+        type: map
+        required: false
+        entry_schema: string
+        description: >
+          Key-value pairs (from, to, protocol, source)
     capabilities:
       resource:
         properties:
