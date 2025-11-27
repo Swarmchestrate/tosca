@@ -69,30 +69,74 @@ class Sardou(DotDict):
         return [p._to_dict() if isinstance(p, DotDict) else p for p in policies]
 
     def get_cluster(self, resource_suffix=None):
- 
+
+        ALIASES = {
+            # AWS
+            "image_id": "ami",
+            "key_name": "ssh_key",
+            "instance_type": "instance_type",
+            "region_name": "region",
+            "security_group_ids": "security_group_id",
+            "provider": "cloud",
+
+            #OS
+            "openstack_image_id": "openstack_image_id",
+            "openstack_flavor_id": "openstack_flavor_id",
+            "volume_size": "volume_size",
+            "network_id": "network_id",
+            "floating_ip_pool": "floating_ip_pool",
+
+            #Edge
+            "edge_device_ip": "edge_device_ip"
+        }
+
+        DIRECT_FIELDS = set(ALIASES.values())
+
         resource_suffix = (
             resource_suffix
             or os.getenv("TOSCA_RESOURCE_SUFFIX")
             or "::Resource"
         )
- 
+
         resources = {}
- 
+
         for name, node in self.nodeTemplates._to_dict().items():
- 
-            # Include nodes with resolved properties
-            if "properties" in node and isinstance(node["properties"], dict):
- 
-                types = node.get("types", {})
-                is_resource = any(
-                    t.get("parent", "").endswith(resource_suffix) or
-                    k.endswith(resource_suffix)
-                    for k, t in types.items()
-                )
- 
-                if not is_resource:
-                    continue
- 
-                resources[name] = node
- 
+
+            if "properties" not in node or not isinstance(node["properties"], dict):
+                continue
+
+            types = node.get("types", {})
+            is_resource = any(
+                t.get("parent", "").endswith(resource_suffix) or
+                k.endswith(resource_suffix)
+                for k, t in types.items()
+            )
+            if not is_resource:
+                continue
+
+            extracted = {}
+
+            # copy raw values exactly as-is (preserve $primitive/$list/$meta)
+            for key, val in node["properties"].items():
+                final_key = ALIASES.get(key, key)
+
+                if final_key in DIRECT_FIELDS or key in ALIASES:
+                    extracted[final_key] = val    # ← KEEP RAW STRUCTURE
+
+            # default values from type definitions (as raw structures)
+            for type_name, type_def in types.items():
+                type_props = type_def.get("properties", {})
+                for key, prop_def in type_props.items():
+                    final_key = ALIASES.get(key, key)
+
+                    if final_key in extracted:
+                        continue
+
+                    if isinstance(prop_def, dict) and "default" in prop_def:
+                        extracted[final_key] = {
+                            "$primitive": prop_def["default"]
+                        }
+
+            resources[name] = extracted
+
         return json.dumps(resources, indent=2)
