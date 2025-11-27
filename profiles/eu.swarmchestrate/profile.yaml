@@ -69,12 +69,12 @@ node_types:
 
   AbstractResource:
     description: >
-      The Swarmchestrate Resource node represents a cloud or edge instance
+      The Swarmchestrate Resource node represents an unselected resource
 
   Resource:
-    derived_from: AbstractResource
     description: >
       The Swarmchestrate Resource node represents a cloud or edge instance
+    derived_from: AbstractResource
     properties:
       ssh_user:
         type: string
@@ -165,6 +165,71 @@ node_types:
             type: string
             required: false
             description: Specific type of energy (e.g., solar, wind, coal)
+
+  EdgeResource:
+    derived_from: Resource
+    description: >
+      The Swarmchestrate Resource node represents an edge instance
+    properties:
+      ssh_key:
+        type: string
+        required: true
+        description: >
+          Path to SSH key for accessing the edge instance.
+        default: /home/ubuntu/.ssh/id_rsa # change as needed
+      ssh_auth_method:
+        type: string
+        required: true
+        description: >
+          SSH authentication method (key or password).
+        default: key
+      edge_device_ip:
+        type: string
+        required: true
+        description: >
+          The IP address of the edge device.
+    capabilities:
+      resource:
+        properties:
+          type:
+            type: string
+            required: true
+            description: Resource type
+            default: edge
+
+  CloudResource:
+    derived_from: Resource
+    description: >
+      The Swarmchestrate Resource node represents a cloud instance
+    properties:
+      image_id:
+        type: string
+        required: true
+        description: >
+          The ID of the image used to launch the instance.
+      instance_type:
+        type: string
+        required: true
+        default: m2.small
+        description: >
+          The type of flavour id (e.g., m2.small) specifying compute resources.
+      key_name:
+        type: string
+        required: false
+        description: >
+          The path to the SSH key pair used to access the instance.
+      security_group_id:
+        type: string
+        description: >
+          A security group ID that controls inbound and outbound traffic for the instance.
+    capabilities:
+      resource:
+        properties:
+          type:
+            type: string
+            required: true
+            description: Resource type
+            default: cloud
 
 
   OpenStack.SZTAKI.m2.small: # Change as required
@@ -410,11 +475,6 @@ node_types:
             required: true
             description: Capacity provider
             default: uow
-          type:
-            type: string
-            required: true
-            description: Resource type
-            default: cloud
       pricing:
         properties:
           cost:
