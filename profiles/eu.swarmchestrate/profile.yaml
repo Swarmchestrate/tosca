@@ -67,7 +67,12 @@ node_types:
           capability: Volume
           relationship: AttachedTo
 
+  AbstractResource:
+    description: >
+      The Swarmchestrate Resource node represents a cloud or edge instance
+
   Resource:
+    derived_from: AbstractResource
     description: >
       The Swarmchestrate Resource node represents a cloud or edge instance
     properties:
