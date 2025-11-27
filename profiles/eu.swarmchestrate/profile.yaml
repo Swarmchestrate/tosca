@@ -537,6 +537,26 @@ node_types:
           
 policy_types:
 
+  RegistryLogin:
+    description: >
+      Policy type for logging into a container registry.
+    properties:
+      username:
+        type: string
+        required: true
+        description: >
+          The username for the container registry.
+      password:
+        type: string
+        required: true
+        description: >
+          The password or token for the container registry.
+      registry_url:
+        type: string
+        required: true
+        description: >
+          The URL of the container registry.
+
   QoS:
     description: >
       Quality of Service (QoS) policies for applications.
