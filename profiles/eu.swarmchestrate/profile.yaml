@@ -70,6 +70,244 @@ node_types:
   Resource:
     description: >
       The Swarmchestrate Resource node represents a cloud or edge instance
+    properties:
+      ssh_user:
+        type: string
+        required: true
+        description: >
+          The SSH user for accessing the instance.
+        default: ubuntu
+    capabilities:
+      host:
+        type: Resource
+        properties:
+          num-cpus:
+            type: integer
+            required: true
+            description: Number of vCPUs
+          mem-size:
+            type: integer
+            required: true
+            description: Memory size in GB
+          disk-size:
+            type: integer
+            required: true
+            description: Disk size in GB
+          bandwidth:
+            type: integer
+            required: true
+            description: Network bandwidth in Mbps
+      os:
+        properties:
+          type:
+            type: string
+            required: true
+            description: Operating system type
+            default: linux
+          version:
+            type: string
+            required: true
+            description: Operating system version
+          distribution:
+            type: string
+            required: true
+            description: Operating system distribution
+      resource:
+        properties:
+          provider:
+            type: string
+            required: true
+            description: Resource provider
+          capacity-provider:
+            type: string
+            required: true
+            description: Capacity provider
+          type:
+            type: string
+            required: true
+            description: Resource type
+      pricing:
+        properties:
+          cost:
+            type: float
+            required: true
+            description: Cost per hour in USD
+      locality:
+        properties:
+          continent:
+            type: string
+            required: true
+            description: Continent where the resource is located
+          country:
+            type: string
+            required: true
+            description: Country where the resource is located
+          city:
+            type: string
+            required: true
+            description: City where the resource is located
+      energy:
+        properties:
+          consumption:
+            type: float
+            required: true
+            description: Energy consumption in watts per hour
+          powered-type:
+            type: string
+            required: false
+            description: Type of power used (e.g., renewable, non-renewable)
+          energy-type:
+            type: string
+            required: false
+            description: Specific type of energy (e.g., solar, wind, coal)
+
+
+  OpenStack.SZTAKI.m2.small: # Change as required
+    derived_from: Resource
+    description: >
+      An OpenStack compute node from the SZTAKI provision
+    properties:
+      image_id:
+        type: string
+        required: true
+        description: >
+          The ID of the OpenStack image used to launch the instance.
+        default: b2be6f4e-ebd8-42af-a526-63691a4d90ea
+      instance_type:
+        type: string
+        required: true
+        default: m2.small
+        description: >
+          The type of OpenStack flavour id (e.g., m2.small) specifying compute resources.
+      key_name:
+        type: string
+        required: false
+        description: >
+          The path to the SSH key pair used to access the OpenStack instance.
+        default: /home/ubuntu/.ssh/id_rsa
+      security_group_id:
+        type: string
+        description: >
+          A security group ID that controls inbound and outbound traffic for the OpenStack instance.
+        default: f05b97f0-140a-4d24-bfc6-3a197e842739
+      network_id:
+        type: string
+        required: true
+        description: >
+          The network ID to which the OpenStack instance will be connected.
+        default: bbe042e4-91a1-4601-962f-14a31e5e2787
+      floating_ip_pool:
+        type: string
+        required: true
+        description: >
+          The floating IP pool name for the OpenStack instance.
+        default: ext-net
+      use_block_device:
+        type: boolean
+        required: true
+        description: >
+          Whether to use a block device for storage.
+        default: true
+      volume_size:
+        type: integer
+        required: true
+        description: >
+          The size of the volume in GB if using block device.
+        default: 10
+    capabilities:
+      host:
+        type: Resource
+        properties:
+          num-cpus:
+            type: integer
+            required: true
+            description: Number of vCPUs
+            default: 2 # Change to actual m2.small
+          mem-size:
+            type: integer
+            required: true
+            description: Memory size in GB
+            default: 1 # Change to actual m2.small
+          disk-size:
+            type: integer
+            required: true
+            description: Disk size in GB
+            default: 20 # Change to actual m2.small
+          bandwidth:
+            type: integer
+            required: true
+            description: Network bandwidth in Mbps
+            default: 100 # Change to actual m2.small
+      os:
+        properties:
+          version:
+            type: string
+            required: true
+            description: Operating system version
+            default: "22.04" # Change to actual image_id
+          distribution:
+            type: string
+            required: true
+            description: Operating system distribution 
+            default: ubuntu
+      resource:
+        properties:
+          provider:
+            type: string
+            required: true
+            description: Resource provider
+            default: OpenStack
+          capacity-provider:
+            type: string
+            required: true
+            description: Capacity provider
+            default: SZTAKI
+          type:
+            type: string
+            required: true
+            description: Resource type
+            default: cloud
+      pricing:
+        properties:
+          cost:
+            type: float
+            required: true
+            description: Cost per hour in USD
+            default: 0.000 # Change to actual cost
+      locality:
+        properties:
+          continent:
+            type: string
+            required: true
+            description: Continent where the resource is located
+            default: Europe
+          country:
+            type: string
+            required: true
+            description: Country where the resource is located
+            default: Hungary
+          city:
+            type: string
+            required: true
+            description: City where the resource is located
+            default: Budapest
+      energy:
+        properties:
+          consumption:
+            type: float
+            required: true
+            description: Energy consumption in watts per hour
+            default: 13.0 # Change to actual consumption
+          powered-type:
+            type: string
+            required: false
+            description: Type of power used (e.g., renewable, non-renewable)
+            default: mains-powered # Change to actual power type
+          energy-type:
+            type: string
+            required: false
+            description: Specific type of energy (e.g., solar, wind, coal)
+            default: non-green # Change to actual energy type
 
   EC2.micro.t3:
     derived_from: Resource
@@ -100,10 +338,8 @@ node_types:
         description: >
           The name of the SSH key pair used to access the EC2 instance.
         default: g-key
-      security_group_ids:
-        type: list
-        required: false
-        entry_schema: string
+      security_group_id:
+        type: string
         description: >
           A list of security group IDs that control inbound and outbound traffic for the EC2 instance.
         default:
