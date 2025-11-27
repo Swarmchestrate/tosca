@@ -245,7 +245,7 @@ node_types:
 
 
   OpenStack.SZTAKI.m2.small: # Change as required
-    derived_from: Resource
+    derived_from: CloudResource
     description: >
       An OpenStack compute node from the SZTAKI provision
     properties:
@@ -344,11 +344,6 @@ node_types:
             required: true
             description: Capacity provider
             default: SZTAKI
-          type:
-            type: string
-            required: true
-            description: Resource type
-            default: cloud
       pricing:
         properties:
           cost:
@@ -392,7 +387,7 @@ node_types:
             default: non-green # Change to actual energy type
 
   EC2.micro.t3:
-    derived_from: Resource
+    derived_from: CloudResource
     description: >
       An EC2 compute node from the University of Westminster provision
     properties:
