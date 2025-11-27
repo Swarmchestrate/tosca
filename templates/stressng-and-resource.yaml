@@ -5,6 +5,7 @@ description: stressng on Swarmchestrate
 imports:
 - namespace: swch
   url: https://raw.githubusercontent.com/Swarmchestrate/tosca/refs/heads/main/profiles/eu.swarmchestrate/profile.yaml
+  #url: file:///workspaces/tosca/profiles/eu.swarmchestrate/profile.yaml
 
 service_template:
 
@@ -16,7 +17,7 @@ service_template:
       - substitute
     
     resource-1:
-      type: swch:Resource
+      type: swch:AbstractResource
       directives: [ select ]
       node_filter:
         $and:
