@@ -60,7 +60,7 @@ class Sardou(DotDict):
         self.raw = DotDict(**raw)
  
     def get_requirements(self):
-        return tosca_to_ask_dict(self.raw)
+        return tosca_to_ask_dict(self.raw._to_dict())
     
     def get_qos(self, indent=None, **kwargs):
         if not hasattr(self.raw.service_template, 'policies'):
