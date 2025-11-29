@@ -35,3 +35,28 @@ service_template:
         args: ['--cpu', '0', '--cpu-method', 'pi', '-l', '20']
       requirements:
       - host: resource-1
+    
+  policies:
+    - energy:
+        type: swch:QoS.Energy.Budget
+        properties:
+          priority: 0.5  # Between 0 and 1, where 1 is the highest priority
+          target: 40      # watts per hour
+
+    - cost:
+        type: swch:QoS.Cost.Budget
+        properties:
+          priority: 0.5  # Between 0 and 1, where 1 is the highest priority
+          target: 2       # $ per hour
+
+    - bandwidth:
+        type: swch:QoS.Performance.Bandwidth
+        properties:
+          priority: 0.5  # Between 0 and 1, where 1 is the highest priority
+          target: 800     # Mbps
+
+    - latency:
+        type: swch:QoS.Performance.Latency
+        properties:
+          priority: 0.5  # Between 0 and 1, where 1 is the highest priority
+          target: 70     # time (ms)
