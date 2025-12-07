@@ -33,6 +33,13 @@ service_template:
       properties:
         image: lorel/docker-stress-ng
         args: ['--cpu', '0', '--cpu-method', 'pi', '-l', '20']
+        ports:
+        - port: 80
+          targetPort: 80
+          nodePort: 30080
+        - port: 443
+          targetPort: 443
+          nodePort: 30443
       requirements:
       - host: resource-1
     

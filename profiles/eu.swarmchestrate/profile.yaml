@@ -35,7 +35,23 @@ node_types:
         required: false
         description: >
           The container image to deploy for this application.
-
+      ports:
+        type: list
+        required: false
+        description: >
+          List of ports to expose from the container.
+        entry_schema:
+          type: map
+          properties:
+            port:
+              type: integer
+              required: true
+            targetPort:
+              type: integer
+              required: true
+            nodePort:
+              type: integer
+              required: true
       env:
         type: list
         required: false
@@ -44,13 +60,13 @@ node_types:
         entry_schema:
           type: map
 
-      ports:
-        type: list
-        required: false
-        description: >
-          List of ports to expose from the container.
-        entry_schema:
-          type: map
+    #  ports:
+     #   type: list
+      #  required: false
+       # description: >
+        #  List of ports to expose from the container.
+       # entry_schema:
+        #  type: map
 
       args:
         type: list
@@ -228,12 +244,22 @@ node_types:
         entry_schema: string
         description: >
           Key-value pairs (from, to, protocol, source)
+        default:
+          protocol: "tcp"
+          source: "0.0.0.0/0"
+          from: "80"
+          to: "80"
       custom_egress_ports:
         type: map
         required: false
         entry_schema: string
         description: >
           Key-value pairs (from, to, protocol, source)
+        default:
+          destination: "0.0.0.0/0"
+          from: "0"
+          to: "65535"
+          protocol: "tcp"
     capabilities:
       resource:
         properties:
