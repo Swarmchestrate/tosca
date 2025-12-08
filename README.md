@@ -114,11 +114,11 @@ Run:
 - **Supported fields**: image, args, env, ports, volumes, nodeSelector, replicas, imagePullSecrets.
 - Automatically injects an external imagePullSecret if provided.
 
-**Input**:
+###### **Input**:
 - A valid TOSCA YAML template as a string. 
 - Optional: name of an imagePullSecret to include in all generated Deployments.
 
-**Output:**
+###### **Output:**
 - A list of dictionaries representing Kubernetes manifests ready to be serialized to YAML.
 
 ##### Manifest Generation Script (run_manifest_generator.py)
