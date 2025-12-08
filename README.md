@@ -108,6 +108,25 @@ This is an added feature that provides a Python validation library and script to
 Run:
 - `python3 run_validation.py`
 
+##### Kubernetes Manifest Generator (manifestGenerator.py)
+- Provides the function get_kubernetes_manifest(tosca_yaml: str, image_pull_secret: str = "test") -> list.
+- **Purpose**: Converts a TOSCA YAML template into Kubernetes manifests (Deployments + Services).
+- **Supported fields**: image, args, env, ports, volumes, nodeSelector, replicas, imagePullSecrets.
+- Automatically injects an external imagePullSecret if provided.
+
+**Input**:
+- A valid TOSCA YAML template as a string. 
+- Optional: name of an imagePullSecret to include in all generated Deployments.
+
+**Output:**
+- A list of dictionaries representing Kubernetes manifests ready to be serialized to YAML.
+
+##### Manifest Generation Script (run_manifest_generator.py)
+- Takes a single TOSCA YAML file and generates Kubernetes manifests as a multi-document YAML file (output.yaml).
+- Usage: update the TOSCA_FILE and OUTPUT_FILE variables in the script and run:
+```python
+python3 run_manifest_generator.py
+```
 
 ## Contact
 
