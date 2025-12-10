@@ -13,6 +13,20 @@ metadata:
 
 description: MiCADO Profile type definitions
 
+data_types:
+
+  PortMapping:
+    properties:
+      port:
+        type: integer
+        required: true
+      targetPort:
+        type: integer
+        required: true
+      nodePort:
+        type: integer
+        required: false
+
 node_types:
 
   Swarm:
@@ -41,17 +55,8 @@ node_types:
         description: >
           List of ports to expose from the container.
         entry_schema:
-          type: map
-          properties:
-            port:
-              type: integer
-              required: true
-            targetPort:
-              type: integer
-              required: true
-            nodePort:
-              type: integer
-              required: true
+          type: PortMapping
+          
       env:
         type: list
         required: false
