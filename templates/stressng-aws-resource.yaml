@@ -17,7 +17,8 @@ service_template:
       - substitute
     
     resource-1:
-      type: swch:EC2.micro.t3
+      type: swch:AbstractResource
+      directives: [ select ]
       properties:
         custom_ingress_ports:
           from: 80
@@ -29,6 +30,17 @@ service_template:
           to: 65535
           protocol: tcp
           destination: 0.0.0.0/0
+      node_filter:
+        $and:
+          - $equal:
+              - $get_property: [ SELF, TARGET, CAPABILITY, host, num-cpus ]
+              - 4
+          - $equal:
+              - $get_property: [ SELF, TARGET, CAPABILITY, locality, city ]
+              - budapest
+          - $equal:
+              - $get_property: [ SELF, TARGET, CAPABILITY, resource, capacity-provider ]
+              - SZTAKI
 
     stressng:
       type: swch:Application
