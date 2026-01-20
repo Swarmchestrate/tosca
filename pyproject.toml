@@ -7,8 +7,9 @@ authors = [
     { name="Jay DesLauriers", email="j.deslauriers@westminster.ac.uk" }
 ]
 dependencies = [
-    "ruamel.yaml"
+    "ruamel-yaml",
 ]
+requires-python = ">=3.12"
 
 [build-system]
 requires = ["setuptools>=61.0"]
@@ -16,3 +17,10 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 packages = ["sardou"]
+
+[dependency-groups]
+dev = [
+    "mkdocs-material>=9.7.1",
+    "ruff>=0.14.13",
+    "ty>=0.0.12",
+]
