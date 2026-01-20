@@ -3,9 +3,12 @@ from pathlib import Path
 
 from sardou.validation import validate_template
 
+
 def main():
     templates_dir = Path("templates")
-    yaml_files = list(templates_dir.rglob("*.yaml")) # finds all YAML files inside subfolders
+    yaml_files = list(
+        templates_dir.rglob("*.yaml")
+    )  # finds all YAML files inside subfolders
 
     if not yaml_files:
         print("No YAML files found under templates/")
