@@ -25,7 +25,7 @@ jobs:
         run: uv sync --only-dev
 
       - name: Run docsgen
-        run: python tools/docsgen.py
+        run: uv run python tools/docsgen.py
 
       - name: Deploy Mkdocs
         run: uv run mkdocs gh-deploy --force
