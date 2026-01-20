@@ -1,8 +1,23 @@
 site_name: TOSCA in Swarmchestrate
+repo_url: https://github.com/Swarmchestrate/tosca
 
 theme: 
   name: material
+  features:
+    - content.code.copy
+    - navigation.expand
+    - navigation.indexes
+    - navigation.instant
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
 
+nav:
+  - Home: index.md
+  - Author Guide: authors.md
+  - TOSCA Library: sardou.md
+  - Microservice Spec: application.md
+  - Policy Spec: policy.md
 
 markdown_extensions:
   - admonition
