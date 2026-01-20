@@ -483,6 +483,7 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "jinja2" },
     { name = "mkdocs-material" },
     { name = "ruff" },
     { name = "ty" },
@@ -493,6 +494,7 @@ requires-dist = [{ name = "ruamel-yaml" }]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "jinja2", specifier = ">=3.1.6" },
     { name = "mkdocs-material", specifier = ">=9.7.1" },
     { name = "ruff", specifier = ">=0.14.13" },
     { name = "ty", specifier = ">=0.0.12" },
