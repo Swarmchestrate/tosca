@@ -1,14 +1,15 @@
+import json
 import os
 from pathlib import Path
-import json
+
 from ruamel.yaml import YAML
 
- 
-from .validation import validate_template
 from .requirements import tosca_to_ask_dict
- 
-yaml = YAML(typ='safe')
- 
+from .validation import validate_template
+
+yaml = YAML(typ="safe")
+
+
 class DotDict:
     def __init__(self, **entries):
         for k, v in entries.items():
@@ -17,16 +18,22 @@ class DotDict:
             elif isinstance(v, list):
                 v = [DotDict(**i) if isinstance(i, dict) else i for i in v]
             setattr(self, k, v)
+
     def __getitem__(self, key):
         return getattr(self, key)
+
     def __setitem__(self, key, value):
         setattr(self, key, value)
+
     def __delitem__(self, key):
         delattr(self, key)
+
     def __contains__(self, key):
         return hasattr(self, key)
+
     def __repr__(self):
         return repr(self._to_dict())
+
     def _to_dict(self):
         result = {}
         for key, value in self.__dict__.items():
@@ -39,10 +46,11 @@ class DotDict:
             else:
                 result[key] = value
         return result
- 
+
     def _to_json(self, indent=None, **kwargs):
         return json.dumps(self._to_dict(), indent=indent, **kwargs)
- 
+
+
 class Sardou(DotDict):
     def __init__(self, path):
         path = Path(path)
@@ -51,26 +59,25 @@ class Sardou(DotDict):
         template = validate_template(path)
         if not template:
             raise ValueError(f"Validation failed for: {path}")
- 
+
         resolved = yaml.load(template.stdout)
         super().__init__(**resolved)
- 
-        with path.open('r') as f:
+
+        with path.open("r") as f:
             raw = yaml.load(f)
         self.raw = DotDict(**raw)
- 
+
     def get_requirements(self):
         return tosca_to_ask_dict(self.raw._to_dict())
-    
+
     def get_qos(self, indent=None, **kwargs):
-        if not hasattr(self.raw.service_template, 'policies'):
+        if not hasattr(self.raw.service_template, "policies"):
             return []
         policies = self.raw.service_template.policies
         return [p._to_dict() if isinstance(p, DotDict) else p for p in policies]
 
     def get_cluster(self, resource_suffix=None):
-
-        # Cloud alias 
+        # Cloud alias
         AWS_ALIASES = {
             "provider": "cloud",
             "instance_type": "instance_type",
@@ -127,9 +134,7 @@ class Sardou(DotDict):
             return val
 
         resource_suffix = (
-            resource_suffix
-            or os.getenv("TOSCA_RESOURCE_SUFFIX")
-            or "::Resource"
+            resource_suffix or os.getenv("TOSCA_RESOURCE_SUFFIX") or "::Resource"
         )
 
         resources = {}
@@ -139,7 +144,8 @@ class Sardou(DotDict):
 
             # Detect resource nodes
             is_resource = any(
-                t.get("parent", "").endswith(resource_suffix) or k.endswith(resource_suffix)
+                t.get("parent", "").endswith(resource_suffix)
+                or k.endswith(resource_suffix)
                 for k, t in types.items()
             )
 
@@ -157,7 +163,7 @@ class Sardou(DotDict):
                     extracted[k] = flatten(v)
 
             extract_properties(node.get("properties", {}))
-     
+
             # Extract capability properties
             def extract_cap_props(cap_dict):
                 for cap in cap_dict.values():
@@ -170,14 +176,24 @@ class Sardou(DotDict):
             # Type-level defaults
             for type_def in types.values():
                 for k, prop_def in type_def.get("properties", {}).items():
-                    if k not in extracted and isinstance(prop_def, dict) and "default" in prop_def:
+                    if (
+                        k not in extracted
+                        and isinstance(prop_def, dict)
+                        and "default" in prop_def
+                    ):
                         extracted[k] = flatten({"$primitive": prop_def["default"]})
 
                 def extract_type_cap_defaults(cap_dict):
                     for cap in cap_dict.values():
                         for k, prop_def in cap.get("properties", {}).items():
-                            if k not in extracted and isinstance(prop_def, dict) and "default" in prop_def:
-                                extracted[k] = flatten({"$primitive": prop_def["default"]})
+                            if (
+                                k not in extracted
+                                and isinstance(prop_def, dict)
+                                and "default" in prop_def
+                            ):
+                                extracted[k] = flatten(
+                                    {"$primitive": prop_def["default"]}
+                                )
                         if "capabilities" in cap:
                             extract_type_cap_defaults(cap["capabilities"])
 
@@ -206,7 +222,7 @@ class Sardou(DotDict):
                 final_key = ALIASES.get(k, k)
                 if final_key in DIRECT or k in ALIASES:
                     final_extracted[final_key] = v
-            
+
             if is_application:
                 final_extracted["_is_application"] = True
 
@@ -236,19 +252,23 @@ class Sardou(DotDict):
             # add port + nodePort rules for each application port entry
             for p in app_ports:
                 if "port" in p:
-                    merged.append({
-                        "from": str(p["port"]),
-                        "to": str(p["port"]),
-                        "protocol": "tcp",
-                        "source": "0.0.0.0/0"
-                    })
+                    merged.append(
+                        {
+                            "from": str(p["port"]),
+                            "to": str(p["port"]),
+                            "protocol": "tcp",
+                            "source": "0.0.0.0/0",
+                        }
+                    )
                 if "nodePort" in p:
-                    merged.append({
-                        "from": str(p["nodePort"]),
-                        "to": str(p["nodePort"]),
-                        "protocol": "tcp",
-                        "source": "0.0.0.0/0"
-                    })
+                    merged.append(
+                        {
+                            "from": str(p["nodePort"]),
+                            "to": str(p["nodePort"]),
+                            "protocol": "tcp",
+                            "source": "0.0.0.0/0",
+                        }
+                    )
 
             props["custom_ingress_ports"] = merged
 
@@ -261,7 +281,7 @@ class Sardou(DotDict):
 
         for app in apps_to_remove:
             resources.pop(app, None)
-            
+
         for props in resources.values():
             props.pop("_is_application", None)
 
