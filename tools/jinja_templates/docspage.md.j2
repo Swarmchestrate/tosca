@@ -1,0 +1,49 @@
+<style>
+  .md-content__button {
+    display: none;
+  }
+</style>
+# SAT {{ name | replace("_", " ") }} Specification
+
+## Spec
+
+The specification for {{ name | replace("_", " ") }} has these fields:
+
+{% for key, value in fields.items() if not value.hide -%}
+
+`{{ key }}`{ #{{ key | lower | replace("_", "-") | replace("*", "") }} }
+
+:   **{{ "Required" if (value.required is defined and value.required == True) else "Optional" }}**-*{{ value.type if value.type is defined else "" }} {{ "of [" + value.schema + "](#types." + value.schema + ")" if value.schema is defined and value.schema else "" }}*<br>
+    {{ (value.description | indent(4, False)) }}
+
+{% endfor %}
+
+{% if name == "Application" %}
+## Data Types
+
+{% for key, value in types.items() %}
+
+`{{ key }}`{ #types.{{ key | replace("_", "-") | replace("*", "") }} }
+
+:   {{ (value.description | indent(4, False)) }}
+    {% for item in value.fields %}
+    `{{ item.name }}`
+
+    :   **{{ "Required" if (item.required is defined and item.required == True) else "Optional" }}**-*{{ item.type if item.type is defined else "" }}*<br>
+        {{ (item.description | indent(8, False)) }}
+    {% endfor %}
+
+{% endfor %}
+
+`string`{ #types.string }
+
+:   Primitive string type
+
+`map`{ #types.map }
+
+:   Primitive map type
+
+`list`{ #types.list }
+
+:   Primitive list type
+{% endif %}
