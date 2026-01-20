@@ -1,7 +1,9 @@
-from ruamel.yaml import YAML
-from sardou.manifestGenerator import get_kubernetes_manifest
-from pathlib import Path
 import sys
+from pathlib import Path
+
+from ruamel.yaml import YAML
+
+from sardou.manifestGenerator import get_kubernetes_manifest
 
 yaml_parser = YAML()
 yaml_parser.default_flow_style = False
