@@ -41,45 +41,318 @@ node_types:
           The name of the swarm.
 
   Application:
+    derived_from: Microservice
+
+  Microservice:
+    derived_from: Kubernetes.APIObject
     description: >
-      The Swarmchestrate Application node represents a Kubernetes Deployment.
+      Convenience workload type for a containerised microservice expressed as a
+      Kubernetes API object. This type inherits name/namespace/labels/annotations
+      from Kubernetes.Base and apiVersion/kind/spec from Kubernetes.APIObject, and
+      adds commonly used Deployment-style and container runtime properties.
+
     properties:
+
+      # Workload shape
+      replicas:
+        type: integer
+        required: false
+        description: >
+          Desired number of workload instances to run concurrently.
+
+      selector:
+        type: map
+        required: false
+        description: >
+          Label selector used to associate the workload with managed Pods. If
+          omitted, the orchestrator may derive a selector from labels.
+
+      strategy:
+        type: map
+        required: false
+        description: >
+          Rollout strategy configuration for the workload (e.g. rolling update
+          parameters).
+
+      revision_history_limit:
+        type: integer
+        required: false
+        description: >
+          Number of prior ReplicaSets to retain for rollback.
+
+      min_ready_seconds:
+        type: integer
+        required: false
+        description: >
+          Minimum number of seconds a new Pod should be ready before it is
+          considered available.
+
+      progress_deadline_seconds:
+        type: integer
+        required: false
+        description: >
+          Maximum time in seconds for the workload to make progress before it is
+          considered failed.
+
+      # Container selection (primary container)
       image:
+        type: string
+        required: true
+        description: >
+          OCI container image reference to run for the primary container.
+
+      image_pull_policy:
         type: string
         required: false
         description: >
-          The container image to deploy for this application.
-      ports:
-        type: list
-        required: false
-        description: >
-          List of ports to expose from the container.
-        entry_schema:
-          type: PortMapping
-          
-      env:
-        type: list
-        required: false
-        description: >
-          Environment variables to set in the container.
-        entry_schema:
-          type: map
+          Image pull behaviour for the container. Common values include
+          'Always', 'IfNotPresent', and 'Never'.
 
-    #  ports:
-     #   type: list
-      #  required: false
-       # description: >
-        #  List of ports to expose from the container.
-       # entry_schema:
-        #  type: map
+      image_pull_secrets:
+        type: list
+        required: false
+        entry_schema:
+          type: string
+        description: >
+          List of Secret names used to authenticate to container registries.
+
+      # Docker-style runtime properties
+      entrypoint:
+        type: list
+        required: false
+        entry_schema:
+          type: string
+        description: >
+          Entrypoint override for the container.
+
+      cmd:
+        type: list
+        required: false
+        entry_schema:
+          type: string
+        description: >
+          Default arguments passed to the entrypoint.
+
+      workdir:
+        type: string
+        required: false
+        description: >
+          Working directory inside the container.
+
+      user:
+        type: string
+        required: false
+        description: >
+          User identity the container process should run as (name or numeric id).
+
+      # Kubernetes-style runtime properties
+      command:
+        type: list
+        required: false
+        entry_schema:
+          type: string
+        description: >
+          Command to execute in the container. If provided, this is treated as
+          the authoritative command for the container.
 
       args:
         type: list
         required: false
-        description: >
-          List of ports to expose from the container.
         entry_schema:
           type: string
+        description: >
+          Arguments to pass to the container command. If provided, this is treated
+          as the authoritative argument list for the container.
+
+      working_dir:
+        type: string
+        required: false
+        description: >
+          Working directory inside the container. If set, this is treated as the
+          authoritative working directory.
+
+      # Environment
+      env:
+        type: list
+        required: false
+        entry_schema:
+          type: map
+        description: >
+          Environment variables for the container. Each item should include at
+          least 'name' and either 'value' or a value source reference.
+
+      env_from:
+        type: list
+        required: false
+        entry_schema:
+          type: map
+        description: >
+          Bulk environment sources (e.g. ConfigMap or Secret references).
+
+      # Networking
+      ports:
+        type: list
+        required: false
+        entry_schema:
+          type: PortMapping
+        description: >
+          Container ports to declare (and optionally expose via a Service).
+
+      hostname:
+        type: string
+        required: false
+        description: >
+          Hostname to set for the container.
+
+      dns_policy:
+        type: string
+        required: false
+        description: >
+          DNS policy for the Pod (e.g. 'ClusterFirst').
+
+      dns_config:
+        type: map
+        required: false
+        description: >
+          DNS configuration customisation for the Pod (nameservers, searches, options).
+
+      # Identity and security
+      service_account:
+        type: string
+        required: false
+        description: >
+          ServiceAccount name the Pod should run as.
+
+      automount_service_account_token:
+        type: boolean
+        required: false
+        description: >
+          Whether to automatically mount the ServiceAccount token into the Pod.
+
+      security_context:
+        type: map
+        required: false
+        description: >
+          Pod-level security context settings (e.g. fsGroup, runAsUser).
+
+      container_security_context:
+        type: map
+        required: false
+        description: >
+          Container-level security context settings (e.g. runAsNonRoot, capabilities).
+
+      # Storage
+      volumes:
+        type: list
+        required: false
+        entry_schema:
+          type: map
+        description: >
+          Volume declarations used by the Pod template.
+
+      volume_mounts:
+        type: list
+        required: false
+        entry_schema:
+          type: map
+        description: >
+          Volume mount definitions for the container filesystem. Each item should
+          include at least 'mountPath' and either a volume reference or name.
+
+      # Resources
+      resources:
+        type: map
+        required: false
+        description: >
+          Resource requests and limits (e.g. cpu and memory) for the container.
+
+      # Health checks
+      liveness_probe:
+        type: map
+        required: false
+        description: >
+          Liveness probe definition used to detect and restart unhealthy containers.
+
+      readiness_probe:
+        type: map
+        required: false
+        description: >
+          Readiness probe definition used to determine when the workload can
+          receive traffic.
+
+      startup_probe:
+        type: map
+        required: false
+        description: >
+          Startup probe definition used to delay other probes until the container starts.
+
+      # Lifecycle
+      lifecycle:
+        type: map
+        required: false
+        description: >
+          Lifecycle hooks for the container (e.g. postStart, preStop).
+
+      termination_grace_period_seconds:
+        type: integer
+        required: false
+        description: >
+          Time in seconds to allow for graceful termination before force kill.
+
+      # Scheduling
+      node_selector:
+        type: map
+        required: false
+        entry_schema: string
+        description: >
+          Node selector constraints for scheduling Pods.
+
+      affinity:
+        type: map
+        required: false
+        description: >
+          Affinity and anti-affinity rules for scheduling Pods.
+
+      tolerations:
+        type: list
+        required: false
+        entry_schema:
+          type: map
+        description: >
+          Tolerations that allow Pods to schedule onto tainted nodes.
+
+      topology_spread_constraints:
+        type: list
+        required: false
+        entry_schema:
+          type: map
+        description: >
+          Constraints to spread Pods across topology domains (e.g. zones, nodes).
+
+      priority_class_name:
+        type: string
+        required: false
+        description: >
+          PriorityClass name to influence scheduling priority.
+
+      # Pod specific metadata
+
+      pod_annotations:
+        type: map
+        required: false
+        entry_schema: string
+        description: >
+          Annotations to apply specifically to Pods created by this workload, distinct
+          from the resource-level annotations.
+
+      pod_labels:
+        type: map
+        required: false
+        entry_schema: string
+        description: >
+          Labels to apply specifically to Pods created by this workload, distinct from
+          the resource-level labels.
+
     requirements:
       - host:
           capability: Resource
@@ -87,6 +360,10 @@ node_types:
       - volume:
           capability: Volume
           relationship: AttachedTo
+      - identity:
+          capability: Identity
+          relationship: IdentifiesAs
+
 
   AbstractResource:
     description: >
@@ -723,6 +1000,10 @@ relationship_types:
   AttachedTo:
     description: >
       This relationship indicates that a volume is attached to a container.
+
+  IdentifiesAs:
+    description: >
+      This relationship indicates that a workload identifies with an account.
 
 capability_types:
 
