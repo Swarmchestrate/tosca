@@ -555,16 +555,106 @@ node_types:
             description: Specific type of energy (e.g., solar, wind, coal)
             default: non-green
 
-  Volume.HostPath:
+  Kubernetes.Base:
     description: >
-      The MiCADO Compute node represents a virtual machine in the cloud
-      that supports a container runtime.
+      General base type for Kubernetes-related modelling. This type captures
+      commonly useful metadata (name/namespace/labels/annotations) without
+      assuming the node is a Kubernetes API object. Derive concrete API-object
+      types (with apiVersion/kind/spec) and embedded-spec types (e.g. volumes)
+      from this base.
     properties:
-      path:
+      name:
         type: string
         required: false
         description: >
-          The path on the host machine to mount as a volume.
+          Optional identifier for the Kubernetes-related entity. For API objects,
+          this should correspond to the Kubernetes metadata.name. For embedded
+          constructs, this can be used as a local reference name.
+      namespace:
+        type: string
+        required: false
+        description: >
+          Optional namespace. Applicable to namespaced API objects; typically
+          ignored for embedded constructs.
+      labels:
+        type: map
+        required: false
+        entry_schema: string
+        description: >
+          Optional key/value labels for selection, grouping, and organisation.
+      annotations:
+        type: map
+        required: false
+        entry_schema: string
+        description: >
+          Optional key/value annotations for non-identifying metadata used by
+          tooling, controllers, and integrations.
+
+Kubernetes.APIObject:
+  derived_from: Kubernetes.Base
+  description: >
+    Base type for Kubernetes API objects (persisted resources that can be
+    created/applied on their own, e.g. Service, Deployment, ServiceAccount).
+    Adds the required Kubernetes API identity fields and a free-form spec.
+  properties:
+    apiVersion:
+      type: string
+      required: true
+      description: >
+        Kubernetes API version for the resource (e.g. "v1", "apps/v1").
+    kind:
+      type: string
+      required: true
+      description: >
+        Kubernetes resource kind (e.g. "Service", "Deployment").
+    spec:
+      type: map
+      required: false
+      description: >
+        Resource specification content. Structure is kind-specific.
+
+Volume:
+  derived_from: Kubernetes.Base
+  description: >
+    Base volume type used to model container storage that can be mounted into
+    a microservice. Concrete volume types (for example EmptyDir and HostPath)
+    derive from this type.
+
+Volume.EmptyDir:
+  derived_from: Volume
+  description: >
+    Ephemeral scratch volume whose lifecycle is tied to the workload instance.
+    It is created when the workload starts and removed when the workload stops.
+    Equivalent intent to Kubernetes emptyDir.
+  properties:
+    medium:
+      type: string
+      required: false
+      constraints:
+      - valid_values: ["", "Memory"]
+      description: >
+        Storage medium for the emptyDir. Use "" for node storage (default) or
+        "Memory" to request a tmpfs-backed in-memory volume (size may be limited
+        by the platform).
+    sizeLimit:
+      type: string
+      required: false
+      description: >
+        Optional upper bound for the volume size (for example "512Mi", "1Gi"),
+        interpreted by the orchestrator/platform where supported.
+
+Volume.HostPath:
+  derived_from: Volume
+  description: >
+    Volume backed by a directory or file path on the host (node) filesystem,
+    mounted into the workload. Equivalent intent to Kubernetes hostPath.
+    Use with care as it couples the workload to the host's filesystem layout.
+  properties:
+    path:
+      type: string
+      required: true
+      description: >
+        Absolute path on the host machine to mount into the workload.
           
 policy_types:
 
