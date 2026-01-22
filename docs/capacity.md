@@ -82,7 +82,7 @@ node_types:
     capabilities:
       capacity:
         properties:
-          num_instances:
+          instances:
             type: integer
             required: true
             description: Number of instances
@@ -195,7 +195,7 @@ service_template:
       capabilities:
         capacity:
           properties:
-            num_instances: 100
+            instances: 100
         host:
           properties:
             num-cpus: 2
