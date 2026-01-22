@@ -1,6 +1,6 @@
 # TOSCA in Swarmchestrate
 
-![](assets/logo-horizontal.png)
+![](img/logo-horizontal.png)
 
 Welcome to the TOSCA documentation pages for the Swarmchestrate project.
 This resource contains information for application owners, capacity
