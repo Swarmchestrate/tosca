@@ -4,6 +4,11 @@ The Capacity Description Template (CDT) defines the resources available for a
 specific capacity. Like the SAT, it follows TOSCA v2.0 and uses the same custom
 Swarmchestrate profile.
 
+!!! warning ""
+
+    The specification is not entirely finalised or fixed. Field names and types
+    may change over the course of the project.
+
 ## Top Matter
 
 Start every CDT with the same structure used in a SAT: `tosca_definitions_version`, a

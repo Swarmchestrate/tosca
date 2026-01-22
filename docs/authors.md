@@ -8,6 +8,11 @@ TOSCA and by association, the SAT, are specified in YAML, a
 superset of JSON. YAML does away with some of the noisy JSON syntax, relying on
 indentation instead, for a more human readable representation.
 
+!!! warning ""
+
+    The specification is not entirely finalised or fixed. Field names and types
+    may change over the course of the project.
+
 ## Top Matter
 
 Every SAT begins in the same way:

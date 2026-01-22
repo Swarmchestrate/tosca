@@ -7,7 +7,12 @@
 
 ## Spec
 
-The specification for {{ name | replace("_", " ") }} has these fields:
+The specification for {{ name | replace("_", " ") }} has the following fields.
+
+!!! warning ""
+
+    The specification is not entirely finalised or fixed. Field names and types
+    may change over the course of the project.
 
 {% for key, value in fields.items() if not value.hide -%}
 
