@@ -244,3 +244,34 @@ Repeat for other sizes (e.g. `EC2.t3.medium`, `EC2.t3.large`)
 changing type, CPU, memory, disk, bandwidth, cost, and energy to match the 
 resource you provide.
 
+### Edge
+
+Edge node definitions are a work-in-progress but follow the same structure.
+Here is a small example:
+
+```yaml
+    Edge.rPi:
+      type: Edge
+      description: >
+        A Raspberry Pi edge node from the University of Westminster provision
+      properties:
+        ip: 192.168.2.1
+        credentials:
+          token: asb1823n19a9asnd929d9n2
+      capabilities:
+        capacity:
+          properties:
+            instances: 1
+        host:
+          properties:
+            num-cpus: 4
+            mem-size: 16
+            disk-size: 200
+            bandwidth: 1000
+        pricing:
+          properties:
+            cost: 0.00
+        energy:
+          properties:
+            consumption: 5.0
+```
