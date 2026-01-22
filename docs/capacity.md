@@ -1,4 +1,4 @@
-# Capacity Guide
+# Capacity Description Template
 
 The Capacity Description Template (CDT) defines the resources available for a
 specific capacity. Like the SAT, it follows TOSCA v2.0 and uses the same custom
@@ -80,12 +80,14 @@ node_types:
         default:
           managed_by: swarmchestrate
     capabilities:
-      host:
+      capacity:
         properties:
           num_instances:
             type: integer
             required: true
             description: Number of instances
+      host:
+        properties:
           num-cpus:
             type: string
             required: true
@@ -182,57 +184,30 @@ node_types:
 Derive specific instance types from the base to encode size-specific defaults. Override only what differs: e.g. `instance_type`, host capacity, pricing, and energy metrics.
 
 ```yaml
-  EC2.t3.micro:
-    derived_from: EC2
-    description: >
-      An EC2 t3.micro compute node from the University of Westminster provision
-    properties:
-      instance_type:
-        type: string
-        required: true
-        default: t3.micro
-    capabilities:
-      host:
-        properties:
-          num_instances:
-            type: integer
-            required: true
-            description: Number of instances
-            default: -1
-          num-cpus:
-            type: string
-            required: true
-            description: Number of vCPUs
-            default: 2
-          mem-size:
-            type: string
-            required: true
-            description: Memory size in GB
-            default: 1
-          disk-size:
-            type: string
-            required: true
-            description: Disk size in GB
-            default: 20
-          bandwidth:
-            type: string
-            required: true
-            description: Network bandwidth in Mbps
-            default: 100
-      pricing:
-        properties:
-          cost:
-            type: float
-            required: true
-            description: Cost per hour in USD
-            default: 0.0139
-      energy:
-        properties:
-          consumption:
-            type: float
-            required: true
-            description: Energy consumption in watts per hour
-            default: 13.0
+service_template:
+  node_templates:
+    EC2.t3.micro:
+      type: EC2
+      description: >
+        An EC2 t3.micro compute node from the University of Westminster provision
+      properties:
+        instance_type: t3.micro
+      capabilities:
+        capacity:
+          properties:
+            num_instances: 100
+        host:
+          properties:
+            num-cpus: 2
+            mem-size: 1
+            disk-size: 20
+            bandwidth: 100
+        pricing:
+          properties:
+            cost: 0.0139
+        energy:
+          properties:
+            consumption: 13.0
 ```
 
 Repeat for other sizes (e.g. `EC2.t2.small`, `EC2.t2.medium`, `EC2.t2.large`, `EC2.t2.xlarge`)
