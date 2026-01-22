@@ -1,8 +1,13 @@
-site_name: TOSCA in Swarmchestrate
+site_name: TOSCA Toolkit
 repo_url: https://github.com/Swarmchestrate/tosca
 
 theme: 
   name: material
+  logo: assets/word-logo.png
+  favicon: assets/favicon.png
+  palette:
+    primary: light blue
+    accent: blue
   features:
     - content.code.copy
     - navigation.expand

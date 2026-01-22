@@ -1,4 +1,6 @@
-# Swarmchestrate TOSCA
+# TOSCA in Swarmchestrate
+
+![](assets/logo-horizontal.png)
 
 Welcome to the TOSCA documentation pages for the Swarmchestrate project.
 This resource contains information for application owners, capacity
@@ -22,4 +24,5 @@ Sardou provides fsuch eatures as validation, translation and extraction.
 ## First Steps
 
 * If you are an application owner, visit the [Author Guide](authors.md).
-* If you are 
+* If you are a capacity administrator, visit the [Capacity Definition](capacity.md).
+* If you are a Swarmchestrate dev, visit the [Sardou library page](sardou.md).
