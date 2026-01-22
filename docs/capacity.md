@@ -185,7 +185,9 @@ Derive specific instance types from the base to encode size-specific defaults. O
 
 ```yaml
 service_template:
+
   node_templates:
+
     EC2.t3.micro:
       type: EC2
       description: >
@@ -208,9 +210,32 @@ service_template:
         energy:
           properties:
             consumption: 13.0
+
+    EC2.t3.small:
+      type: EC2
+      description: >
+        An EC2 t3.small compute node from the University of Westminster provision
+      properties:
+        instance_type: t3.small
+      capabilities:
+        capacity:
+          properties:
+            instances: 100
+        host:
+          properties:
+            num-cpus: 2
+            mem-size: 2
+            disk-size: 20
+            bandwidth: 100
+        pricing:
+          properties:
+            cost: 0.02
+        energy:
+          properties:
+            consumption: 15.0
 ```
 
-Repeat for other sizes (e.g. `EC2.t2.small`, `EC2.t2.medium`, `EC2.t2.large`, `EC2.t2.xlarge`)
-changing numeric defaults for CPU, memory, disk, bandwidth, cost, and energy to match the 
-capacity you provide.
+Repeat for other sizes (e.g. `EC2.t3.medium`, `EC2.t3.large`)
+changing type, CPU, memory, disk, bandwidth, cost, and energy to match the 
+resource you provide.
 
