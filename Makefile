@@ -25,6 +25,8 @@ parse:
 	fi
 
 install:
+	curl -LsSf https://astral.sh/uv/install.sh | sh
+	uv sync
 	wget https://github.com/Swarmchestrate/tosca/releases/download/v0.2.4/go-puccini_0.22.7-SNAPSHOT-3e85b40_linux_amd64.deb && \
 	sudo dpkg -i go-puccini_0.22.7-SNAPSHOT-3e85b40_linux_amd64.deb || sudo apt --fix-broken install -y && \
 	rm -f go-puccini_0.22.7-SNAPSHOT-3e85b40_linux_amd64.deb
