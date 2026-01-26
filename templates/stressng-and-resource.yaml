@@ -16,18 +16,6 @@ service_template:
       directives:
       - substitute
     
-    resource-1:
-      type: swch:AbstractResource
-      directives: [ select ]
-      node_filter:
-        $and:
-          - $equal:
-              - $get_property: [ SELF, TARGET, CAPABILITY, host, num-cpus ]
-              - 4
-          - $equal:
-              - $get_property: [ SELF, TARGET, CAPABILITY, locality, city ]
-              - london
-
     stressng:
       type: swch:Application
       properties:
@@ -41,7 +29,16 @@ service_template:
           targetPort: 443
           nodePort: 30443
       requirements:
-      - host: resource-1
+      - host:       
+          node_filter:
+            $and:
+              - $equal:
+                  - $get_property: [ SELF, TARGET, CAPABILITY, host, num-cpus ]
+                  - 4
+              - $equal:
+                  - $get_property: [ SELF, TARGET, CAPABILITY, locality, city ]
+                  - london
+
     
   policies:
     - energy:

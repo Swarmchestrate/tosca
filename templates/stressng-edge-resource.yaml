@@ -16,42 +16,9 @@ service_template:
       directives:
       - substitute
     
-    resource-1:
-      type: swch:EdgeResource
-      properties:
-        edge_device_ip: 192.168.1.100
-      capabilities:
-        host:
-          properties:
-            num-cpus: 4
-            mem-size: 8192
-            disk-size: 1000
-            bandwidth: 1000
-        os:
-          properties:
-            distribution: ubuntu
-            version: "20.04"
-        locality:
-          properties:
-            country: UK
-            city: london
-            continent: Europe
-        energy:
-          properties:
-            consumption: 50.0
-        pricing:
-          properties:
-            cost: 0.05
-        resource:
-          properties:
-            capacity-provider: fuelics
-            provider: fuelics
-        
 
     stressng:
       type: swch:Application
       properties:
         image: lorel/docker-stress-ng
         args: ['--cpu', '0', '--cpu-method', 'pi', '-l', '20']
-      requirements:
-      - host: resource-1
