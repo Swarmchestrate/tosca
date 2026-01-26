@@ -907,8 +907,7 @@ node_types:
       medium:
         type: string
         required: false
-        constraints:
-        - valid_values: ["", "Memory"]
+        validation: { $valid_values: [ $value, [ "", "Memory" ] ] }
         description: >
           Storage medium for the emptyDir. Use "" for node storage (default) or
           "Memory" to request a tmpfs-backed in-memory volume (size may be limited
