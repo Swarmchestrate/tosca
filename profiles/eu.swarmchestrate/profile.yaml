@@ -955,12 +955,6 @@ policy_types:
     derived_from: Scheduling
     description: >
       Policy type for colocating multiple microservices on a specific host.
-    properties:
-      host_name:
-        type: string
-        required: true
-        description: >
-          The name of the TOSCA hosting node.
 
       
 
