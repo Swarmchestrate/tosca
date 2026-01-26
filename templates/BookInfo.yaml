@@ -46,6 +46,34 @@ service_template:
         - port: 9080
           targetPort: 9080
           containerPort: 9080
+      capabilities:
+        metrics:
+          properties:
+            raw:
+            - name: cpu_util_instance
+              sensor: "Netdata"
+              config:
+                scope_contexts: k8s.cgroup.cpu
+                results-aggregation: SUM
+              collection_frequency: "30 sec"
+              collection_output: "all"
+            
+            composite:
+            - name: cpu_util_prct
+              formula: mean( cpu_util_instance )
+              collection_frequency: "30 sec"
+              collection_output: "all"
+              window_type: "sliding"
+              window_size: "5 min"
+              grouping: "per_zone"
+
+        slo-constraints:
+          properties:
+            name: cpu_utilization
+            metric: cpu_util_prct
+            operator: ">"
+            threshold: 80.0
+
       requirements:
       - host: 
           node_filter:
