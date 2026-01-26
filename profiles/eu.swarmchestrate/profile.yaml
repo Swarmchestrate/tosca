@@ -40,6 +40,109 @@ data_types:
         type: integer
         required: false
 
+  RawMetric:
+    properties:
+      name:
+        type: string
+        required: true
+        description: Name of the raw metric
+      sensor:
+        type: string
+        required: true
+        description: Sensor type
+        default: Netdata
+      config:
+        type: map
+        required: true
+        entry_schema: string
+        description: |
+          Configuration for the metric e.g.
+            scope_contexts: k8s.cgroup.cpu
+            results-aggregation: SUM
+      collection_frequency:
+        type: string
+        required: true
+        description: Frequency of collection e.g. "30 sec"
+        default: "30 sec"
+      collection_output:
+        type: string
+        required: true
+        description: Output type e.g. "all"
+        default: "all"
+
+  CompositeMetric:
+    description: >
+      Composite metric definition.
+    properties:
+      name:
+        type: string
+        required: true
+        description: Name of the composite metric
+      formula:
+        type: string
+        required: true
+        description: Formula for the composite metric e.g. mean( cpu_util_instance )
+      collection_frequency:
+        type: string
+        required: true
+        description: Frequency of collection e.g. "30 sec"
+        default: "30 sec"
+      collection_output:
+        type: string
+        required: true
+        description: Output type e.g. "all"
+        default: "all"
+      window_type:
+        type: string
+        required: true
+        description: Type of window e.g. "sliding"
+        default: "sliding"
+      window_size:
+        type: string
+        required: true
+        description: Size of the window e.g. "5 min"
+      grouping:
+        type: string
+        required: true
+        description: >
+          Grouping type e.g. "per_zone", "per_host", "per_region" # possibly "cross-swarms"
+        default: "per_zone"
+
+  SLO:
+    description: >
+      Service Level Objective (SLO) data type.
+    properties:
+      name:
+        type: string
+        required: true
+        description: Name of the SLO
+      metric:
+        type: string
+        required: false
+        description: Name of the metric to apply the SLO on
+      operator:
+        type: string
+        required: false
+        description: Operator for the SLO e.g. ">"
+      threshold:
+        type: float
+        required: false
+        description: Threshold value for the SLO e.g. 80.0
+      and_list:
+        type: list
+        entry_schema: SLO
+        required: false
+        description: List of SLOs to AND together
+      or_list:
+        type: list
+        entry_schema: SLO
+        required: false
+        description: List of SLOs to OR together
+      constraint:
+        type: string
+        required: false
+        description: Constraint for the SLO e.g. "cpu_util_prct > 80"
+
 node_types:
 
   Swarm:
@@ -853,7 +956,29 @@ node_types:
             description: Specific type of energy (e.g., solar, wind, coal)
             default: non-green
 
+  MonitoredComponent:
+    description: General base type for components that can be monitored in SwCh.
+    capabilities:
+      metrics:
+        type: Metric
+        properties:
+          raw:
+            type: list
+            required: false
+            description: Raw metrics
+            entry_schema: RawMetric
+          composite:
+            type: list
+            required: false
+            description: Composite metrics
+            entry_schema: CompositeMetric
+      slo-constraints:
+        type: SLO
+          
+
+
   Kubernetes.Base:
+    derived_from: MonitoredComponent
     description: >
       General base type for Kubernetes-related modelling. This type captures
       commonly useful metadata (name/namespace/labels/annotations) without
@@ -1052,3 +1177,43 @@ capability_types:
   Volume:
     description: >
       This capability represents a volume that can be attached to a container.
+
+  Metric:
+    description: >
+      This capability represents metrics.
+
+  SLO:
+    description: >
+      Service Level Objective (SLO) definition.
+    properties:
+      name:
+        type: string
+        required: true
+        description: Name of the SLO
+        default: "default-slo"
+      metric:
+        type: string
+        required: false
+        description: Name of the metric to apply the SLO on
+      operator:
+        type: string
+        required: false
+        description: Operator for the SLO e.g. ">"
+      threshold:
+        type: float
+        required: false
+        description: Threshold value for the SLO e.g. 80.0
+      and_list:
+        type: list
+        entry_schema: SLO
+        required: false
+        description: List of SLOs to AND together
+      or_list:
+        type: list
+        entry_schema: SLO
+        required: false
+        description: List of SLOs to OR together
+      constraint:
+        type: string
+        required: false
+        description: Constraint for the SLO e.g. "cpu_util_prct > 80"
