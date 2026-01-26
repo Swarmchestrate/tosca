@@ -16,17 +16,27 @@ description: MiCADO Profile type definitions
 data_types:
 
   PortMapping:
+    description: >
+      For specifying ports in a container.
     properties:
       containerPort:
         type: integer
         required: false
+        description: >
+          Informational only - port inside the container.
       port:
+        description: >
+          The port number to expose targetPort to.
         type: integer
         required: true
       targetPort:
+        description: >
+          The port number inside the container to map to.
         type: integer
         required: false
       nodePort:
+        description: >
+          A port in range 30000-32767 available on all nodes.
         type: integer
         required: false
 
