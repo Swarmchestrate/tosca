@@ -17,12 +17,15 @@ data_types:
 
   PortMapping:
     properties:
+      containerPort:
+        type: integer
+        required: false
       port:
         type: integer
         required: true
       targetPort:
         type: integer
-        required: true
+        required: false
       nodePort:
         type: integer
         required: false
@@ -63,6 +66,7 @@ node_types:
       selector:
         type: map
         required: false
+        entry_schema: string
         description: >
           Label selector used to associate the workload with managed Pods. If
           omitted, the orchestrator may derive a selector from labels.
@@ -70,6 +74,7 @@ node_types:
       strategy:
         type: map
         required: false
+        entry_schema: string
         description: >
           Rollout strategy configuration for the workload (e.g. rolling update
           parameters).
@@ -213,6 +218,7 @@ node_types:
       dns_config:
         type: map
         required: false
+        entry_schema: string
         description: >
           DNS configuration customisation for the Pod (nameservers, searches, options).
 
@@ -232,12 +238,14 @@ node_types:
       security_context:
         type: map
         required: false
+        entry_schema: string
         description: >
           Pod-level security context settings (e.g. fsGroup, runAsUser).
 
       container_security_context:
         type: map
         required: false
+        entry_schema: string
         description: >
           Container-level security context settings (e.g. runAsNonRoot, capabilities).
 
@@ -263,6 +271,7 @@ node_types:
       resources:
         type: map
         required: false
+        entry_schema: string
         description: >
           Resource requests and limits (e.g. cpu and memory) for the container.
 
@@ -270,12 +279,14 @@ node_types:
       liveness_probe:
         type: map
         required: false
+        entry_schema: string
         description: >
           Liveness probe definition used to detect and restart unhealthy containers.
 
       readiness_probe:
         type: map
         required: false
+        entry_schema: string
         description: >
           Readiness probe definition used to determine when the workload can
           receive traffic.
@@ -283,6 +294,7 @@ node_types:
       startup_probe:
         type: map
         required: false
+        entry_schema: string
         description: >
           Startup probe definition used to delay other probes until the container starts.
 
@@ -290,6 +302,7 @@ node_types:
       lifecycle:
         type: map
         required: false
+        entry_schema: string
         description: >
           Lifecycle hooks for the container (e.g. postStart, preStop).
 
@@ -310,6 +323,7 @@ node_types:
       affinity:
         type: map
         required: false
+        entry_schema: string
         description: >
           Affinity and anti-affinity rules for scheduling Pods.
 
@@ -360,9 +374,6 @@ node_types:
       - volume:
           capability: Volume
           relationship: AttachesTo
-      - identity:
-          capability: Identity
-          relationship: IdentifiesAs
 
 
   AbstractResource:
@@ -876,17 +887,18 @@ node_types:
     properties:
       apiVersion:
         type: string
-        required: true
+        required: false
         description: >
           Kubernetes API version for the resource (e.g. "v1", "apps/v1").
       kind:
         type: string
-        required: true
+        required: false
         description: >
           Kubernetes resource kind (e.g. "Service", "Deployment").
       spec:
         type: map
         required: false
+        entry_schema: string
         description: >
           Resource specification content. Structure is kind-specific.
 
@@ -939,7 +951,7 @@ policy_types:
       Policy type for scheduling.
 
 
-  Scheduling.Colation:
+  Scheduling.Colocation:
     derived_from: Scheduling
     description: >
       Policy type for colocating multiple microservices on a specific host.
