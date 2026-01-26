@@ -22,7 +22,7 @@ nav:
   - Author Guide: authors.md
   - Capacity Definition: capacity.md
   - TOSCA Library: sardou.md
-  - Microservice Spec: application.md
+  - Microservice Spec: microservice.md
   - Policy Spec: policy.md
 
 markdown_extensions:

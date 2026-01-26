@@ -37,7 +37,7 @@ pages_to_write.append(
 fields = {}
 types = {}
 
-for name, value in profile["node_types"]["Application"]["properties"].items():
+for name, value in profile["node_types"]["Microservice"]["properties"].items():
     info = {
         "required": value.get("required", False),
         "type": value.get("type", ""),
@@ -64,7 +64,7 @@ for name, value in profile["data_types"].items():
 
 pages_to_write.append(
     {
-        "name": "Application",
+        "name": "Microservice",
         "fields": fields,
         "types": types
     }
