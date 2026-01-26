@@ -359,7 +359,7 @@ node_types:
           relationship: HostedOn
       - volume:
           capability: Volume
-          relationship: AttachedTo
+          relationship: AttachesTo
       - identity:
           capability: Identity
           relationship: IdentifiesAs
@@ -935,6 +935,24 @@ Volume.HostPath:
           
 policy_types:
 
+  Scheduling:
+    description: >
+      Policy type for scheduling.
+
+
+  Scheduling.Colation:
+    derived_from: Scheduling
+    description: >
+      Policy type for colocating multiple microservices on a specific host.
+    properties:
+      host_name:
+        type: string
+        required: true
+        description: >
+          The name of the TOSCA hosting node.
+
+      
+
   RegistryLogin:
     description: >
       Policy type for logging into a container registry.
@@ -997,9 +1015,14 @@ relationship_types:
     description: >
       This relationship indicates that a node is hosted on another node.
 
-  AttachedTo:
+  AttachesTo:
     description: >
       This relationship indicates that a volume is attached to a container.
+    properties:
+      mount_path:
+        type: string
+        required: true
+        description: Path to mount to in Pod
 
   IdentifiesAs:
     description: >
