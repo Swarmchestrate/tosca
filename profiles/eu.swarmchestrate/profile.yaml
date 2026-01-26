@@ -867,71 +867,71 @@ node_types:
           Optional key/value annotations for non-identifying metadata used by
           tooling, controllers, and integrations.
 
-Kubernetes.APIObject:
-  derived_from: Kubernetes.Base
-  description: >
-    Base type for Kubernetes API objects (persisted resources that can be
-    created/applied on their own, e.g. Service, Deployment, ServiceAccount).
-    Adds the required Kubernetes API identity fields and a free-form spec.
-  properties:
-    apiVersion:
-      type: string
-      required: true
-      description: >
-        Kubernetes API version for the resource (e.g. "v1", "apps/v1").
-    kind:
-      type: string
-      required: true
-      description: >
-        Kubernetes resource kind (e.g. "Service", "Deployment").
-    spec:
-      type: map
-      required: false
-      description: >
-        Resource specification content. Structure is kind-specific.
+  Kubernetes.APIObject:
+    derived_from: Kubernetes.Base
+    description: >
+      Base type for Kubernetes API objects (persisted resources that can be
+      created/applied on their own, e.g. Service, Deployment, ServiceAccount).
+      Adds the required Kubernetes API identity fields and a free-form spec.
+    properties:
+      apiVersion:
+        type: string
+        required: true
+        description: >
+          Kubernetes API version for the resource (e.g. "v1", "apps/v1").
+      kind:
+        type: string
+        required: true
+        description: >
+          Kubernetes resource kind (e.g. "Service", "Deployment").
+      spec:
+        type: map
+        required: false
+        description: >
+          Resource specification content. Structure is kind-specific.
 
-Volume:
-  derived_from: Kubernetes.Base
-  description: >
-    Base volume type used to model container storage that can be mounted into
-    a microservice. Concrete volume types (for example EmptyDir and HostPath)
-    derive from this type.
+  Volume:
+    derived_from: Kubernetes.Base
+    description: >
+      Base volume type used to model container storage that can be mounted into
+      a microservice. Concrete volume types (for example EmptyDir and HostPath)
+      derive from this type.
 
-Volume.EmptyDir:
-  derived_from: Volume
-  description: >
-    Ephemeral scratch volume whose lifecycle is tied to the workload instance.
-    It is created when the workload starts and removed when the workload stops.
-    Equivalent intent to Kubernetes emptyDir.
-  properties:
-    medium:
-      type: string
-      required: false
-      constraints:
-      - valid_values: ["", "Memory"]
-      description: >
-        Storage medium for the emptyDir. Use "" for node storage (default) or
-        "Memory" to request a tmpfs-backed in-memory volume (size may be limited
-        by the platform).
-    sizeLimit:
-      type: string
-      required: false
-      description: >
-        Optional upper bound for the volume size (for example "512Mi", "1Gi"),
-        interpreted by the orchestrator/platform where supported.
+  Volume.EmptyDir:
+    derived_from: Volume
+    description: >
+      Ephemeral scratch volume whose lifecycle is tied to the workload instance.
+      It is created when the workload starts and removed when the workload stops.
+      Equivalent intent to Kubernetes emptyDir.
+    properties:
+      medium:
+        type: string
+        required: false
+        constraints:
+        - valid_values: ["", "Memory"]
+        description: >
+          Storage medium for the emptyDir. Use "" for node storage (default) or
+          "Memory" to request a tmpfs-backed in-memory volume (size may be limited
+          by the platform).
+      sizeLimit:
+        type: string
+        required: false
+        description: >
+          Optional upper bound for the volume size (for example "512Mi", "1Gi"),
+          interpreted by the orchestrator/platform where supported.
 
-Volume.HostPath:
-  derived_from: Volume
-  description: >
-    Volume backed by a directory or file path on the host (node) filesystem,
-    mounted into the workload. Equivalent intent to Kubernetes hostPath.
-    Use with care as it couples the workload to the host's filesystem layout.
-  properties:
-    path:
-      type: string
-      required: true
-      description: >
-        Absolute path on the host machine to mount into the workload.
+  Volume.HostPath:
+    derived_from: Volume
+    description: >
+      Volume backed by a directory or file path on the host (node) filesystem,
+      mounted into the workload. Equivalent intent to Kubernetes hostPath.
+      Use with care as it couples the workload to the host's filesystem layout.
+    properties:
+      path:
+        type: string
+        required: true
+        description: >
+          Absolute path on the host machine to mount into the workload.
           
 policy_types:
 
