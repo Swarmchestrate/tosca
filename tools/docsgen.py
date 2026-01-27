@@ -38,10 +38,11 @@ fields = {}
 types = {}
 
 for name, value in profile["node_types"]["Microservice"]["properties"].items():
+    entry_schema = value.get("entry_schema", {})
     info = {
         "required": value.get("required", False),
         "type": value.get("type", ""),
-        "schema": value.get("entry_schema", {}).get("type", ""),
+        "schema": entry_schema if isinstance(entry_schema, str) else entry_schema.get("type", ""),
         "description": value.get("description", "No description available")
     }
     fields[name] = info
