@@ -1,0 +1,124 @@
+##########################################################################
+# This file contains MiCADO Profile Capacity type definitions.
+##########################################################################
+
+tosca_definitions_version: tosca_2_0
+
+profile: eu.swarmchestrate:0.1
+
+metadata:
+  template_name: capacity.yaml
+  template_author: University of Westminster
+  template_version: 0.1
+
+description: MiCADO Profile capacity type definitions
+
+
+node_types:
+
+  Capacity:
+    description: >
+      The Swarmchestrate Capacity Node
+    capabilities:
+      capacity:
+        properties:
+          instances:
+            type: integer
+            required: false
+            description: Number of instances
+          num-cpus:
+            type: integer
+            required: false
+            description: Number of CPUs available
+          mem-size:
+            type: string
+            required: false
+            description: Amount of RAM available in GB
+          disk-size:
+            type: string
+            required: false
+            description: Amount of disk space available in GB
+          bandwidth:
+            type: string
+            required: false
+            description: Amount of network bandwidth available in Mbps
+      host:
+        properties:
+          num-cpus:
+            type: integer
+            required: false
+            description: Number of vCPUs
+          mem-size:
+            type: string
+            required: false
+            description: Memory size in GB
+          disk-size:
+            type: string
+            required: false
+            description: Disk size in GB
+          bandwidth:
+            type: string
+            required: false
+            description: Network bandwidth in Mbps
+      os:
+        properties:
+          type:
+            type: string
+            required: true
+            description: Operating system type
+          version:
+            type: string
+            required: true
+            description: Operating system version
+          distribution:
+            type: string
+            required: true
+            description: Operating system distribution
+      resource:
+        properties:
+          provider:
+            type: string
+            required: true
+            description: Resource provider
+          capacity-provider:
+            type: string
+            required: true
+            description: Capacity provider
+          type:
+            type: string
+            required: true
+            description: Resource type
+      pricing:
+        properties:
+          cost:
+            type: float
+            required: true
+            description: Cost per hour in USD
+      locality:
+        properties:
+          continent:
+            type: string
+            required: true
+            description: Continent where the resource is located
+          country:
+            type: string
+            required: true
+            description: Country where the resource is located
+          city:
+            type: string
+            required: true
+            description: City where the resource is located
+      energy:
+        properties:
+          consumption:
+            type: float
+            required: true
+            description: Energy consumption in watts per hour
+          powered-type:
+            type: string
+            required: false
+            description: Type of power used (e.g., renewable, non-renewable)
+          energy-type:
+            type: string
+            required: false
+            description: Specific type of energy (e.g., solar, wind, coal)
