@@ -10,15 +10,24 @@ jinja_env = jinja2.Environment(loader=jinja_loader)
 template = jinja_env.get_template("docspage.md.j2")
 
 PROFILE_URL = "profiles/eu.swarmchestrate/profile.yaml"
+CAPACITY_URL = "profiles/eu.swarmchestrate/capacity.yaml"
 
 DOCS_LOC = Path("docs/")
 
 with open(PROFILE_URL) as f:
     profile = yaml.load(f)
-print()
+
+with open(CAPACITY_URL) as f:
+    capacity = yaml.load(f)
 
 fields = {}
 pages_to_write = []
+
+###
+## Policy Page
+###
+
+PAGE_NAME = "Policy"
 
 for name, value in profile["policy_types"].items():
     if not name.startswith("QoS."):
@@ -30,12 +39,18 @@ for name, value in profile["policy_types"].items():
 
 pages_to_write.append(
     {
-        "name": "Policy",
+        "name": PAGE_NAME,
         "fields": fields
     }
 )
 fields = {}
 types = {}
+
+###
+## Microservice Page
+###
+
+PAGE_NAME = "Microservice"
 
 for name, value in profile["node_types"]["Microservice"]["properties"].items():
     entry_schema = value.get("entry_schema", {})
@@ -65,15 +80,37 @@ for name, value in profile["data_types"].items():
 
 pages_to_write.append(
     {
-        "name": "Microservice",
+        "name": PAGE_NAME,
         "fields": fields,
         "types": types
     }
 )
 
-print()
+###
+## Capacity Page
+###
 
-# ## Render & write pages
+## TODO: Implement capacity page generation
+
+
+
+
+###
+## Monitoring Page
+###
+
+
+## TODO: Implemenent monitoring page generation
+##      - RawMetric
+##      - CompositeMetric
+##      - SLO
+
+
+
+###
+## Render and write pages
+###
+
 for page_data in pages_to_write:
     rendered = template.render(**page_data)
     file_name = page_data["name"].lower().replace(" ", "_")
