@@ -24,6 +24,8 @@ nav:
   - TOSCA Library: sardou.md
   - Microservice Spec: microservice.md
   - Policy Spec: policy.md
+  - Capacity Spec: capacity_spec.md
+  - Monitoring: monitoring.md
 
 markdown_extensions:
   - admonition

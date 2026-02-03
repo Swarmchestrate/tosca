@@ -90,8 +90,37 @@ pages_to_write.append(
 ## Capacity Page
 ###
 
-## TODO: Implement capacity page generation
+PAGE_NAME = "Capacity Spec"
 
+fields = {}
+types = {}
+
+for node_name, node_value in capacity.get("node_types", {}).items():
+    info = {
+        "description": node_value.get("description", "No description available"),
+        "fields": []
+    }
+
+    for cap_name, cap_value in node_value.get("capabilities", {}).items():
+        for prop_name, prop_value in cap_value.get("properties", {}).items():
+            info["fields"].append(
+                {
+                    "name": f"{cap_name}.{prop_name}",
+                    "required": prop_value.get("required", False),
+                    "type": prop_value.get("type", ""),
+                    "description": prop_value.get("description", "No description available")
+                }
+            )
+
+    types[node_name] = info
+
+pages_to_write.append(
+    {
+        "name": PAGE_NAME,
+        "fields": fields,
+        "types": types
+    }
+)
 
 
 
@@ -99,11 +128,39 @@ pages_to_write.append(
 ## Monitoring Page
 ###
 
+PAGE_NAME = "Monitoring"
+fields = {}
+types = {}
 
-## TODO: Implemenent monitoring page generation
-##      - RawMetric
-##      - CompositeMetric
-##      - SLO
+monitoring_data_types = ["RawMetric", "CompositeMetric", "SLO"]
+
+for mon_type in monitoring_data_types:
+    dt = profile["data_types"].get(mon_type, {})
+    info = {
+        "description": dt.get("description", "No description available"),
+        "fields": []
+    }
+
+    for field_name, field_value in dt.get("properties", {}).items():
+        info["fields"].append(
+            {
+                "name": field_name,
+                "required": field_value.get("required", False),
+                "type": field_value.get("type", ""),
+                "description": field_value.get("description", "No description available")
+            }
+        )
+
+    types[mon_type] = info
+
+
+pages_to_write.append(
+    {
+        "name": PAGE_NAME,
+        "fields": fields,  
+        "types": types
+    }
+)
 
 
 

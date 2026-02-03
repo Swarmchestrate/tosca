@@ -23,6 +23,25 @@ The specification for {{ name | replace("_", " ") }} has the following fields.
 
 {% endfor %}
 
+{% if types is defined and types %}
+## Types
+
+{% for key, value in types.items() %}
+
+`{{ key }}`{ #types.{{ key | lower | replace("_", "-") }} }
+
+:   {{ value.description }}
+
+    {% for item in value.fields %}
+    `{{ item.name }}`
+
+    :   **{{ "Required" if item.required else "Optional" }}**-*{{ item.type }}*<br>
+        {{ item.description }}
+    {% endfor %}
+
+{% endfor %}
+{% endif %}
+
 {% if name == "Application" %}
 ## Data Types
 
