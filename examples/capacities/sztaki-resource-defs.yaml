@@ -65,98 +65,60 @@ node_types:
         default: 20
 
     capabilities:
-      capacity:
-        properties:
-          instances:
-            type: integer
-            required: true
-            description: Number of instances
       host:
+        type: swch:HostCap
         properties:
           disk-size:
-            type: string
-            required: true
-            description: Disk size in GB
             default: 20
           bandwidth:
-            type: string
-            required: true
-            description: Network bandwidth in Mbps
             default: 1000
       os:
+        type: swch:OSCap
         properties:
           type:
-            type: string
-            required: true
-            description: Operating system type
             default: linux
           version:
-            type: string
-            required: true
-            description: Operating system version
             default: "22.04"
           distribution:
-            type: string
-            required: true
-            description: Operating system distribution
             default: ubuntu
       resource:
+        type: swch:ResourceCap
         properties:
           provider:
-            type: string
-            required: true
-            description: Resource provider
             default: SZTAKI
           capacity-provider:
-            type: string
-            required: true
-            description: Capacity provider
             default: SZTAKI
           type:
-            type: string
-            required: true
-            description: Resource type
             default: cloud
-          labels:
-            type: list
-            required: false
-            entry_schema: string
-            description: Labels associated with the resource
+      network:
+        type: swch:NetworkCap
+        properties:
+          ipv4_enabled:
+            default: False
+          ipv6_enabled:
+            default: False
+          type:
+            default: ethernet
       pricing:
+        type: swch:PricingCap
         properties:
           cost:
-            type: float
-            required: true
-            description: Cost per hour in USD
-            default: 0
+            default: 0.00
       locality:
+        type: swch:LocalityCap
         properties:
           continent:
-            type: string
-            required: true
-            description: Continent where the resource is located
             default: Europe
           country:
-            type: string
-            required: true
-            description: Country where the resource is located
             default: Hungary
           city:
-            type: string
-            required: true
-            description: City where the resource is located
             default: Budapest
       energy:
+        type: swch:EnergyCap
         properties:
           powered-type:
-            type: string
-            required: false
-            description: Type of power used (e.g., renewable, non-renewable)
             default: mains-powered
           energy-type:
-            type: string
-            required: false
-            description: Specific type of energy (e.g., solar, wind, coal)
             default: non-green
 
 
@@ -172,8 +134,11 @@ service_template:
       capabilities:
         host:
           properties:
-            num_cpus: 4
-            mem_size: 8 GB
+            num-cpus: 4
+            mem-size: 8 GB
+        energy:
+          properties:
+            consumption: 0.10
 
     m2-small-sztaki:
       type: OpenStackBase
@@ -183,8 +148,11 @@ service_template:
       capabilities:
         host:
           properties:
-            num_cpus: 2
-            mem_size: 4 GB
+            num-cpus: 2
+            mem-size: 4 GB
+        energy:
+          properties:
+            consumption: 0.10
   
     specific-small-sztaki:
       type: OpenStackBase
@@ -194,9 +162,12 @@ service_template:
       capabilities:
         host:
           properties:
-            num_cpus: 2
-            mem_size: 4 GB
+            num-cpus: 2
+            mem-size: 4 GB
         resource:
           properties:
             labels:
               - my_specific_resource
+        energy:
+          properties:
+            consumption: 0.10
