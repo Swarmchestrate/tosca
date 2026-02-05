@@ -114,6 +114,12 @@ node_types:
             type: string
             required: true
             description: Resource type
+          labels:
+            type: list
+            required: false
+            entry_schema: string
+            description: Labels associated with the resource
+            
       pricing:
         properties:
           cost:
