@@ -16,6 +16,12 @@ description: MiCADO Profile capacity type definitions
 
 node_types:
 
+  ## Future
+  # CloudCapacity:
+  #   description: >
+  #     The Swarmchestrate Cloud Capacity Node
+  #   derived_from: Capacity
+
   Capacity:
     description: >
       The Swarmchestrate Capacity Node
