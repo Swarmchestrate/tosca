@@ -13,6 +13,11 @@ metadata:
 
 description: MiCADO Profile type definitions
 
+imports:
+- namespace: capacity
+  url: https://raw.githubusercontent.com/Swarmchestrate/tosca/refs/heads/main/profiles/eu.swarmchestrate/capacity.yaml
+
+
 data_types:
 
   PortMapping:
