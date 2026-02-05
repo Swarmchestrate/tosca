@@ -74,6 +74,22 @@ node_types:
             type: string
             required: true
             description: Operating system distribution
+
+      network:
+        properties:
+          type:
+            type: string
+            required: true
+            description: Network type (e.g. 4G, 5G, Ethernet)
+          ipv6_enabled:
+            type: boolean
+            required: true
+            description: Whether IPv6 is enabled
+          ipv4_enabled:
+            type: boolean
+            required: true
+            description: Whether IPv4 is enabled
+            
       resource:
         properties:
           provider:
