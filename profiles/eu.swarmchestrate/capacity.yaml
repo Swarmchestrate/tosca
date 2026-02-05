@@ -13,6 +13,148 @@ metadata:
 
 description: MiCADO Profile capacity type definitions
 
+capability_types:
+  HostCap:
+    properties:
+      num-cpus:
+        type: integer
+        required: true
+        description: Number of vCPUs
+      mem-size:
+        type: string
+        required: true
+        description: Memory size in GB
+      disk-size:
+        type: string
+        required: true
+        description: Disk size in GB
+      bandwidth:
+        type: string
+        required: true
+        description: Network bandwidth in Mbps
+
+  CapacityCap:
+    properties:
+      instances:
+        type: integer
+        required: false
+        description: Number of instances
+      num-cpus:
+        type: integer
+        required: false
+        description: Number of vCPUs
+      mem-size:
+        type: string
+        required: false
+        description: Memory size in GB
+      disk-size:
+        type: string
+        required: false
+        description: Disk size in GB
+      bandwidth:
+        type: string
+        required: false
+        description: Network bandwidth in Mbps
+
+  OSCap:
+    properties:
+      type:
+        type: string
+        required: true
+        description: Operating system type
+      version:
+        type: string
+        required: true
+        description: Operating system version
+      distribution:
+        type: string
+        required: true
+        description: Operating system distribution
+
+  NetworkCap:
+    properties:
+      type:
+        type: string
+        required: true
+        description: Network type (e.g. 4G, 5G, Ethernet)
+      ipv6_enabled:
+        type: boolean
+        required: true
+        description: Whether IPv6 is enabled
+      ipv4_enabled:
+        type: boolean
+        required: true
+        description: Whether IPv4 is enabled
+      subnet:
+        type: string
+        required: false
+        description: Subnet CIDR
+
+  ResourceCap:
+    properties:
+      provider:
+        type: string
+        required: true
+        description: Resource provider
+      capacity-provider:
+        type: string
+        required: true
+        description: Capacity provider
+      type:
+        type: string
+        required: true
+        description: Resource type
+      labels:
+        type: list
+        required: false
+        entry_schema: string
+        description: Labels associated with the resource
+
+  PricingCap:
+    properties:
+      cost:
+        type: float
+        required: true
+        description: Cost per hour in USD
+
+  LocalityCap:
+    properties:
+      continent:
+        type: string
+        required: true
+        description: Continent where the resource is located
+      country:
+        type: string
+        required: true
+        description: Country where the resource is located
+      city:
+        type: string
+        required: true
+        description: City where the resource is located
+
+  EnergyCap:
+    properties:
+      consumption:
+        type: float
+        required: true
+        description: Energy consumption in watts per hour
+      powered-type:
+        type: string
+        required: false
+        description: Type of power used (e.g., renewable, non-renewable)
+      energy-type:
+        type: string
+        required: false
+        description: Specific type of energy (e.g., solar, wind, coal)
+
+  TrustCap:
+    properties:
+      level:
+        type: float
+        required: true
+        description: Trust level
+        default: 0.5
+
 
 node_types:
 
@@ -26,142 +168,24 @@ node_types:
     description: >
       The Swarmchestrate Capacity Node
     capabilities:
-      capacity:
-        properties:
-          instances:
-            type: integer
-            required: false
-            description: Number of instances
-          num-cpus:
-            type: integer
-            required: false
-            description: Number of CPUs available
-          mem-size:
-            type: string
-            required: false
-            description: Amount of RAM available in GB
-          disk-size:
-            type: string
-            required: false
-            description: Amount of disk space available in GB
-          bandwidth:
-            type: string
-            required: false
-            description: Amount of network bandwidth available in Mbps
       host:
-        properties:
-          num-cpus:
-            type: integer
-            required: false
-            description: Number of vCPUs
-          mem-size:
-            type: string
-            required: false
-            description: Memory size in GB
-          disk-size:
-            type: string
-            required: false
-            description: Disk size in GB
-          bandwidth:
-            type: string
-            required: false
-            description: Network bandwidth in Mbps
+        type: HostCap
+      capacity:
+        type: CapacityCap
       os:
-        properties:
-          type:
-            type: string
-            required: true
-            description: Operating system type
-          version:
-            type: string
-            required: true
-            description: Operating system version
-          distribution:
-            type: string
-            required: true
-            description: Operating system distribution
-
+        type: OSCap
       network:
-        properties:
-          type:
-            type: string
-            required: true
-            description: Network type (e.g. 4G, 5G, Ethernet)
-          ipv6_enabled:
-            type: boolean
-            required: true
-            description: Whether IPv6 is enabled
-          ipv4_enabled:
-            type: boolean
-            required: true
-            description: Whether IPv4 is enabled
-          subnet:
-            type: string
-            required: false
-            description: Subnet CIDR
-
+        type: NetworkCap
       resource:
-        properties:
-          provider:
-            type: string
-            required: true
-            description: Resource provider
-          capacity-provider:
-            type: string
-            required: true
-            description: Capacity provider
-          type:
-            type: string
-            required: true
-            description: Resource type
-          labels:
-            type: list
-            required: false
-            entry_schema: string
-            description: Labels associated with the resource
-            
+        type: ResourceCap
       pricing:
-        properties:
-          cost:
-            type: float
-            required: true
-            description: Cost per hour in USD
+        type: PricingCap
       locality:
-        properties:
-          continent:
-            type: string
-            required: true
-            description: Continent where the resource is located
-          country:
-            type: string
-            required: true
-            description: Country where the resource is located
-          city:
-            type: string
-            required: true
-            description: City where the resource is located
+        type: LocalityCap
       energy:
-        properties:
-          consumption:
-            type: float
-            required: true
-            description: Energy consumption in watts per hour
-          powered-type:
-            type: string
-            required: false
-            description: Type of power used (e.g., renewable, non-renewable)
-          energy-type:
-            type: string
-            required: false
-            description: Specific type of energy (e.g., solar, wind, coal)
-
+        type: EnergyCap
       trust:
-        properties:
-          level:
-            type: float
-            required: true
-            description: Trust level
-
+        type: TrustCap      
   
   EdgeCapacity:
     description: >
