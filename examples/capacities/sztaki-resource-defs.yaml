@@ -1,0 +1,182 @@
+tosca_definitions_version: tosca_2_0
+
+description: SZTAKI OpenStack Capacity Def
+
+metadata:
+  name: cap-os-sztaki
+  author: University of Westminster
+  date: 2026-02-05
+  version: 0.1
+  tags:
+  - provider: sztaki
+
+imports:
+- namespace: swch
+  url: https://raw.githubusercontent.com/Swarmchestrate/tosca/refs/heads/main/profiles/eu.swarmchestrate/profile.yaml
+
+node_types:
+
+  OpenStackBase:
+    derived_from: swch:Capacity
+    description: >
+      An base compute node from the SZTAKI provision
+    properties:
+      image_id:
+        type: string
+        required: true
+        description: >
+          The ID of the image used to launch the instance.
+        default: b2be6f4e-ebd8-42af-a526-63691a4d90ea
+      project_id:
+        type: string
+        required: true
+        description: >
+          OpenStack project ID
+        default: facbcbb71bab40c0a8934b3eda67d389
+      network_id:
+        type: string
+        required: true
+        description: >
+          The ID of the network connected by this instance
+        default: eb47e022-fdf3-4f7c-83ef-1fe46ec8e6dc
+      flavor_name:
+        type: string
+        required: true
+        description: >
+          The type of OpenStack instance (e.g., m2.medium) specifying compute resources.
+      key_name:
+        type: string
+        required: false
+        description: >
+          The name of the SSH key pair used to access the instance.
+      security_groups:
+        type: list
+        required: false
+        entry_schema: string
+        description: >
+          A list of security group IDs that control inbound and outbound traffic for the instance.
+        default:
+        - 0eb63f2b-b656-47a1-a0e7-3da0a993379e
+      volume_size:
+        type: integer
+        required: true
+        description: >
+          Size of instance disk volume in GB
+        default: 20
+
+    capabilities:
+      capacity:
+        properties:
+          instances:
+            type: integer
+            required: true
+            description: Number of instances
+      host:
+        properties:
+          disk-size:
+            type: string
+            required: true
+            description: Disk size in GB
+            default: 20
+          bandwidth:
+            type: string
+            required: true
+            description: Network bandwidth in Mbps
+            default: 1000
+      os:
+        properties:
+          type:
+            type: string
+            required: true
+            description: Operating system type
+            default: linux
+          version:
+            type: string
+            required: true
+            description: Operating system version
+            default: "22.04"
+          distribution:
+            type: string
+            required: true
+            description: Operating system distribution
+            default: ubuntu
+      resource:
+        properties:
+          provider:
+            type: string
+            required: true
+            description: Resource provider
+            default: SZTAKI
+          capacity-provider:
+            type: string
+            required: true
+            description: Capacity provider
+            default: SZTAKI
+          type:
+            type: string
+            required: true
+            description: Resource type
+            default: cloud
+      pricing:
+        properties:
+          cost:
+            type: float
+            required: true
+            description: Cost per hour in USD
+            default: 0
+      locality:
+        properties:
+          continent:
+            type: string
+            required: true
+            description: Continent where the resource is located
+            default: Europe
+          country:
+            type: string
+            required: true
+            description: Country where the resource is located
+            default: Hungary
+          city:
+            type: string
+            required: true
+            description: City where the resource is located
+            default: Budapest
+      energy:
+        properties:
+          powered-type:
+            type: string
+            required: false
+            description: Type of power used (e.g., renewable, non-renewable)
+            default: mains-powered
+          energy-type:
+            type: string
+            required: false
+            description: Specific type of energy (e.g., solar, wind, coal)
+            default: non-green
+
+
+service_template:
+
+  node_templates:
+
+    m2-medium-sztaki:
+      type: OpenStackBase
+      properties:
+        flavor_name: m2.medium
+        key_name: fuelics
+      capabilities:
+        host:
+          properties:
+            num_cpus: 4
+            mem_size: 8 GB
+
+    m2-small-sztaki:
+      type: swch:Compute.EC2
+      properties:
+        flavor_name: m2.small
+        key_name: fuelics
+      capabilities:
+        host:
+          properties:
+            num_cpus: 2
+            mem_size: 4 GB
