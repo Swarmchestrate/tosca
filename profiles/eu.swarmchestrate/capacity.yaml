@@ -145,3 +145,20 @@ node_types:
             type: float
             required: true
             description: Trust level
+
+  
+  EdgeCapacity:
+    description: >
+      The Swarmchestrate Edge Capacity Node
+    derived_from: Capacity
+    properties:
+      ip:
+        type: string
+        required: true
+        description: IP of edge node
+        
+      credentials:
+        type: map
+        required: false
+        description: Map of credentials (e.g. token, basic auth)
+        entry_schema: string
