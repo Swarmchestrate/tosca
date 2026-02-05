@@ -89,7 +89,7 @@ node_types:
             type: boolean
             required: true
             description: Whether IPv4 is enabled
-            
+
       resource:
         properties:
           provider:
@@ -138,3 +138,10 @@ node_types:
             type: string
             required: false
             description: Specific type of energy (e.g., solar, wind, coal)
+
+      trust:
+        properties:
+          level:
+            type: float
+            required: true
+            description: Trust level
