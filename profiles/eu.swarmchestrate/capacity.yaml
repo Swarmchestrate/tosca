@@ -89,6 +89,10 @@ node_types:
             type: boolean
             required: true
             description: Whether IPv4 is enabled
+          subnet:
+            type: string
+            required: false
+            description: Subnet CIDR
 
       resource:
         properties:
