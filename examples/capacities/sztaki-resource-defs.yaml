@@ -171,7 +171,7 @@ service_template:
             mem_size: 8 GB
 
     m2-small-sztaki:
-      type: swch:Compute.EC2
+      type: OpenStackBase
       properties:
         flavor_name: m2.small
         key_name: fuelics
