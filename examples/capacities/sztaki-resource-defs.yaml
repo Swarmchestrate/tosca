@@ -117,6 +117,11 @@ node_types:
             required: true
             description: Resource type
             default: cloud
+          labels:
+            type: list
+            required: false
+            entry_schema: string
+            description: Labels associated with the resource
       pricing:
         properties:
           cost:
@@ -180,3 +185,18 @@ service_template:
           properties:
             num_cpus: 2
             mem_size: 4 GB
+  
+    specific-small-sztaki:
+      type: OpenStackBase
+      properties:
+        flavor_name: m2.small
+        key_name: fuelics
+      capabilities:
+        host:
+          properties:
+            num_cpus: 2
+            mem_size: 4 GB
+        resource:
+          properties:
+            labels:
+              - my_specific_resource
