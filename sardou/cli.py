@@ -1,5 +1,6 @@
 import argparse
 import sys
+import glob
 from pathlib import Path
 from sardou import Sardou
 
@@ -10,7 +11,8 @@ def main():
     parser.add_argument(
         "path",
         type=str,
-        help="Path to the TOSCA template file"
+        nargs="+",
+        help="Path(s) to TOSCA template file(s), supports glob patterns"
     )
     parser.add_argument(
         "-v", "--verbose",
@@ -20,25 +22,40 @@ def main():
     
     args = parser.parse_args()
     
-    target_path = Path(args.path).resolve()
-    if not target_path.exists():
-        print(f"Error: Path does not exist: {args.path}", file=sys.stderr)
+    # Expand glob patterns and collect all files
+    files = []
+    for path_pattern in args.path:
+        expanded = glob.glob(path_pattern)
+        if expanded:
+            files.extend(expanded)
+        else:
+            # If glob returns nothing, treat as literal path
+            files.append(path_pattern)
+    
+    if not files:
+        print("Error: No files found matching the given path(s)", file=sys.stderr)
         sys.exit(1)
     
-    if args.verbose:
-        print(f"Parsing TOSCA template: {target_path}")
-    
-    try:
-        Sardou(str(target_path))
+    # Process each file
+    for file_path in files:
+        target_path = Path(file_path).resolve()
+        if not target_path.exists():
+            print(f"Error: Path does not exist: {file_path}", file=sys.stderr)
+            sys.exit(1)
         
         if args.verbose:
-            print("Successfully parsed TOSCA template")
+            print(f"Parsing TOSCA template: {target_path}")
         
-        sys.exit(0)
-        
-    except Exception as e:
-        print(f"Error parsing TOSCA template: {e}", file=sys.stderr)
-        sys.exit(1)
+        try:
+            tpl = Sardou(str(target_path))
+            
+            if args.verbose:
+                print("Successfully parsed TOSCA template")
+        except Exception as e:
+            print(f"Error parsing TOSCA template: {e}", file=sys.stderr)
+            sys.exit(1)
+    
+    sys.exit(0)
 
 
 if __name__ == "__main__":
