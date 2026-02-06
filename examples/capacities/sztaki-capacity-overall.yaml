@@ -12,7 +12,8 @@ metadata:
 
 imports:
 - namespace: swch
-  url: https://raw.githubusercontent.com/Swarmchestrate/tosca/refs/heads/main/profiles/eu.swarmchestrate/profile.yaml
+  #url: https://raw.githubusercontent.com/Swarmchestrate/tosca/refs/heads/main/profiles/eu.swarmchestrate/profile.yaml
+  url: file:///workspaces/tosca/profiles/eu.swarmchestrate/profile.yaml
 
 node_types:
 
@@ -66,14 +67,12 @@ node_types:
 
     capabilities:
       host:
-        type: swch:HostCap
         properties:
           disk-size:
             default: 20
           bandwidth:
             default: 1000
       os:
-        type: swch:OSCap
         properties:
           type:
             default: linux
@@ -82,7 +81,6 @@ node_types:
           distribution:
             default: ubuntu
       resource:
-        type: swch:ResourceCap
         properties:
           provider:
             default: SZTAKI
@@ -91,7 +89,6 @@ node_types:
           type:
             default: cloud
       network:
-        type: swch:NetworkCap
         properties:
           ipv4_enabled:
             default: False
@@ -100,12 +97,10 @@ node_types:
           type:
             default: ethernet
       pricing:
-        type: swch:PricingCap
         properties:
           cost:
             default: 0.00
       locality:
-        type: swch:LocalityCap
         properties:
           continent:
             default: Europe
@@ -114,7 +109,6 @@ node_types:
           city:
             default: Budapest
       energy:
-        type: swch:EnergyCap
         properties:
           powered-type:
             default: mains-powered
@@ -125,6 +119,14 @@ node_types:
 service_template:
 
   node_templates:
+
+    sztaki-capacity:
+      type: swch:OverallCapacity
+      capabilities:
+        capacity:
+          properties:
+              num-cpus: 40
+              mem-size: 1000 GB
 
     m2-medium-sztaki:
       type: OpenStackBase
