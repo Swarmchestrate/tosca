@@ -33,12 +33,15 @@ capability_types:
         required: true
         description: Network bandwidth in Mbps
 
-  CapacityCap:
+  CapacityInstanceCap:
     properties:
       instances:
         type: integer
         required: false
         description: Number of instances
+
+  CapacityCap:
+    properties:
       num-cpus:
         type: integer
         required: false
@@ -163,6 +166,13 @@ node_types:
   #   description: >
   #     The Swarmchestrate Cloud Capacity Node
   #   derived_from: Capacity
+  
+  OverallCapacity:
+    description: >
+      The Swarmchestrate Overall Capacity Node
+    capabilities:
+      capacity:
+        type: CapacityCap
 
   Capacity:
     description: >
@@ -171,7 +181,7 @@ node_types:
       host:
         type: HostCap
       capacity:
-        type: CapacityCap
+        type: CapacityInstanceCap
       os:
         type: OSCap
       network:
