@@ -16,7 +16,7 @@ service_template:
       - substitute
 
     stressng:
-      type: swch:Application
+      type: swch:Microservice
       properties:
         image: lorel/docker-stress-ng
         args: ['--cpu', '0', '--cpu-method', 'pi', '-l', '20']
