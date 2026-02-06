@@ -2,8 +2,8 @@ import os
 from pathlib import Path
 import json
 from ruamel.yaml import YAML
- 
- 
+
+from .capacities import extract_capacities 
 from .validation import validate_template
 from .requirements import tosca_to_ask_dict
  
@@ -67,7 +67,11 @@ class Sardou(DotDict):
             return []
         policies = self.raw.service_template.policies
         return [p._to_dict() if isinstance(p, DotDict) else p for p in policies]
- 
+    
+    def get_capacities(self):
+        nodes = self.nodeTemplates._to_dict()
+        return extract_capacities(nodes)
+
     def get_cluster(self, resource_suffix=None):
  
         # Cloud alias
