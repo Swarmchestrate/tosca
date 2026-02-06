@@ -4,6 +4,27 @@ This page is primarily for developers building tooling around TOSCA.
 Sardou is the Swarmchestrate TOSCA toolkit, which validates, extracts
 and translate various information from a Swarmchestrate TOSCA template.
 
+## Quickstart
+
+Install Puccini:
+
+```bash
+wget https://github.com/Swarmchestrate/tosca/releases/download/v0.2.4/go-puccini_0.22.7-SNAPSHOT-3e85b40_linux_amd64.deb
+sudo dpkg -i go-puccini_0.22.7-SNAPSHOT-3e85b40_linux_amd64.deb || sudo apt --fix-broken install -y
+```
+
+Install Sardou:
+
+```bash
+uv add sardou
+```
+
+Run the Sardou CLI to validate an SAT or CDT:
+
+```bash
+sardou templates/BookInfo.yaml
+```
+
 ## Setup
 
 ### Prerequisites
@@ -37,13 +58,24 @@ Install from PyPi using uv or pip
 
 ## Usage
 
-### Validation
+### Command-line Interface
+
+The Sardou CLI currently only performs validation. Run it against
+any SAT or CDT. If processed succesfully, the template is valid.
+
+```bash
+sardou templates/BookInfo.yaml
+```
+
+### Library
 
 Import the Sardou TOSCA Library
 
 ```python
 from sardou import Sardou # note the uppercase S
 ```
+
+#### Validation
 
 Create a new `Sardou` object, passing it the path to your Swarmchestrate TOSCA template.
 This will validate the template and complete the representation, inheriting from parent
