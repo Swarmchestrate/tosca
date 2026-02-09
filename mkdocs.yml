@@ -4,7 +4,7 @@ repo_url: https://github.com/Swarmchestrate/tosca
 theme: 
   name: material
   logo: img/word-logo.png
-  favicon: img/favicon.png
+  favicon: img/favicon.ico
   palette:
     primary: blue
     accent: light blue
