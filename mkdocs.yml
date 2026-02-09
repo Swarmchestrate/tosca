@@ -19,12 +19,13 @@ theme:
 
 nav:
   - Home: index.md
-  - Author Guide: authors.md
-  - Capacity Definition: capacity.md
+  - Authors:
+    - Applications: sat.md
+    - Capacities: cdt.md
   - TOSCA Library: sardou.md
   - Microservice Spec: microservice.md
   - Policy Spec: policy.md
-  - Capacity Spec: capacity_spec.md
+  - Capacity Spec: capacity.md
   - Monitoring: monitoring.md
 
 markdown_extensions:
