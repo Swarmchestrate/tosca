@@ -4,7 +4,7 @@ import json
 from ruamel.yaml import YAML
 
 from .capacities import extract_capacities 
-from .validation import validate_template
+from .validation import check_is_sat, validate_template
 from .requirements import tosca_to_ask_dict
  
 yaml = YAML(typ='safe')
@@ -54,6 +54,8 @@ class Sardou(DotDict):
  
         resolved = yaml.load(template.stdout)
         super().__init__(**resolved)
+
+        self.isSAT = check_is_sat(self)
  
         with path.open('r') as f:
             raw = yaml.load(f)
@@ -69,6 +71,8 @@ class Sardou(DotDict):
         return [p._to_dict() if isinstance(p, DotDict) else p for p in policies]
     
     def get_capacities(self):
+        if self.isSAT:
+            raise TypeError("Cannot get capacity info from a SAT")
         nodes = self.nodeTemplates._to_dict()
         return extract_capacities(nodes)
 

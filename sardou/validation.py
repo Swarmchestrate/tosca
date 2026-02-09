@@ -39,6 +39,22 @@ def prevalidate(file_path: Path) -> bool:
 
     return data
 
+def check_is_sat(template) -> str:
+    # Check for invalid node type combinations
+    nodes = template.nodeTemplates._to_dict()
+
+    has_capacity = (any(k.endswith("::Capacity") for k in node.get("types", {})) 
+                    for node in nodes.values())
+    has_microservice = (any(k.endswith("::Microservice") for k in node.get("types", {})) 
+                    for node in nodes.values())
+
+    if any(has_capacity) and any(has_microservice):
+        raise ValueError("Invalid: cannot have both Capacity and Microservice node types")
+    elif any(has_capacity):
+        return False
+    
+    return True
+    
 
 def validate_template(file_path: Path) -> bool:
     # will run the puccini-tosca parse <with flag>
