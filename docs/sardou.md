@@ -110,6 +110,18 @@ so this may not be a long-term feature)
 {'resource-1': {'metadata': {}, 'description': '', 'types': {'eu.swarmchestrate:0.1::EC2.micro.t3' ...
 ```
 
+### Capacities Detail
+
+**NOTE** This only works on CDTs.
+
+Grab capacity detail from a CDT using `get_capacities()`
+
+```python
+>>> tosca.get_capacities()
+t.get_capacities()
+({'m2-medium-sztaki': {'capacity': {'instances': 4}, 'energy': {'consumption': 0.1, 'energy-type': 'non-green', 'powered-type': 'mains-powered'}, 'host': {'bandwidth': '1000', 'disk-size': '20', 'mem-size': '8 GB', 'num-cpus': 4},
+```
+
 ### Quality of Service Policies
 
 Grab the QoS requirements as a Python object with `get_qos()`
