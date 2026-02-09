@@ -12,8 +12,7 @@ metadata:
 
 imports:
 - namespace: swch
-  #url: https://raw.githubusercontent.com/Swarmchestrate/tosca/refs/heads/main/profiles/eu.swarmchestrate/profile.yaml
-  url: file:///workspaces/tosca/profiles/eu.swarmchestrate/profile.yaml
+  url: https://raw.githubusercontent.com/Swarmchestrate/tosca/refs/heads/main/profiles/eu.swarmchestrate/profile.yaml
 
 node_types:
 
