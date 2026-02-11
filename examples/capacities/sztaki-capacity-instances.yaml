@@ -166,7 +166,7 @@ service_template:
         resource:
           properties:
             labels:
-              - my_specific_resource
+              key_name: my_specific_resource
         energy:
           properties:
             consumption: 0.10
