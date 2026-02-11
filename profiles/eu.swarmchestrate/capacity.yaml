@@ -108,7 +108,7 @@ capability_types:
         required: true
         description: Resource type
       labels:
-        type: list
+        type: map
         required: false
         entry_schema: string
         description: Labels associated with the resource
