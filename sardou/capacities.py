@@ -13,8 +13,9 @@ def _is_overall(node: dict) -> bool:
 
 
 def extract_capacities(processed_nodes: dict):
-    flavor_definition = {}
+    flavour_definition = {}
     capacity_by = {}
+    capacities = {}
     overall = None
 
     
@@ -30,19 +31,20 @@ def extract_capacities(processed_nodes: dict):
             continue
 
         caps = node.get("capabilities", {}) or {}
-        flavor_definition[name] = {}
+        flavour_definition[name] = {}
         for cap_name, cap in caps.items():
             props = cap.get("properties", {}) or {}
-            if props:
-                flavor_definition[name][cap_name] = {k: _unwrap(v) for k, v in props.items()}
+            if props and cap_name != "capacity":
+                flavour_definition[name][cap_name] = {k: _unwrap(v) for k, v in props.items()}
 
-    
     if overall is not None:
-        capacity_by = overall
+        capacities = {"flavour": flavour_definition, "capacity_raw": overall}
     else:
         for name, node in processed_nodes.items():
             caps = node.get("capabilities", {}) or {}
             inst = caps.get("capacity", {}).get("properties", {}).get("instances")
             capacity_by[name] = _unwrap(inst) if inst is not None else 1
+        
+        capacities = {"flavour": flavour_definition, "capacity_flavour": capacity_by}
 
-    return flavor_definition, capacity_by
+    return capacities
