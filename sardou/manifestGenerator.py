@@ -1,10 +1,11 @@
+from sardou import Sardou
 from ruamel.yaml import YAML
 
 # Read and update YAML using ruamel.yaml
 yaml = YAML()
 
 
-def get_kubernetes_manifest(tosca_yaml: str, image_pull_secret: str = "test") -> list:
+def get_kubernetes_manifest(tosca_yaml: str, image_pull_secret: str = "my-registry-secret") -> list:
     """
     Convert a TOSCA template string into Kubernetes manifests (Deployment + Service).
     Always injects external imagePullSecret. Handles:
@@ -17,29 +18,29 @@ def get_kubernetes_manifest(tosca_yaml: str, image_pull_secret: str = "test") ->
     - imagePullSecrets
     """
 
-    try:
-        data = yaml.load(tosca_yaml)
-    except Exception as e:
-        raise ValueError(f"Failed to parse TOSCA YAML: {e}")
+    
+    # Load and validate TOSCA
+    
+    tosca = Sardou(tosca_yaml)
+    node_templates = tosca.raw._to_dict().get("service_template", {}).get(
+        "node_templates", {}
+    )
 
-    node_templates = data.get("service_template", {}).get("node_templates", {})
     if not node_templates:
-        print("Warning: No node_templates found in TOSCA YAML")
-
+        raise ValueError("No node_templates found in TOSCA YAML")
+    
     manifests = []
-
+    # Iterate over nodes
     for name, node in node_templates.items():
         try:
             node_type = node.get("type", "")
-            if not node_type.endswith("Application"):
+            if not node_type.endswith("Microservice"):
                 continue
 
             props = node.get("properties", {}) or {}
             requirements = node.get("requirements", []) or []
 
-            # -----------------------------
             # Basic fields
-            # -----------------------------
             image = props.get("image")
             if not image:
                 raise ValueError(f"{name}: missing image")
@@ -47,9 +48,7 @@ def get_kubernetes_manifest(tosca_yaml: str, image_pull_secret: str = "test") ->
             replicas = int(props.get("replicas", 1))
             args = props.get("args", []) or []
 
-            # -----------------------------
-            # ENV
-            # -----------------------------
+            # Environment variables
             env_list = []
             for e in props.get("env", []) or []:
                 if isinstance(e, dict) and "name" in e:
@@ -57,9 +56,7 @@ def get_kubernetes_manifest(tosca_yaml: str, image_pull_secret: str = "test") ->
                         {"name": str(e["name"]), "value": str(e.get("value", ""))}
                     )
 
-            # -----------------------------
             # PORTS
-            # -----------------------------
             container_ports = []
             service_ports = []
 
@@ -85,17 +82,11 @@ def get_kubernetes_manifest(tosca_yaml: str, image_pull_secret: str = "test") ->
 
                 service_ports.append(sp)
 
-            # -----------------------------
-            # Volumes from requirements
-            # -----------------------------
+            # Volumes
             volumes = []
             volume_mounts = []
-            node_selector = {}
 
-            for r in requirements:
-                if "host" in r:
-                    node_selector["kubernetes.io/hostname"] = r["host"]
-
+            for r in requirements:        
                 if "volume" in r:
                     vol_name = r["volume"]
                     vol_def = node_templates.get(vol_name, {})
@@ -110,15 +101,30 @@ def get_kubernetes_manifest(tosca_yaml: str, image_pull_secret: str = "test") ->
                             }
                         )
                         volume_mounts.append({"name": vol_name, "mountPath": path})
+            
+            # Node labels / nodeSelector
+            labels = {}
 
-            # -----------------------------
-            # imagePullSecrets (external always wins)
-            # -----------------------------
+            for r in requirements:
+                if "host" in r:
+                    node_filter = r["host"].get("node_filter", {})
+
+                    for cond in node_filter.get("$and", []):
+                        if "$equal" in cond:
+                            left, right = cond["$equal"]
+                            if isinstance(left, dict) and "$get_property" in left:
+                                path = left["$get_property"]
+                                if isinstance(path, list) and len(path) >= 6 and path[:5] == ["SELF", "TARGET", "CAPABILITY", "resource", "labels"]:
+                                    key = path[5]
+                                    value = right
+                                    if value not in (None, "", []):
+                                        labels[key] = value
+            
+            
+            # imagePullSecrets
             image_pull_secrets = [{"name": image_pull_secret}]
 
-            # -----------------------------
             # Deployment (standard field order)
-            # -----------------------------
             deployment = {
                 "apiVersion": "apps/v1",
                 "kind": "Deployment",
@@ -130,9 +136,7 @@ def get_kubernetes_manifest(tosca_yaml: str, image_pull_secret: str = "test") ->
                         "metadata": {"labels": {"app": name}},
                         "spec": {
                             "imagePullSecrets": image_pull_secrets,
-                            **(
-                                {"nodeSelector": node_selector} if node_selector else {}
-                            ),
+                             **({"nodeSelector": labels} if labels else {}), 
                             "containers": [
                                 {
                                     "name": name,
@@ -159,9 +163,7 @@ def get_kubernetes_manifest(tosca_yaml: str, image_pull_secret: str = "test") ->
 
             manifests.append(deployment)
 
-            # -----------------------------
-            # Service
-            # -----------------------------
+            # Service (only if ports are defined)
             if service_ports:
                 svc_type = (
                     "NodePort"
