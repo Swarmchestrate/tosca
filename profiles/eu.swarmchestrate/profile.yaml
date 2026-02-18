@@ -678,7 +678,7 @@ node_types:
             required: true
             description: Resource type
             default: cloud
-
+            
 
   OpenStack.SZTAKI.m2.small: # Change as required
     derived_from: CloudResource
