@@ -9,172 +9,145 @@ jinja_loader = jinja2.FileSystemLoader(searchpath="tools/jinja_templates")
 jinja_env = jinja2.Environment(loader=jinja_loader)
 template = jinja_env.get_template("docspage.md.j2")
 
-PROFILE_URL = "profiles/eu.swarmchestrate/profile.yaml"
-CAPACITY_URL = "profiles/eu.swarmchestrate/capacity.yaml"
-
 DOCS_LOC = Path("docs/")
 
-with open(PROFILE_URL) as f:
-    profile = yaml.load(f)
+SOURCES = {
+    "profile": "profiles/eu.swarmchestrate/profile.yaml",
+    "capacity": "profiles/eu.swarmchestrate/capacity.yaml",
+    "monitoring": "profiles/eu.swarmchestrate/monitoring.yaml",
+}
 
-with open(CAPACITY_URL) as f:
-    capacity = yaml.load(f)
+# --- Load YAML sources ---
 
-fields = {}
-pages_to_write = []
+data = {}
+for key, path in SOURCES.items():
+    with open(path) as f:
+        data[key] = yaml.load(f)
 
-###
-## Policy Page
-###
 
-PAGE_NAME = "Policy"
+# --- Extraction helpers ---
 
-for name, value in profile["policy_types"].items():
-    if not name.startswith("QoS."):
-        continue
-    info = {
-        "description": value.get("description", "No description available")
-    }
-    fields[name] = info
 
-pages_to_write.append(
-    {
-        "name": PAGE_NAME,
-        "fields": fields
-    }
-)
-fields = {}
-types = {}
-
-###
-## Microservice Page
-###
-
-PAGE_NAME = "Microservice"
-
-for name, value in profile["node_types"]["Microservice"]["properties"].items():
-    entry_schema = value.get("entry_schema", {})
-    info = {
-        "required": value.get("required", False),
-        "type": value.get("type", ""),
-        "schema": entry_schema if isinstance(entry_schema, str) else entry_schema.get("type", ""),
-        "description": value.get("description", "No description available")
-    }
-    fields[name] = info
-
-for name, value in profile["data_types"].items():
-    info = {
-        "description": value.get("description", "No description available"),
-        "fields": []
-    }
-    types[name] = info
-    for k, v in value.get("properties", {}).items():
-        field = {
-            "name": k,
-            "required": v.get("required", False),
-            "type": v.get("type", ""),
-            "description": v.get("description", "No description available")
+def extract_fields(properties):
+    """Convert a YAML properties dict to template `fields` format."""
+    fields = {}
+    for name, value in properties.items():
+        entry_schema = value.get("entry_schema", {})
+        fields[name] = {
+            "required": value.get("required", False),
+            "type": value.get("type", ""),
+            "schema": (
+                entry_schema
+                if isinstance(entry_schema, str)
+                else entry_schema.get("type", "")
+            ),
+            "description": value.get("description", "No description available"),
         }
-        info["fields"].append(field)
-    types[name] = info
+    return fields
 
-pages_to_write.append(
-    {
-        "name": PAGE_NAME,
-        "fields": fields,
-        "types": types
-    }
-)
 
-###
-## Capacity Page
-###
-
-PAGE_NAME = "Capacity Spec"
-
-fields = {}
-types = {}
-
-for node_name, node_value in capacity.get("node_types", {}).items():
-    info = {
-        "description": node_value.get("description", "No description available"),
-        "fields": []
-    }
-
-    for cap_name, cap_value in node_value.get("capabilities", {}).items():
-        for prop_name, prop_value in cap_value.get("properties", {}).items():
-            info["fields"].append(
+def extract_types(types_dict):
+    """Convert a data_types / policy_types dict to template `types` format."""
+    types = {}
+    for name, value in types_dict.items():
+        types[name] = {
+            "description": value.get("description", "No description available"),
+            "fields": [
                 {
-                    "name": f"{cap_name}.{prop_name}",
+                    "name": prop_name,
                     "required": prop_value.get("required", False),
                     "type": prop_value.get("type", ""),
-                    "description": prop_value.get("description", "No description available")
+                    "description": prop_value.get(
+                        "description", "No description available"
+                    ),
                 }
-            )
+                for prop_name, prop_value in value.get("properties", {}).items()
+            ],
+        }
+    return types
 
-    types[node_name] = info
 
-pages_to_write.append(
+def extract_capability_types(node_types_dict, capability_types_dict):
+    """Convert node_types with capability references to template `types` format.
+
+    Resolves capability type references (e.g. ``type: HostCap``) against
+    *capability_types_dict* so that properties are included in the output.
+    """
+    types = {}
+    for node_name, node_value in node_types_dict.items():
+        fields = []
+        for cap_name, cap_value in node_value.get("capabilities", {}).items():
+            # Prefer inline properties; fall back to the referenced cap type
+            props = cap_value.get("properties", {})
+            if not props:
+                cap_type = cap_value.get("type", "")
+                if cap_type in capability_types_dict:
+                    props = capability_types_dict[cap_type].get("properties", {})
+
+            for prop_name, prop_value in props.items():
+                fields.append(
+                    {
+                        "name": f"{cap_name}.{prop_name}",
+                        "required": prop_value.get("required", False),
+                        "type": prop_value.get("type", ""),
+                        "description": prop_value.get(
+                            "description", "No description available"
+                        ),
+                    }
+                )
+
+        types[node_name] = {
+            "description": node_value.get("description", "No description available"),
+            "fields": fields,
+        }
+    return types
+
+
+# --- Page definitions ---
+
+pages = [
     {
-        "name": PAGE_NAME,
-        "fields": fields,
-        "types": types
-    }
-)
-
-
-
-###
-## Monitoring Page
-###
-
-PAGE_NAME = "Monitoring"
-fields = {}
-types = {}
-
-monitoring_data_types = ["RawMetric", "CompositeMetric", "SLO"]
-
-for mon_type in monitoring_data_types:
-    dt = profile["data_types"].get(mon_type, {})
-    info = {
-        "description": dt.get("description", "No description available"),
-        "fields": []
-    }
-
-    for field_name, field_value in dt.get("properties", {}).items():
-        info["fields"].append(
-            {
-                "name": field_name,
-                "required": field_value.get("required", False),
-                "type": field_value.get("type", ""),
-                "description": field_value.get("description", "No description available")
-            }
-        )
-
-    types[mon_type] = info
-
-
-pages_to_write.append(
+        "name": "Policy",
+        "fields": {
+            name: {"description": value.get("description", "No description available")}
+            for name, value in data["profile"].get("policy_types", {}).items()
+            if name.startswith("QoS.")
+        },
+    },
     {
-        "name": PAGE_NAME,
-        "fields": fields,  
-        "types": types
-    }
-)
+        "name": "Microservice",
+        "fields": extract_fields(
+            data["profile"]["node_types"]["Microservice"]["properties"]
+        ),
+        "types": extract_types(data["profile"].get("data_types", {})),
+        "show_primitives": True,
+    },
+    {
+        "name": "Capacity",
+        "types": extract_capability_types(
+            data["capacity"].get("node_types", {}),
+            data["capacity"].get("capability_types", {}),
+        ),
+        "show_primitives": True,
+    },
+    {
+        "name": "Monitoring",
+        "types": extract_types(data["monitoring"].get("data_types", {})),
+    },
+]
 
 
+# --- Render and write ---
 
-###
-## Render and write pages
-###
+for page in pages:
+    page.setdefault("fields", {})
+    page.setdefault("types", {})
+    page.setdefault("show_primitives", False)
 
-for page_data in pages_to_write:
-    rendered = template.render(**page_data)
-    file_name = page_data["name"].lower().replace(" ", "_")
+    rendered = template.render(**page)
+    file_name = page["name"].lower().replace(" ", "_")
 
-    write_path = (
-        DOCS_LOC / f"{file_name}.md"
-    )
-    with open(write_path, "w") as file:
-        file.write(rendered)
+    write_path = DOCS_LOC / f"{file_name}.md"
+    with open(write_path, "w") as f:
+        f.write(rendered)
 
