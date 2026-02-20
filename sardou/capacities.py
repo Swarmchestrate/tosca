@@ -4,6 +4,8 @@ def _unwrap(v):
             return v["$primitive"]
         if "$list" in v:
             return [_unwrap(x) for x in v["$list"]]
+        if "$map" in v:
+            return {_unwrap(entry["$key"]): _unwrap({k: x for k, x in entry.items() if k != "$key"}) for entry in v["$map"]}
     return v
 
 
