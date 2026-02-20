@@ -1,6 +1,6 @@
 [project]
 name = "Sardou"
-version = "0.4.2"
+version = "0.4.3"
 description = "Sardou TOSCA Library"
 readme = "README.md"
 authors = [
