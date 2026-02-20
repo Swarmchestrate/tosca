@@ -32,6 +32,10 @@ capability_types:
         type: string
         required: true
         description: Network bandwidth in Mbps
+      architecture:
+        type: string
+        required: false
+        description: CPU architecture (e.g., x86_64, arm64)
 
   CapacityInstanceCap:
     properties:
