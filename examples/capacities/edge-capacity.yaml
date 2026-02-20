@@ -1,0 +1,102 @@
+tosca_definitions_version: tosca_2_0
+
+description: Fuelics Edges Capacity Def
+
+metadata:
+  name: cap-edges-fuelics
+  author: University of Westminster
+  date: 2026-02-18
+  version: 0.1
+  tags:
+  - provider: fuelics
+
+imports:
+- namespace: swch
+  url: https://raw.githubusercontent.com/Swarmchestrate/tosca/refs/heads/main/profiles/eu.swarmchestrate/profile.yaml
+
+node_types:
+
+  FuelicsEdge:
+    derived_from: swch:EdgeCapacity
+    description: >
+      An base edge node from the Fuelics provision
+    capabilities:
+      host:
+        properties:
+          num-cpus:
+            default: 2
+          mem-size:
+            default: 2 GB
+          disk-size:
+            default: 20
+          bandwidth:
+            default: 1000
+      os:
+        properties:
+          type:
+            default: linux
+          version:
+            default: "22.04"
+          distribution:
+            default: raspbian
+      resource:
+        properties:
+          provider:
+            default: Fuelics
+          capacity-provider:
+            default: Fuelics
+          type:
+            default: edge
+      network:
+        properties:
+          ipv4_enabled:
+            default: False
+          ipv6_enabled:
+            default: False
+          type:
+            default: 4G
+      pricing:
+        properties:
+          cost:
+            default: 0.00
+      locality:
+        properties:
+          continent:
+            default: Europe
+          country:
+            default: Greece
+          city:
+            default: Athens
+      energy:
+        properties:
+          powered-type:
+            default: battery-powered
+          energy-type:
+            default: non-green
+          consumption: 
+            default: 0.10
+
+
+service_template:
+
+  node_templates:
+
+    edge-device-a2bc:
+      type: FuelicsEdge
+      properties:
+        ip: 192.168.1.100
+
+    edge-device-rr2x:
+      type: FuelicsEdge
+      properties:
+        ip: 192.168.1.101
+
+    edge-device-x9yz:
+      type: FuelicsEdge
+      properties:
+        ip: 192.168.1.102
+
+    edge-device-l5mn:
+      type: FuelicsEdge
+      properties:
+        ip: 192.168.1.103
