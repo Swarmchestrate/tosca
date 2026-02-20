@@ -38,6 +38,12 @@ service_template:
               - $equal:
                   - $get_property: [ SELF, TARGET, CAPABILITY, locality, city ]
                   - london
+              - $equal:
+                  - $get_property: [ SELF, TARGET, CAPABILITY, resource, type ]
+                  - cloud # or edge
+              - $equal:
+                  - $get_property: [ SELF, TARGET, CAPABILITY, host, architecture ]
+                  - x86_64 # or arm64
 
     
   policies:
