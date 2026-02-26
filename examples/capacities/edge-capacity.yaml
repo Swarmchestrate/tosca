@@ -76,27 +76,26 @@ node_types:
           consumption: 
             default: 0.10
 
-
-service_template:
-
-  node_templates:
-
     edge-device-a2bc:
-      type: FuelicsEdge
+      derived_from: FuelicsEdge
       properties:
-        ip: 192.168.1.100
+        ip:
+          default: 192.168.1.100
 
     edge-device-rr2x:
-      type: FuelicsEdge
+      derived_from: FuelicsEdge
       properties:
-        ip: 192.168.1.101
+        ip:
+          default: 192.168.1.101
 
     edge-device-x9yz:
-      type: FuelicsEdge
+      derived_from: FuelicsEdge
       properties:
-        ip: 192.168.1.102
+        ip:
+          default: 192.168.1.102
 
     edge-device-l5mn:
-      type: FuelicsEdge
+      derived_from: FuelicsEdge
       properties:
-        ip: 192.168.1.103
+        ip:
+          default: 192.168.1.103

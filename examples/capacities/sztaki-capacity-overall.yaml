@@ -114,61 +114,81 @@ node_types:
           energy-type:
             default: non-green
 
-
-service_template:
-
-  node_templates:
-
     sztaki-capacity:
-      type: swch:OverallCapacity
+      derived_from: swch:OverallCapacity
       capabilities:
         capacity:
           properties:
-              num-cpus: 40
-              mem-size: 1000 GB
+              num-cpus:
+                default:40
+              mem-size:
+                default: 1000 GB
 
     m2-medium-sztaki:
-      type: OpenStackBase
+      derived_from: OpenStackBase
       properties:
-        flavor_name: m2.medium
-        key_name: fuelics
+        flavor_name:
+          default: m2.medium
+        key_name:
+          default: fuelics
       capabilities:
+        capacity:
+          properties:
+            instances: 4
         host:
           properties:
-            num-cpus: 4
-            mem-size: 8 GB
+            num-cpus: 
+              default: 4
+            mem-size:
+              default: 8 GB
         energy:
           properties:
-            consumption: 0.10
+            consumption: 
+              default: 0.10
 
     m2-small-sztaki:
-      type: OpenStackBase
+      derived_from: OpenStackBase
       properties:
-        flavor_name: m2.small
-        key_name: fuelics
+        flavor_name:
+          default: m2.small
+        key_name:
+          default: fuelics
       capabilities:
         host:
           properties:
-            num-cpus: 2
-            mem-size: 4 GB
+            num-cpus:
+              default: 2
+            mem-size:
+              default: 4 GB
         energy:
           properties:
-            consumption: 0.10
+            consumption: 
+              default: 0.10
   
     specific-small-sztaki:
-      type: OpenStackBase
+      derived_from: OpenStackBase
       properties:
-        flavor_name: m2.small
-        key_name: fuelics
+        flavor_name:
+          default: m2.small
+        key_name:
+          default: fuelics
       capabilities:
+        capacity:
+          properties:
+            instances:
+              default: 1
         host:
           properties:
-            num-cpus: 2
-            mem-size: 4 GB
+            num-cpus: 
+              default: 2
+            mem-size:
+              default: 4 GB
         resource:
           properties:
             labels:
-              key_name: my_specific_resource
+              key_name:
+                default: my_specific_resource
         energy:
           properties:
-            consumption: 0.10
+            consumption: 
+              default: 0.10
