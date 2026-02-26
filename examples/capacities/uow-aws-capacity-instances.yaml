@@ -1,0 +1,120 @@
+tosca_definitions_version: tosca_2_0
+
+description: UoW AWS Capacity Def
+
+metadata:
+  name: cap-aws-uow
+  author: University of Westminster
+  date: 2026-02-26
+  version: 0.1
+  tags:
+  - provider: uow
+
+imports:
+- namespace: swch
+  url: https://raw.githubusercontent.com/Swarmchestrate/tosca/refs/heads/main/profiles/eu.swarmchestrate/profile.yaml
+
+node_types:
+
+  EC2Base:
+    derived_from: swch:Capacity
+    description: >
+      An base compute node from the UoW AWS provision
+    properties:
+      ami:
+        type: string
+        required: true
+        description: >
+          The Amazon Machine ID of the image used to launch the instance.
+        default: b2be6f4e-ebd8-42af-a526-63691a4d90ea
+      instance_type:
+        type: string
+        required: true
+        description: >
+          The AWS instance type (e.g., t2.micro) specifying compute resources.
+      key_name:
+        type: string
+        required: false
+        description: >
+          The name of the SSH key pair used to access the instance.
+      security_groups:
+        type: list
+        required: false
+        entry_schema: string
+        description: >
+          A list of security group IDs that control inbound and outbound traffic for the instance.
+        default:
+        - 0eb63f2b-b656-47a1-a0e7-3da0a993379e
+
+    capabilities:
+      host:
+        properties:
+          disk-size:
+            default: 8
+          bandwidth:
+            default: 1000
+      os:
+        properties:
+          type:
+            default: linux
+          version:
+            default: "22.04"
+          distribution:
+            default: ubuntu
+      resource:
+        properties:
+          provider:
+            default: UoW
+          capacity-provider:
+            default: UoW
+          type:
+            default: cloud
+      network:
+        properties:
+          ipv4_enabled:
+            default: True
+          ipv6_enabled:
+            default: False
+          type:
+            default: ethernet
+      locality:
+        properties:
+          continent:
+            default: Europe
+          country:
+            default: United Kingdom
+          city:
+            default: London
+      energy:
+        properties:
+          powered-type:
+            default: mains-powered
+          energy-type:
+            default: non-green
+
+
+    t2-medium-uow:
+      derived_from: EC2Base
+      properties:
+        instance_type:
+          default: t2.medium
+        key_name:
+          default: g-key
+      capabilities:
+        capacity:
+          properties:
+            instances: 4
+        host:
+          properties:
+            num-cpus: 
+              default: 4
+            mem-size:
+              default: 8 GB
+        cost:
+          properties:
+            cost:
+              default: 0.20
+        energy:
+          properties:
+            consumption: 
+              default: 0.10
