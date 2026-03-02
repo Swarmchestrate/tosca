@@ -1,11 +1,14 @@
-from sardou import Sardou
 from ruamel.yaml import YAML
+
+from sardou import Sardou
 
 # Read and update YAML using ruamel.yaml
 yaml = YAML()
 
 
-def get_kubernetes_manifest(tosca_yaml: str, image_pull_secret: str = "my-registry-secret") -> list:
+def get_kubernetes_manifest(
+    tosca_yaml: str, image_pull_secret: str = "my-registry-secret"
+) -> list:
     """
     Convert a TOSCA template string into Kubernetes manifests (Deployment + Service).
     Always injects external imagePullSecret. Handles:
@@ -18,17 +21,16 @@ def get_kubernetes_manifest(tosca_yaml: str, image_pull_secret: str = "my-regist
     - imagePullSecrets
     """
 
-    
     # Load and validate TOSCA
-    
+
     tosca = Sardou(tosca_yaml)
-    node_templates = tosca.raw._to_dict().get("service_template", {}).get(
-        "node_templates", {}
+    node_templates = (
+        tosca.raw._to_dict().get("service_template", {}).get("node_templates", {})
     )
 
     if not node_templates:
         raise ValueError("No node_templates found in TOSCA YAML")
-    
+
     manifests = []
     # Iterate over nodes
     for name, node in node_templates.items():
@@ -86,7 +88,7 @@ def get_kubernetes_manifest(tosca_yaml: str, image_pull_secret: str = "my-regist
             volumes = []
             volume_mounts = []
 
-            for r in requirements:        
+            for r in requirements:
                 if "volume" in r:
                     vol_name = r["volume"]
                     vol_def = node_templates.get(vol_name, {})
@@ -101,7 +103,7 @@ def get_kubernetes_manifest(tosca_yaml: str, image_pull_secret: str = "my-regist
                             }
                         )
                         volume_mounts.append({"name": vol_name, "mountPath": path})
-            
+
             # Node labels / nodeSelector
             labels = {}
 
@@ -114,13 +116,23 @@ def get_kubernetes_manifest(tosca_yaml: str, image_pull_secret: str = "my-regist
                             left, right = cond["$equal"]
                             if isinstance(left, dict) and "$get_property" in left:
                                 path = left["$get_property"]
-                                if isinstance(path, list) and len(path) >= 6 and path[:5] == ["SELF", "TARGET", "CAPABILITY", "resource", "labels"]:
+                                if (
+                                    isinstance(path, list)
+                                    and len(path) >= 6
+                                    and path[:5]
+                                    == [
+                                        "SELF",
+                                        "TARGET",
+                                        "CAPABILITY",
+                                        "resource",
+                                        "labels",
+                                    ]
+                                ):
                                     key = path[5]
                                     value = right
                                     if value not in (None, "", []):
                                         labels[key] = value
-            
-            
+
             # imagePullSecrets
             image_pull_secrets = [{"name": image_pull_secret}]
 
@@ -136,7 +148,7 @@ def get_kubernetes_manifest(tosca_yaml: str, image_pull_secret: str = "my-regist
                         "metadata": {"labels": {"app": name}},
                         "spec": {
                             "imagePullSecrets": image_pull_secrets,
-                             **({"nodeSelector": labels} if labels else {}), 
+                            **({"nodeSelector": labels} if labels else {}),
                             "containers": [
                                 {
                                     "name": name,

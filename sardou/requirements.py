@@ -43,10 +43,7 @@ def convert_node_filter_to_capabilities(node_filter):
 def extract_nodes_with_filter(tosca_dict):
     nodes_with_filter = {}
 
-    node_templates = (
-        tosca_dict.get("service_template", {})
-        .get("node_templates", {})
-    )
+    node_templates = tosca_dict.get("service_template", {}).get("node_templates", {})
 
     for node_name, node_data in node_templates.items():
         for req in node_data.get("requirements", []):
