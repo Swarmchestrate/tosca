@@ -1,4 +1,5 @@
 """Tests for the sardou library API"""
+
 import json
 from pathlib import Path
 
@@ -16,10 +17,12 @@ SAT_DIR = Path(__file__).parent / "templates" / "sat"
 # requirements.py — convert_node_filter_to_capabilities
 # ---------------------------------------------------------------------------
 
+
 class TestConvertNodeFilterToCapabilities:
     @pytest.fixture
     def convert(self):
         from sardou.requirements import convert_node_filter_to_capabilities
+
         return convert_node_filter_to_capabilities
 
     def test_empty_filter_returns_empty_dict(self, convert):
@@ -33,7 +36,15 @@ class TestConvertNodeFilterToCapabilities:
             "$and": [
                 {
                     "$equal": [
-                        {"$get_property": ["SELF", "TARGET", "CAPABILITY", "host", "num-cpus"]},
+                        {
+                            "$get_property": [
+                                "SELF",
+                                "TARGET",
+                                "CAPABILITY",
+                                "host",
+                                "num-cpus",
+                            ]
+                        },
                         4,
                     ]
                 }
@@ -47,7 +58,15 @@ class TestConvertNodeFilterToCapabilities:
             "$and": [
                 {
                     "$greater_or_equal": [
-                        {"$get_property": ["SELF", "TARGET", "CAPABILITY", "host", "mem-size"]},
+                        {
+                            "$get_property": [
+                                "SELF",
+                                "TARGET",
+                                "CAPABILITY",
+                                "host",
+                                "mem-size",
+                            ]
+                        },
                         "2 GB",
                     ]
                 }
@@ -61,13 +80,29 @@ class TestConvertNodeFilterToCapabilities:
             "$and": [
                 {
                     "$equal": [
-                        {"$get_property": ["SELF", "TARGET", "CAPABILITY", "host", "num-cpus"]},
+                        {
+                            "$get_property": [
+                                "SELF",
+                                "TARGET",
+                                "CAPABILITY",
+                                "host",
+                                "num-cpus",
+                            ]
+                        },
                         2,
                     ]
                 },
                 {
                     "$equal": [
-                        {"$get_property": ["SELF", "TARGET", "CAPABILITY", "os", "distribution"]},
+                        {
+                            "$get_property": [
+                                "SELF",
+                                "TARGET",
+                                "CAPABILITY",
+                                "os",
+                                "distribution",
+                            ]
+                        },
                         "ubuntu",
                     ]
                 },
@@ -82,10 +117,12 @@ class TestConvertNodeFilterToCapabilities:
 # requirements.py — extract_nodes_with_filter
 # ---------------------------------------------------------------------------
 
+
 class TestExtractNodesWithFilter:
     @pytest.fixture
     def extract(self):
         from sardou.requirements import extract_nodes_with_filter
+
         return extract_nodes_with_filter
 
     def _tosca(self, node_templates):
@@ -96,20 +133,14 @@ class TestExtractNodesWithFilter:
         assert extract(tosca) == {}
 
     def test_requirement_without_filter_ignored(self, extract):
-        tosca = self._tosca({
-            "app": {
-                "requirements": [{"host": {"node": "some-node"}}]
-            }
-        })
+        tosca = self._tosca(
+            {"app": {"requirements": [{"host": {"node": "some-node"}}]}}
+        )
         assert extract(tosca) == {}
 
     def test_node_with_filter_captured(self, extract):
         nf = {"$and": []}
-        tosca = self._tosca({
-            "app": {
-                "requirements": [{"host": {"node_filter": nf}}]
-            }
-        })
+        tosca = self._tosca({"app": {"requirements": [{"host": {"node_filter": nf}}]}})
         result = extract(tosca)
         assert "app" in result
         assert result["app"] is nf
@@ -122,10 +153,12 @@ class TestExtractNodesWithFilter:
 # requirements.py — tosca_to_ask_dict
 # ---------------------------------------------------------------------------
 
+
 class TestToscaToAskDict:
     @pytest.fixture
     def to_ask(self):
         from sardou.requirements import tosca_to_ask_dict
+
         return tosca_to_ask_dict
 
     def test_no_node_filters_returns_empty(self, to_ask):
@@ -144,7 +177,15 @@ class TestToscaToAskDict:
                                         "$and": [
                                             {
                                                 "$equal": [
-                                                    {"$get_property": ["SELF", "TARGET", "CAPABILITY", "host", "num-cpus"]},
+                                                    {
+                                                        "$get_property": [
+                                                            "SELF",
+                                                            "TARGET",
+                                                            "CAPABILITY",
+                                                            "host",
+                                                            "num-cpus",
+                                                        ]
+                                                    },
                                                     4,
                                                 ]
                                             }
@@ -167,11 +208,7 @@ class TestToscaToAskDict:
         tosca = {
             "service_template": {
                 "node_templates": {
-                    "svc": {
-                        "requirements": [
-                            {"host": {"node_filter": {"$and": []}}}
-                        ]
-                    }
+                    "svc": {"requirements": [{"host": {"node_filter": {"$and": []}}}]}
                 }
             }
         }
@@ -184,10 +221,12 @@ class TestToscaToAskDict:
 # capacities.py — _unwrap
 # ---------------------------------------------------------------------------
 
+
 class TestUnwrap:
     @pytest.fixture
     def unwrap(self):
         from sardou.capacities import _unwrap
+
         return _unwrap
 
     def test_primitive_passthrough(self, unwrap):
@@ -213,10 +252,12 @@ class TestUnwrap:
 # capacities.py — _is_overall
 # ---------------------------------------------------------------------------
 
+
 class TestIsOverall:
     @pytest.fixture
     def is_overall(self):
         from sardou.capacities import _is_overall
+
         return _is_overall
 
     def test_matching_type_returns_true(self, is_overall):
@@ -235,10 +276,12 @@ class TestIsOverall:
 # capacities.py — extract_capacities
 # ---------------------------------------------------------------------------
 
+
 class TestExtractCapacities:
     @pytest.fixture
     def extract(self):
         from sardou.capacities import extract_capacities
+
         return extract_capacities
 
     def _node(self, types, caps=None):
@@ -248,8 +291,10 @@ class TestExtractCapacities:
         nodes = {
             "small": self._node(
                 {"eu.swch::Capacity": {}},
-                {"capacity": {"properties": {"instances": {"$primitive": 3}}},
-                 "host": {"properties": {"num-cpus": {"$primitive": 2}}}},
+                {
+                    "capacity": {"properties": {"instances": {"$primitive": 3}}},
+                    "host": {"properties": {"num-cpus": {"$primitive": 2}}},
+                },
             )
         }
         result = extract(nodes)
@@ -296,6 +341,7 @@ class TestExtractCapacities:
 # ---------------------------------------------------------------------------
 # Sardou public API (requires puccini-tosca)
 # ---------------------------------------------------------------------------
+
 
 @requires_puccini
 class TestSardouCDTAPI:

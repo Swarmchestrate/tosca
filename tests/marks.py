@@ -1,4 +1,5 @@
 """Shared pytest marks for the test suite."""
+
 import shutil
 
 import pytest

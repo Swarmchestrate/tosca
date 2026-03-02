@@ -1,11 +1,11 @@
 """Unit tests for package internals that don't require puccini-tosca."""
-import shutil
-import pytest
 
+import pytest
 
 # ---------------------------------------------------------------------------
 # Import / metadata
 # ---------------------------------------------------------------------------
+
 
 class TestImport:
     def test_sardou_is_importable(self):
@@ -13,14 +13,17 @@ class TestImport:
 
     def test_version_is_a_string(self):
         import sardou
+
         assert isinstance(sardou.__version__, str)
 
     def test_version_not_unknown(self):
         import sardou
+
         assert sardou.__version__ != "unknown"
 
     def test_sardou_class_exported(self):
         from sardou import Sardou
+
         assert callable(Sardou)
 
 
@@ -28,10 +31,12 @@ class TestImport:
 # DotDict
 # ---------------------------------------------------------------------------
 
+
 class TestDotDict:
     @pytest.fixture
     def DotDict(self):
         from sardou.sardou import DotDict
+
         return DotDict
 
     def test_attribute_access(self, DotDict):
@@ -74,6 +79,7 @@ class TestDotDict:
 
     def test_to_json(self, DotDict):
         import json
+
         d = DotDict(x=1)
         parsed = json.loads(d._to_json())
         assert parsed == {"x": 1}
@@ -83,10 +89,12 @@ class TestDotDict:
 # prevalidate
 # ---------------------------------------------------------------------------
 
+
 class TestPrevalidate:
     @pytest.fixture
     def prevalidate(self):
         from sardou.validation import prevalidate
+
         return prevalidate
 
     def test_nonexistent_file_returns_false(self, prevalidate, tmp_path):

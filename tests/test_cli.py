@@ -1,8 +1,8 @@
-"""CLI smoke tests """
+"""CLI smoke tests"""
+
 import subprocess
 from pathlib import Path
 
-import pytest
 from tests.marks import requires_puccini
 
 CDT_DIR = Path(__file__).parent / "templates" / "cdt"
@@ -77,4 +77,3 @@ class TestSATTemplates:
     def test_bookinfo_parses(self):
         result = run(str(SAT_DIR / "BookInfo.yaml"))
         assert result.returncode == 0, result.stderr
-
