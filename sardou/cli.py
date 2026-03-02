@@ -47,7 +47,7 @@ def main():
             print(f"Parsing TOSCA template: {target_path}")
         
         try:
-            tpl = Sardou(str(target_path))
+            Sardou(str(target_path))
             
             if args.verbose:
                 print("Successfully parsed TOSCA template")
