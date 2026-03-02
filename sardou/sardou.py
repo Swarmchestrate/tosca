@@ -182,6 +182,8 @@ class Sardou(DotDict):
         return tosca_to_ask_dict(self.raw._to_dict())
 
     def get_qos(self, indent=None, **kwargs):
+        if not self.isSAT:
+            raise TypeError("Can only get QoS goals from a SAT")
         if not hasattr(self.raw.service_template, "policies"):
             return []
         policies = self.raw.service_template.policies

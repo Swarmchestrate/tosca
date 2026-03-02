@@ -28,13 +28,13 @@ def prevalidate(file_path: Path) -> bool:
         print("No YAML content found")
         return False
     imports = data.get("imports", [])
-    nodes = data["service_template"].get("node_templates", {})
+    template = data.get("service_template", {})
 
     for imp in imports:
         if isinstance(imp, dict) and "profile" in imp:
             imp["url"] = imp.pop("profile")
 
-    for _, node in nodes.items():
+    for _, node in template.get("node_templates", {}).items():
         node.pop("node_filter", None)
 
     return data
@@ -42,6 +42,9 @@ def prevalidate(file_path: Path) -> bool:
 
 def check_is_sat(template) -> str:
     # Check for invalid node type combinations
+    if not template._to_dict().get('nodeTemplates'):
+        return False
+    
     nodes = template.nodeTemplates._to_dict()
 
     has_capacity = (
