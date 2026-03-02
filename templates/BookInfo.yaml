@@ -75,7 +75,8 @@ service_template:
             threshold: 80.0
 
       requirements:
-      - host: 
+      - host:
+          count: 1
           node_filter:
             $and:
               - $greater_or_equal:
@@ -105,7 +106,8 @@ service_template:
           targetPort: 9080
           containerPort: 9080
       requirements:
-      - host: 
+      - host:
+          count: 1
           node_filter:
             $and:
               - $greater_or_equal:
@@ -144,6 +146,7 @@ service_template:
           mount_path: /opt/ibm/wlp/output
       requirements:
       - host: 
+          count: 1
           node_filter:
             $and:
               - $greater_or_equal:
@@ -176,7 +179,8 @@ service_template:
         - name: wlp-output
           mount_path: /opt/ibm/wlp/output
       requirements:
-      - host: 
+      - host:
+          count: 1
           node_filter:
             $and:
               - $greater_or_equal:
@@ -244,7 +248,8 @@ service_template:
         - name: tmp
           mount_path: /tmp
       requirements:
-      - host: 
+      - host:
+          count: 1
           node_filter:
             $and:
               - $greater_or_equal:

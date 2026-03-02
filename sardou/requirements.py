@@ -40,8 +40,8 @@ def convert_node_filter_to_capabilities(node_filter):
     return capabilities
 
 
-def extract_nodes_with_filter(tosca_dict):
-    nodes_with_filter = {}
+def extract_reqs_with_filter(tosca_dict):
+    reqs_with_filter = {}
 
     node_templates = tosca_dict.get("service_template", {}).get("node_templates", {})
 
@@ -49,9 +49,10 @@ def extract_nodes_with_filter(tosca_dict):
         for req in node_data.get("requirements", []):
             for _, req_data in req.items():
                 if "node_filter" in req_data:
-                    nodes_with_filter[node_name] = req_data["node_filter"]
+                    reqs_with_filter[node_name] = req_data
 
-    return nodes_with_filter
+
+    return reqs_with_filter
 
 
 def tosca_to_ask_dict(tosca_dict):
@@ -64,10 +65,11 @@ def tosca_to_ask_dict(tosca_dict):
     Returns:
         dict: Ask format data
     """
-    nodes_with_filter = extract_nodes_with_filter(tosca_dict)
+    reqs_with_filter = extract_reqs_with_filter(tosca_dict)
     ask_data = {}
 
-    for node_name, node_filter in nodes_with_filter.items():
+    for node_name, req_data in reqs_with_filter.items():
+        node_filter = req_data["node_filter"]
         ask_entry = {
             "metadata": {
                 "created_by": "sardou-tosca-lib",
@@ -75,6 +77,7 @@ def tosca_to_ask_dict(tosca_dict):
                 "description": f"Generated from node {node_name}",
                 "version": "1.0",
             },
+            "count": req_data.get("count", 1),
             "capabilities": convert_node_filter_to_capabilities(node_filter),
         }
 
