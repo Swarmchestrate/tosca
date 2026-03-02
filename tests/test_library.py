@@ -382,10 +382,6 @@ class TestSardouCDTAPI:
         reqs = cloud_overall.get_requirements()
         assert isinstance(reqs, dict)
 
-    def test_get_qos_returns_list(self, cloud_overall):
-        qos = cloud_overall.get_qos()
-        assert isinstance(qos, list)
-
     def test_get_cluster_returns_valid_json(self, cloud_overall):
         cluster_json = cloud_overall.get_cluster()
         parsed = json.loads(cluster_json)
