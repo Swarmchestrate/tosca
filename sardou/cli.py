@@ -1,6 +1,7 @@
 import argparse
 import glob
 import sys
+import traceback
 from pathlib import Path
 
 from sardou import Sardou
@@ -52,7 +53,11 @@ def main():
             if args.verbose:
                 print("Successfully parsed TOSCA template")
         except Exception as e:
-            print(f"Error parsing TOSCA template: {e}", file=sys.stderr)
+            if args.verbose:
+                traceback.print_exc()
+            else:
+                print(f"Error parsing TOSCA template: {e}", file=sys.stderr)
+                print("Run with --verbose for details.", file=sys.stderr)
             sys.exit(1)
 
     sys.exit(0)
