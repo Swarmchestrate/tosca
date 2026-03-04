@@ -90,7 +90,7 @@ class Sardou(DotDict):
             raise TypeError("Cannot get capacity info from a SAT")
         nodes = self.nodeTemplates._to_dict()
         return extract_capacities(nodes)
-    
+
     def generate_rdt(self, selected_offer, cdt_path, output_path="rdt.yaml"):
         return _generate_rdt(selected_offer, cdt_path=cdt_path, output_path=output_path)
 
