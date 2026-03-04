@@ -132,7 +132,7 @@ node_types:
           num-cpus: 
             default: 4
           mem-size:
-            default: 8 GB
+            default: 8
       energy:
         properties:
           consumption: 
@@ -151,7 +151,7 @@ node_types:
           num-cpus:
             default: 2
           mem-size:
-            default: 4 GB
+            default: 4
       energy:
         properties:
           consumption: 
@@ -174,7 +174,7 @@ node_types:
           num-cpus: 
             default: 2
           mem-size:
-            default: 4 GB
+            default: 4
       resource:
         properties:
           labels:

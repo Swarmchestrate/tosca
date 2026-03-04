@@ -26,7 +26,7 @@ node_types:
           num-cpus:
             default: 2
           mem-size:
-            default: 2 GB
+            default: 2
           disk-size:
             default: 20
           bandwidth:
