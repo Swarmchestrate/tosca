@@ -39,6 +39,9 @@ jobs:
       run: |
         uv sync
 
+    - name: Install Puccini
+      run: make install
+      
     # This step runs unit tests with pytest
     # (we need -m so that our tests can find our notebook code)
     - name: Test with pytest

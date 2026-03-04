@@ -1,6 +1,6 @@
-from importlib.metadata import version, PackageNotFoundError
+from importlib.metadata import PackageNotFoundError, version
 
-from .sardou import Sardou # noqa: F401
+from .sardou import Sardou  # noqa: F401
 
 try:
     __version__ = version("sardou")

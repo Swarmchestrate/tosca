@@ -28,33 +28,43 @@ def prevalidate(file_path: Path) -> bool:
         print("No YAML content found")
         return False
     imports = data.get("imports", [])
-    nodes = data["service_template"].get("node_templates", {})
+    template = data.get("service_template", {})
 
     for imp in imports:
         if isinstance(imp, dict) and "profile" in imp:
             imp["url"] = imp.pop("profile")
 
-    for _, node in nodes.items():
+    for _, node in template.get("node_templates", {}).items():
         node.pop("node_filter", None)
 
     return data
 
+
 def check_is_sat(template) -> str:
     # Check for invalid node type combinations
-    nodes = template.nodeTemplates._to_dict()
-
-    has_capacity = (any(k.endswith("::Capacity") for k in node.get("types", {})) 
-                    for node in nodes.values())
-    has_microservice = (any(k.endswith("::Microservice") for k in node.get("types", {})) 
-                    for node in nodes.values())
-
-    if any(has_capacity) and any(has_microservice):
-        raise ValueError("Invalid: cannot have both Capacity and Microservice node types")
-    elif any(has_capacity):
+    if not template._to_dict().get('nodeTemplates'):
         return False
     
+    nodes = template.nodeTemplates._to_dict()
+
+    has_capacity = (
+        any(k.endswith("::Capacity") for k in node.get("types", {}))
+        for node in nodes.values()
+    )
+    has_microservice = (
+        any(k.endswith("::Microservice") for k in node.get("types", {}))
+        for node in nodes.values()
+    )
+
+    if any(has_capacity) and any(has_microservice):
+        raise ValueError(
+            "Invalid: cannot have both Capacity and Microservice node types"
+        )
+    elif any(has_capacity):
+        return False
+
     return True
-    
+
 
 def validate_template(file_path: Path) -> bool:
     # will run the puccini-tosca parse <with flag>
