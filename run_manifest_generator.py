@@ -1,8 +1,6 @@
 import sys
 from pathlib import Path
-
 from ruamel.yaml import YAML
-
 from sardou.manifestGenerator import get_kubernetes_manifest
 
 yaml_parser = YAML()
@@ -10,7 +8,7 @@ yaml_parser.default_flow_style = False
 
 TOSCA_FILE = "templates/tosca-filename.yaml"
 OUTPUT_FILE = "manifest-out.yaml"
-IMAGE_PULL_SECRET = "my-registry-secret"
+IMAGE_PULL_SECRET = "my-registry-secret"  # Optional: set to None if not needed
 
 path = Path(TOSCA_FILE)
 if not path.exists():
@@ -25,8 +23,9 @@ try:
     with open(OUTPUT_FILE, "w") as f:
         yaml_parser.dump_all(manifests, f)
 
-    print(f"✅ Kubernetes manifests written to '{OUTPUT_FILE}' ({len(manifests)} items)")
+    print(
+        f"✅ Kubernetes manifests written to '{OUTPUT_FILE}' ({len(manifests)} items)"
+    )
 
 except Exception as e:
     sys.exit(f"Error: {e}")
-
