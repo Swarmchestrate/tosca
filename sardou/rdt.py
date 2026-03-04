@@ -4,7 +4,14 @@ import requests
 
 SWCH_IMPORT_URL = "https://raw.githubusercontent.com/Swarmchestrate/tosca/refs/heads/main/profiles/eu.swarmchestrate/profile.yaml"
 
-TOSCA_RESERVED_KEYS = {"derived_from", "properties", "capabilities", "requirements", "description", "metadata"}
+TOSCA_RESERVED_KEYS = {
+    "derived_from",
+    "properties",
+    "capabilities",
+    "requirements",
+    "description",
+    "metadata",
+}
 
 
 def fetch_cdt(cdt_path: str) -> dict:
@@ -40,14 +47,20 @@ def extract_node_type(cdt: dict, instance_type: str) -> tuple[str, str | None]:
             for key in INSTANCE_KEYS:
                 if key in props:
                     prop_val = props[key]
-                    default = prop_val.get("default", "") if isinstance(prop_val, dict) else prop_val
+                    default = (
+                        prop_val.get("default", "")
+                        if isinstance(prop_val, dict)
+                        else prop_val
+                    )
                     if default == instance_type:
                         return namespace, f"{namespace}:{node_name}"
 
     return namespace, None
 
-def generate_rdt(selected_offer: list, cdt_path: str, output_path: str = "rdt.yaml") -> dict:
 
+def generate_rdt(
+    selected_offer: list, cdt_path: str, output_path: str = "rdt.yaml"
+) -> dict:
     if isinstance(selected_offer, list):
         selected_offer = selected_offer[0]
 
@@ -55,7 +68,7 @@ def generate_rdt(selected_offer: list, cdt_path: str, output_path: str = "rdt.ya
 
     imports = [
         {"namespace": "swch", "url": SWCH_IMPORT_URL},
-        {"namespace": "cap-definition", "url": cdt_path}
+        {"namespace": "cap-definition", "url": cdt_path},
     ]
 
     node_templates = {}
@@ -65,13 +78,14 @@ def generate_rdt(selected_offer: list, cdt_path: str, output_path: str = "rdt.ya
         _, node_type = extract_node_type(cdt, instance_type)
 
         if node_type is None:
-            print(f"[WARNING] instance_type '{instance_type}' not found in CDT, skipping '{resource_key}'")
-            continue 
+            print(
+                f"[WARNING] instance_type '{instance_type}' not found in CDT, skipping '{resource_key}'"
+            )
+            continue
 
         node_templates[resource_key] = {
             "type": node_type,
         }
-
 
     rdt = {
         "tosca_definitions_version": "tosca_2_0",
@@ -79,12 +93,10 @@ def generate_rdt(selected_offer: list, cdt_path: str, output_path: str = "rdt.ya
         "metadata": {
             "name": "rdt-generated",
             "author": "University of Westminster",
-            "version": "0.1"
+            "version": "0.1",
         },
         "imports": imports,
-        "service_template": {
-            "node_templates": node_templates
-        }
+        "service_template": {"node_templates": node_templates},
     }
 
     # To maintain consistent structure
