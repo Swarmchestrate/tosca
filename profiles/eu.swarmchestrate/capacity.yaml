@@ -21,15 +21,15 @@ capability_types:
         required: true
         description: Number of vCPUs
       mem-size:
-        type: string
+        type: integer
         required: true
         description: Memory size in GB
       disk-size:
-        type: string
+        type: integer
         required: true
         description: Disk size in GB
       bandwidth:
-        type: string
+        type: integer
         required: true
         description: Network bandwidth in Mbps
       architecture:
