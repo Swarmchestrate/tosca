@@ -1,4 +1,11 @@
-.PHONY: parse install
+.PHONY: parse install test quality
+
+test:
+	uv run -m pytest
+
+quality:
+	uvx ruff format
+	uvx ruff check --fix
 
 parse:
 	@success=0; \
