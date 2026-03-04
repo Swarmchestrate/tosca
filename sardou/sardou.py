@@ -5,6 +5,7 @@ from pathlib import Path
 from ruamel.yaml import YAML
 
 from .capacities import extract_capacities
+from .rdt import generate_rdt as _generate_rdt
 from .requirements import tosca_to_ask_dict
 from .validation import check_is_sat, validate_template
 
@@ -73,111 +74,6 @@ class Sardou(DotDict):
             raw = yaml.load(f)
         self.raw = DotDict(**raw)
 
-        self.auto_replace_substitutes()
-
-    # Generate concrete nodes
-    def _find_capacity_file(self):
-        from pathlib import Path
-
-        project_root = Path(self.path).resolve().parent.parent
-        cap_dir = project_root / "examples" / "capacities"
-
-        if not cap_dir.exists():
-            raise FileNotFoundError(f"Capacity directory not found: {cap_dir}")
-
-        files = list(cap_dir.glob("*.y*ml"))
-        if not files:
-            raise FileNotFoundError(f"No capacity YAML files found in {cap_dir}")
-
-        return files[0]
-
-    def auto_replace_substitutes(self):
-        from pathlib import Path
-
-        from ruamel.yaml import YAML
-
-        rt_yaml = YAML(typ="rt")
-        rt_yaml.preserve_quotes = True
-        rt_yaml.default_flow_style = False
-
-        with Path(self.path).open() as f:
-            target_yaml = rt_yaml.load(f)
-
-        node_templates = target_yaml["service_template"]["node_templates"]
-
-        # find swarm nodes for substitution
-        placeholders = [
-            name
-            for name, node in node_templates.items()
-            if "directives" in node and "substitute" in node["directives"]
-        ]
-
-        if not placeholders:
-            return
-
-        capacity_path = self._find_capacity_file()
-
-        if placeholders:
-            capacity_path = self._find_capacity_file()
-            self.replace_with_concrete_nodes(
-                target_yaml_path=self.path,
-                capacity_path=capacity_path,
-                save_path=self.path,
-            )
-
-        with Path(self.path).open() as f:
-            new_raw = yaml.load(f)
-        self.raw = DotDict(**new_raw)
-
-    def replace_with_concrete_nodes(
-        self, target_yaml_path, capacity_path, save_path=None
-    ):
-        from pathlib import Path
-
-        from ruamel.yaml import YAML
-
-        target_yaml_path = Path(target_yaml_path)
-        capacity_path = Path(capacity_path)
-
-        if not target_yaml_path.exists():
-            raise FileNotFoundError(f"Target YAML does not exist: {target_yaml_path}")
-        if not capacity_path.exists():
-            raise FileNotFoundError(
-                f"Capacity definition file does not exist: {capacity_path}"
-            )
-
-        # preserve the original TOSCA format
-        rt_yaml = YAML(typ="rt")
-        rt_yaml.preserve_quotes = True
-        rt_yaml.default_flow_style = False
-
-        target_yaml = rt_yaml.load(target_yaml_path)
-        capacity_yaml = rt_yaml.load(capacity_path)
-
-        node_templates = target_yaml["service_template"]["node_templates"]
-        capacity_nodes = capacity_yaml["service_template"]["node_templates"]
-
-        if "swarm" not in node_templates:
-            raise KeyError("No 'swarm' node found in target YAML.")
-
-        # preserve the insertion index
-        keys = list(node_templates.keys())
-        swarm_index = keys.index("swarm")
-
-        del node_templates["swarm"]
-
-        # insert the concrete nodes
-        for name, node in capacity_nodes.items():
-            node_templates.insert(swarm_index, name, node)
-            swarm_index += 1
-
-        if save_path:
-            with Path(save_path).open("w") as f:
-                rt_yaml.dump(target_yaml, f)
-            return str(save_path)
-
-        return target_yaml
-
     def get_requirements(self):
         return tosca_to_ask_dict(self.raw._to_dict())
 
@@ -194,6 +90,9 @@ class Sardou(DotDict):
             raise TypeError("Cannot get capacity info from a SAT")
         nodes = self.nodeTemplates._to_dict()
         return extract_capacities(nodes)
+
+    def generate_rdt(self, selected_offer, cdt_path, output_path="rdt.yaml"):
+        return _generate_rdt(selected_offer, cdt_path=cdt_path, output_path=output_path)
 
     def get_cluster(self, resource_suffix=None):
         # Cloud alias
