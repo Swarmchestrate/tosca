@@ -52,7 +52,6 @@ def generate_rdt(selected_offer: list, cdt_path: str, output_path: str = "rdt.ya
         selected_offer = selected_offer[0]
 
     cdt = fetch_cdt(cdt_path)
-    namespace = cdt.get("metadata", {}).get("name", "cap-unknown")
 
     imports = [
         {"namespace": "swch", "url": SWCH_IMPORT_URL},
