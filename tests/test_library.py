@@ -121,9 +121,9 @@ class TestConvertNodeFilterToCapabilities:
 class TestExtractNodesWithFilter:
     @pytest.fixture
     def extract(self):
-        from sardou.requirements import extract_nodes_with_filter
+        from sardou.requirements import extract_reqs_with_filter
 
-        return extract_nodes_with_filter
+        return extract_reqs_with_filter
 
     def _tosca(self, node_templates):
         return {"service_template": {"node_templates": node_templates}}
@@ -143,7 +143,7 @@ class TestExtractNodesWithFilter:
         tosca = self._tosca({"app": {"requirements": [{"host": {"node_filter": nf}}]}})
         result = extract(tosca)
         assert "app" in result
-        assert result["app"] is nf
+        assert result["app"]["node_filter"] is nf
 
     def test_missing_service_template_returns_empty(self, extract):
         assert extract({}) == {}
