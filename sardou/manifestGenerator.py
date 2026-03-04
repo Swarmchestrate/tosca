@@ -1,4 +1,5 @@
 from typing import Optional
+
 from ruamel.yaml import YAML
 
 from sardou import Sardou
