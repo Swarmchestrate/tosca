@@ -5,8 +5,8 @@ from pathlib import Path
 from ruamel.yaml import YAML
 
 from .capacities import extract_capacities
-from .requirements import tosca_to_ask_dict
 from .rdt import generate_rdt as _generate_rdt
+from .requirements import tosca_to_ask_dict
 from .validation import check_is_sat, validate_template
 
 yaml = YAML(typ="safe")

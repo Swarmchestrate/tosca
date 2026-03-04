@@ -1,6 +1,7 @@
 from io import StringIO
-from ruamel.yaml import YAML
+
 import requests
+from ruamel.yaml import YAML
 
 SWCH_IMPORT_URL = "https://raw.githubusercontent.com/Swarmchestrate/tosca/refs/heads/main/profiles/eu.swarmchestrate/profile.yaml"
 
