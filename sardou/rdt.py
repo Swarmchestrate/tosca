@@ -1,18 +1,11 @@
 from io import StringIO
-import requests
 from ruamel.yaml import YAML
+import requests
 from typing import Union
 
 SWCH_IMPORT_URL = "https://raw.githubusercontent.com/Swarmchestrate/tosca/refs/heads/main/profiles/eu.swarmchestrate/profile.yaml"
 
-TOSCA_RESERVED_KEYS = {
-    "derived_from",
-    "properties",
-    "capabilities",
-    "requirements",
-    "description",
-    "metadata",
-}
+TOSCA_RESERVED_KEYS = {"derived_from", "properties", "capabilities", "requirements", "description", "metadata"}
 
 
 def fetch_cdt(cdt_path: str) -> dict:
@@ -27,6 +20,7 @@ def fetch_cdt(cdt_path: str) -> dict:
 
 
 def extract_node_type(cdt: dict, instance_type: str) -> tuple[str, str | None]:
+   
     namespace = cdt.get("metadata", {}).get("name", "cap-unknown")
     node_types = cdt.get("node_types", {})
 
@@ -52,7 +46,7 @@ def extract_node_type(cdt: dict, instance_type: str) -> tuple[str, str | None]:
 
                 if lookup == name:
                     return name
-
+ 
             for child_name, child_def in definition.items():
                 if child_name in TOSCA_RESERVED_KEYS:
                     continue
@@ -71,44 +65,21 @@ def extract_node_type(cdt: dict, instance_type: str) -> tuple[str, str | None]:
         return namespace, f"{namespace}:{match}"
     return namespace, None
 
-def generate_rdt(
-    selected_offer: Union[list, dict], cdt_path: str, output_path: str = "rdt.yaml"
-) -> dict:
-    # support old callers that pass a list
-    if isinstance(selected_offer, list):
-        selected_offer = selected_offer[0]
+def generate_rdt(selected_offer: dict, cdt_path: str, output_path: str = "rdt.yaml") -> dict:
 
     cdt = fetch_cdt(cdt_path)
+    namespace = cdt.get("metadata", {}).get("name", "cap-unknown")
 
     imports = [
         {"namespace": "swch", "url": SWCH_IMPORT_URL},
-        {"namespace": "cap-definition", "url": cdt_path},
+        {"namespace": "cap-definition", "url": cdt_path}
     ]
 
     node_templates = {}
 
-    # selected_offer can be either the old flat format or the new service-based format
     for service_key, service_data in selected_offer.items():
-        if not isinstance(service_data, dict):
-            continue
-
-        # old/simple format: resource_data directly contains instance_type
-        if "instance_type" in service_data or "flavor_name" in service_data:
-            instance_type = service_data.get("instance_type", "")
-            _, node_type = extract_node_type(cdt, instance_type)
-
-            if node_type is None:
-                print(
-                    f"[WARNING] instance_type '{instance_type}' not found in CDT, skipping '{service_key}'"
-                )
-                continue
-
-            node_templates[service_key] = {"type": node_type}
-            continue
-
-        # new format expects nested resources under each service
-        if "colocated" in service_data:
-            continue
+        if not isinstance(service_data, dict) or "colocated" in service_data:
+            continue 
 
         for resource_key, resource_data in service_data.items():
             instance_type = resource_data["ids"]["res_id"]
@@ -122,16 +93,19 @@ def generate_rdt(
                 "type": node_type,
             }
 
+
     rdt = {
         "tosca_definitions_version": "tosca_2_0",
         "description": "Resource Definition Template generated from selected offer",
         "metadata": {
             "name": "generated-rdt",
             "author": "University of Westminster",
-            "version": "0.1",
+            "version": "0.1"
         },
         "imports": imports,
-        "service_template": {"node_templates": node_templates},
+        "service_template": {
+            "node_templates": node_templates
+        }
     }
 
     # To maintain consistent structure
