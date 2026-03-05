@@ -1,7 +1,7 @@
 from io import StringIO
-
 import requests
 from ruamel.yaml import YAML
+from typing import Union
 
 SWCH_IMPORT_URL = "https://raw.githubusercontent.com/Swarmchestrate/tosca/refs/heads/main/profiles/eu.swarmchestrate/profile.yaml"
 
@@ -32,36 +32,49 @@ def extract_node_type(cdt: dict, instance_type: str) -> tuple[str, str | None]:
 
     INSTANCE_KEYS = {"instance_type", "flavor_name"}
 
-    for top_name, top_def in node_types.items():
-        if not isinstance(top_def, dict):
-            continue
-
-        for node_name, node_def in top_def.items():
-            if node_name in TOSCA_RESERVED_KEYS:
-                continue
-            if not isinstance(node_def, dict):
-                continue
-            if "derived_from" not in node_def:
+    def _search(defs: dict, lookup: str) -> str | None:
+        for name, definition in defs.items():
+            if not isinstance(definition, dict):
                 continue
 
-            props = node_def.get("properties", {})
-            for key in INSTANCE_KEYS:
-                if key in props:
-                    prop_val = props[key]
-                    default = (
-                        prop_val.get("default", "")
-                        if isinstance(prop_val, dict)
-                        else prop_val
-                    )
-                    if default == instance_type:
-                        return namespace, f"{namespace}:{node_name}"
+            if "derived_from" in definition:
+                props = definition.get("properties", {})
+                for key in INSTANCE_KEYS:
+                    if key in props:
+                        prop_val = props[key]
+                        default = (
+                            prop_val.get("default", "")
+                            if isinstance(prop_val, dict)
+                            else prop_val
+                        )
+                        if default == lookup:
+                            return name
 
+                if lookup == name:
+                    return name
+
+            for child_name, child_def in definition.items():
+                if child_name in TOSCA_RESERVED_KEYS:
+                    continue
+                if isinstance(child_def, dict):
+                    result = _search({child_name: child_def}, lookup)
+                    if result:
+                        return result
+        return None
+
+    match = _search(node_types, instance_type)
+    if not match and "-" in instance_type:
+        stripped = "-".join(instance_type.split("-")[:-1])
+        if stripped != instance_type:
+            match = _search(node_types, stripped)
+    if match:
+        return namespace, f"{namespace}:{match}"
     return namespace, None
 
-
 def generate_rdt(
-    selected_offer: list, cdt_path: str, output_path: str = "rdt.yaml"
+    selected_offer: Union[list, dict], cdt_path: str, output_path: str = "rdt.yaml"
 ) -> dict:
+    # support old callers that pass a list
     if isinstance(selected_offer, list):
         selected_offer = selected_offer[0]
 
@@ -74,25 +87,46 @@ def generate_rdt(
 
     node_templates = {}
 
-    for resource_key, resource_data in selected_offer.items():
-        instance_type = resource_data.get("instance_type", "")
-        _, node_type = extract_node_type(cdt, instance_type)
-
-        if node_type is None:
-            print(
-                f"[WARNING] instance_type '{instance_type}' not found in CDT, skipping '{resource_key}'"
-            )
+    # selected_offer can be either the old flat format or the new service-based format
+    for service_key, service_data in selected_offer.items():
+        if not isinstance(service_data, dict):
             continue
 
-        node_templates[resource_key] = {
-            "type": node_type,
-        }
+        # old/simple format: resource_data directly contains instance_type
+        if "instance_type" in service_data or "flavor_name" in service_data:
+            instance_type = service_data.get("instance_type", "")
+            _, node_type = extract_node_type(cdt, instance_type)
+
+            if node_type is None:
+                print(
+                    f"[WARNING] instance_type '{instance_type}' not found in CDT, skipping '{service_key}'"
+                )
+                continue
+
+            node_templates[service_key] = {"type": node_type}
+            continue
+
+        # new format expects nested resources under each service
+        if "colocated" in service_data:
+            continue
+
+        for resource_key, resource_data in service_data.items():
+            instance_type = resource_data["ids"]["res_id"]
+            _, node_type = extract_node_type(cdt, instance_type)
+
+            if node_type is None:
+                print(f"[WARNING] instance_type '{instance_type}' not found in CDT, skipping '{resource_key}'")
+                continue 
+
+            node_templates[resource_key] = {
+                "type": node_type,
+            }
 
     rdt = {
         "tosca_definitions_version": "tosca_2_0",
         "description": "Resource Definition Template generated from selected offer",
         "metadata": {
-            "name": "rdt-generated",
+            "name": "generated-rdt",
             "author": "University of Westminster",
             "version": "0.1",
         },
