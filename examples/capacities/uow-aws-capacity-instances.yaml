@@ -107,7 +107,7 @@ service_template:
         host:
           properties:
             num-cpus: 4
-            mem-size: 8 GB
+            mem-size: 8
         cost:
           properties:
             cost: 0.20

@@ -129,7 +129,7 @@ service_template:
         host:
           properties:
             num-cpus: 4
-            mem-size: 8 GB
+            mem-size: 8
         energy:
           properties:
             consumption: 0.10
@@ -143,7 +143,7 @@ service_template:
         host:
           properties:
             num-cpus: 2
-            mem-size: 4 GB
+            mem-size: 4
         energy:
           properties:
             consumption: 0.10
@@ -160,7 +160,7 @@ service_template:
         host:
           properties:
             num-cpus: 2
-            mem-size: 4 GB
+            mem-size: 4
         resource:
           properties:
             labels: {"key_name": "my_specific_resource"}

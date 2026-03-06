@@ -122,9 +122,9 @@ service_template:
         capacity:
           properties:
             num-cpus: 40
-            mem-size: 1000 GB
+            mem-size: 1000
 
-    m2-medium-sztaki:
+    m2-medium:
       type: OpenStackBase
       properties:
         flavor_name: m2.medium
@@ -136,12 +136,12 @@ service_template:
         host:
           properties:
             num-cpus: 4
-            mem-size: 8 GB
+            mem-size: 8
         energy:
           properties:
             consumption: 0.10
 
-    m2-small-sztaki:
+    m2-small:
       type: OpenStackBase
       properties:
         flavor_name: m2.small
@@ -150,7 +150,7 @@ service_template:
         host:
           properties:
             num-cpus: 2
-            mem-size: 4 GB
+            mem-size: 4
         energy:
           properties:
             consumption: 0.10
@@ -167,7 +167,7 @@ service_template:
         host:
           properties:
             num-cpus: 2
-            mem-size: 4 GB
+            mem-size: 4
         resource:
           properties:
             labels: {"key_name": "my_specific_resource"}
