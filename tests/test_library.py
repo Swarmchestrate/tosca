@@ -424,6 +424,66 @@ class TestSardouSATAPI:
         assert hasattr(bookinfo, "raw")
 
 
+# ---------------------------------------------------------------------------
+# Integration
+# ---------------------------------------------------------------------------
+
+
+@requires_puccini
+class TestSATTemplateOutput:
+    """Verify that SAT templates produce meaningful, non-empty results."""
+
+    @pytest.fixture
+    def bookinfo(self):
+        return Sardou(str(SAT_DIR / "BookInfo.yaml"))
+
+    def test_bookinfo_requirements_non_empty(self, bookinfo):
+        reqs = bookinfo.get_requirements()
+        assert reqs, "BookInfo SAT should produce non-empty requirements"
+
+    def test_bookinfo_requirements_have_capabilities(self, bookinfo):
+        reqs = bookinfo.get_requirements()
+        for node_name, entry in reqs.items():
+            assert "capabilities" in entry, (
+                f"Requirement entry '{node_name}' should have capabilities"
+            )
+            assert entry["capabilities"], (
+                f"Capabilities for '{node_name}' should be non-empty"
+            )
+
+    def test_bookinfo_requirements_have_metadata(self, bookinfo):
+        reqs = bookinfo.get_requirements()
+        for node_name, entry in reqs.items():
+            assert "metadata" in entry, (
+                f"Requirement entry '{node_name}' should have metadata"
+            )
+
+
+@requires_puccini
+class TestCDTTemplateOutput:
+    """Verify that CDT templates produce meaningful, non-empty capacities."""
+
+    @pytest.fixture(params=["cloud-overall.yaml", "cloud-instances.yaml", "edge.yaml"])
+    def cdt(self, request):
+        return Sardou(str(CDT_DIR / request.param))
+
+    def test_capacities_non_empty(self, cdt):
+        caps = cdt.get_capacities()
+        assert caps, "CDT should produce non-empty capacities"
+
+    def test_capacities_have_flavour(self, cdt):
+        caps = cdt.get_capacities()
+        assert "flavour" in caps
+        assert caps["flavour"], "CDT flavour dict should be non-empty"
+
+    def test_flavour_entries_have_properties(self, cdt):
+        caps = cdt.get_capacities()
+        for flavour_name, flavour in caps["flavour"].items():
+            assert flavour, (
+                f"Flavour '{flavour_name}' should have at least one capability"
+            )
+
+
 @requires_puccini
 class TestSardouRDTAPI:
     """Tests for RDT generation from a CDT and a selected offer."""
