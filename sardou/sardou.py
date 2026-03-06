@@ -7,7 +7,7 @@ from ruamel.yaml import YAML
 from .capacities import extract_capacities
 from .rdt import generate_rdt as _generate_rdt
 from .requirements import tosca_to_ask_dict
-from .validation import check_is_sat, validate_template
+from .validation import classify_template, validate_template
 
 yaml = YAML(typ="safe")
 
@@ -68,7 +68,7 @@ class Sardou(DotDict):
         resolved = yaml.load(template.stdout)
         super().__init__(**resolved)
 
-        self.isSAT = check_is_sat(self)
+        self.kind = classify_template(self)
 
         with path.open("r") as f:
             raw = yaml.load(f)
@@ -78,7 +78,7 @@ class Sardou(DotDict):
         return tosca_to_ask_dict(self.raw._to_dict())
 
     def get_qos(self, indent=None, **kwargs):
-        if not self.isSAT:
+        if self.kind != "sat":
             raise TypeError("Can only get QoS goals from a SAT")
         if not hasattr(self.raw.service_template, "policies"):
             return []
@@ -86,7 +86,7 @@ class Sardou(DotDict):
         return [p._to_dict() if isinstance(p, DotDict) else p for p in policies]
 
     def get_capacities(self):
-        if self.isSAT:
+        if self.kind == "sat":
             raise TypeError("Cannot get capacity info from a SAT")
         nodes = self.nodeTemplates._to_dict()
         return extract_capacities(nodes)
@@ -152,7 +152,7 @@ class Sardou(DotDict):
             return val
 
         resource_suffix = (
-            resource_suffix or os.getenv("TOSCA_RESOURCE_SUFFIX") or "::Resource"
+            resource_suffix or os.getenv("TOSCA_RESOURCE_SUFFIX") or "::Capacity"
         )
 
         resources = {}

@@ -40,30 +40,36 @@ def prevalidate(file_path: Path) -> bool:
     return data
 
 
-def check_is_sat(template) -> str:
-    # Check for invalid node type combinations
-    if not template._to_dict().get('nodeTemplates'):
-        return False
-    
-    nodes = template.nodeTemplates._to_dict()
+def classify_template(template) -> str:
+    """Classify a parsed template as 'sat', 'cdt', 'rdt', 'tdt'."""
 
-    has_capacity = (
+    valid_kinds = ["sat", "cdt", "rdt", "tdt"]
+    kind = template._to_dict()["metadata"].get("kind", "").lower()
+    if kind in valid_kinds:
+        return kind
+
+    nodes = template.nodeTemplates._to_dict()
+    if not nodes:
+        return "tdt"
+
+    has_capacity = any(
         any(k.endswith("::Capacity") for k in node.get("types", {}))
         for node in nodes.values()
     )
-    has_microservice = (
+    has_microservice = any(
         any(k.endswith("::Microservice") for k in node.get("types", {}))
         for node in nodes.values()
     )
 
-    if any(has_capacity) and any(has_microservice):
+    if has_capacity and has_microservice:
         raise ValueError(
-            "Invalid: cannot have both Capacity and Microservice node types"
+            "Invalid template: cannot have both Capacity and Microservice definitions"
         )
-    elif any(has_capacity):
-        return False
 
-    return True
+    if has_capacity:
+        return "cdt"
+
+    return "sat"
 
 
 def validate_template(file_path: Path) -> bool:

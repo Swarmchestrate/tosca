@@ -362,8 +362,8 @@ class TestSardouCDTAPI:
     def test_sardou_instance_has_path(self, cloud_overall):
         assert cloud_overall.path is not None
 
-    def test_is_sat_false_for_capacity_template(self, cloud_overall):
-        assert cloud_overall.isSAT is False
+    def test_kind_cdt_for_capacity_template(self, cloud_overall):
+        assert cloud_overall.kind == "cdt"
 
     def test_get_capacities_returns_dict(self, cloud_overall):
         caps = cloud_overall.get_capacities()
@@ -374,7 +374,7 @@ class TestSardouCDTAPI:
         """get_capacities() must raise TypeError when called on a SAT."""
         # Build a minimal fake Sardou without going through __init__
         fake = object.__new__(SardouInternal)
-        fake.isSAT = True
+        fake.kind = "sat"
         with pytest.raises(TypeError):
             fake.get_capacities()
 
@@ -391,7 +391,7 @@ class TestSardouCDTAPI:
         assert hasattr(cloud_overall, "raw")
 
     def test_cloud_instances_parses(self, cloud_instances):
-        assert cloud_instances.isSAT is False
+        assert cloud_instances.kind == "cdt"
 
 
 @requires_puccini
@@ -403,7 +403,7 @@ class TestSardouSATAPI:
         return Sardou(str(SAT_DIR / "BookInfo.yaml"))
 
     def test_is_sat_true(self, bookinfo):
-        assert bookinfo.isSAT is True
+        assert bookinfo.kind == "sat"
 
     def test_get_requirements_returns_dict(self, bookinfo):
         reqs = bookinfo.get_requirements()
