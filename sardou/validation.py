@@ -12,21 +12,30 @@ PUCCINI_FLAGS = ["-x", "data_types.string.permissive"]
 yaml = YAML()
 
 
-def prevalidate(file_path: Path) -> bool:
-    # Check if file exists
-    if not file_path.exists():
-        print(f"File does not exist: {file_path}", file=sys.stderr)
-        return False
-
-    try:
-        with file_path.open("r") as f:
-            data = yaml.load(f)
-    except Exception as e:
-        print(f"Error reading YAML file {file_path}: {e}", file=sys.stderr)
-        return False
+def prevalidate(input_data):
+    if isinstance(input_data, Path):
+        if not input_data.exists():
+            print(f"File does not exist: {input_data}", file=sys.stderr)
+            return False
+        try:
+            with input_data.open("r") as f:
+                data = yaml.load(f)
+        except Exception as e:
+            print(f"Error reading YAML file {input_data}: {e}", file=sys.stderr)
+            return False
+    elif isinstance(input_data, dict):
+        data = input_data
+    else:
+        try:
+            data = yaml.load(input_data)
+        except Exception as e:
+            print(f"Error parsing YAML content: {e}", file=sys.stderr)
+            return False
+    
     if not data:
         print("No YAML content found", file=sys.stderr)
         return False
+    
     imports = data.get("imports", [])
     template = data.get("service_template", {})
 
@@ -72,9 +81,9 @@ def classify_template(template) -> str:
     return "sat"
 
 
-def validate_template(file_path: Path) -> bool:
+def validate_template(input_data) -> bool:
     # will run the puccini-tosca parse <with flag>
-    yaml_data = prevalidate(file_path)
+    yaml_data = prevalidate(input_data)
 
     # open a temp file
     with NamedTemporaryFile() as temp_file:
@@ -87,10 +96,22 @@ def validate_template(file_path: Path) -> bool:
                 text=True,
             )
             if result.returncode == 0:
-                print(f"Processed successfully: {file_path} \n")
+                if isinstance(input_data, Path):
+                    file_label = str(input_data)
+                elif isinstance(input_data, dict):
+                    file_label = "(dict content)"
+                else:
+                    file_label = "(string content)"
+                print(f"Processed successfully: {file_label} \n")
                 return result
             else:
-                print(f"Failed to process: {file_path} \n", file=sys.stderr)
+                if isinstance(input_data, Path):
+                    file_label = str(input_data)
+                elif isinstance(input_data, dict):
+                    file_label = "(dict content)"
+                else:
+                    file_label = "(string content)"
+                print(f"Failed to process: {file_label} \n", file=sys.stderr)
                 print("==== Error Output ====", file=sys.stderr)
                 print(result.stderr.strip() or result.stdout.strip(), file=sys.stderr)
                 print("======================", file=sys.stderr)
