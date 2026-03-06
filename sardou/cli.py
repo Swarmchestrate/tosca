@@ -54,10 +54,9 @@ def main():
                 print("Successfully parsed TOSCA template")
         except Exception as e:
             if args.verbose:
-                traceback.print_exc()
+                traceback.print_exc(file=sys.stderr)
             else:
                 print(f"Error parsing TOSCA template: {e}", file=sys.stderr)
-                print("Run with --verbose for details.", file=sys.stderr)
             sys.exit(1)
 
     sys.exit(0)
