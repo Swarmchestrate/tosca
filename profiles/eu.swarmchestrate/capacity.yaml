@@ -51,15 +51,15 @@ capability_types:
         required: false
         description: Number of vCPUs
       mem-size:
-        type: string
+        type: integer
         required: false
         description: Memory size in GB
       disk-size:
-        type: string
+        type: integer
         required: false
         description: Disk size in GB
       bandwidth:
-        type: string
+        type: integer
         required: false
         description: Network bandwidth in Mbps
 

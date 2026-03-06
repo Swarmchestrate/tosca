@@ -316,12 +316,12 @@ class TestExtractCapacities:
         nodes = {
             "medium": self._node(
                 {"eu.swch::Capacity": {}},
-                {"host": {"properties": {"mem-size": {"$primitive": "4 GB"}}}},
+                {"host": {"properties": {"mem-size": {"$primitive": "4"}}}},
             )
         }
         result = extract(nodes)
         assert "medium" in result["flavour"]
-        assert result["flavour"]["medium"]["host"]["mem-size"] == "4 GB"
+        assert result["flavour"]["medium"]["host"]["mem-size"] == "4"
 
     def test_empty_nodes_returns_empty_flavour(self, extract):
         result = extract({})

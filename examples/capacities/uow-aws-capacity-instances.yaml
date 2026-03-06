@@ -108,7 +108,7 @@ service_template:
           properties:
             num-cpus: 4
             mem-size: 8
-        cost:
+        pricing:
           properties:
             cost: 0.20
         energy:

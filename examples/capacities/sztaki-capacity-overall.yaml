@@ -161,9 +161,6 @@ service_template:
         flavor_name: m2.small
         key_name: fuelics
       capabilities:
-        capacity:
-          properties:
-            instances: 1
         host:
           properties:
             num-cpus: 2
