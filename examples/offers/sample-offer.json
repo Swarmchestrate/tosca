@@ -1,0 +1,40 @@
+[
+  {
+    "resource-1": {
+      "ra_id": "cap-os-sztaki",
+      "provider": "edge",
+      "cost_per_hour": 0.0499,
+      "count": 1,
+      "res_id": "m2-medium",
+      "energy-consumption": 14.1,
+      "bandwidth": 200
+    },
+    "resource-2": {
+      "ra_id": "cap-os-sztaki",
+      "provider": "openstack",
+      "cost_per_hour": 0.0699,
+      "count": 1,
+      "res_id": "m2-small",
+      "energy-consumption": 14,
+      "bandwidth": 100
+    },
+    "resource-3": {
+      "ra_id": "cap-os-sztaki",
+      "provider": "edge",
+      "cost_per_hour": 0.0499,
+      "count": 1,
+      "res_id": "specific-small-sztaki",
+      "energy-consumption": 14.1,
+      "bandwidth": 200
+    },
+    "resource-4": {
+      "ra_id": "cap-os-sztaki",
+      "provider": "edge",
+      "cost_per_hour": 0.0499,
+      "count": 1,
+      "res_id": "m2-medium",
+      "energy-consumption": 14.1,
+      "bandwidth": 200
+    }
+  }
+]
