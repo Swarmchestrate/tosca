@@ -1,3 +1,5 @@
+from typing import Optional
+
 from ruamel.yaml import YAML
 
 from sardou import Sardou
@@ -7,7 +9,7 @@ yaml = YAML()
 
 
 def get_kubernetes_manifest(
-    tosca_yaml: str, image_pull_secret: str = "my-registry-secret"
+    tosca_yaml: str, image_pull_secret: Optional[str] = None
 ) -> list:
     """
     Convert a TOSCA template string into Kubernetes manifests (Deployment + Service).
@@ -35,6 +37,9 @@ def get_kubernetes_manifest(
     # Iterate over nodes
     for name, node in node_templates.items():
         try:
+            # Sanitize name for Kubernetes RFC 1123 compliance (replace underscores with hyphens)
+            k3s_name = name.replace("_", "-")
+
             node_type = node.get("type", "")
             if not node_type.endswith("Microservice"):
                 continue
@@ -132,26 +137,26 @@ def get_kubernetes_manifest(
                                     value = right
                                     if value not in (None, "", []):
                                         labels[key] = value
-
-            # imagePullSecrets
-            image_pull_secrets = [{"name": image_pull_secret}]
-
             # Deployment (standard field order)
             deployment = {
                 "apiVersion": "apps/v1",
                 "kind": "Deployment",
-                "metadata": {"name": name},
+                "metadata": {"name": k3s_name},
                 "spec": {
                     "replicas": replicas,
-                    "selector": {"matchLabels": {"app": name}},
+                    "selector": {"matchLabels": {"app": k3s_name}},
                     "template": {
-                        "metadata": {"labels": {"app": name}},
+                        "metadata": {"labels": {"app": k3s_name}},
                         "spec": {
-                            "imagePullSecrets": image_pull_secrets,
+                            **(
+                                {"imagePullSecrets": [{"name": image_pull_secret}]}
+                                if image_pull_secret
+                                else {}
+                            ),
                             **({"nodeSelector": labels} if labels else {}),
                             "containers": [
                                 {
-                                    "name": name,
+                                    "name": k3s_name,
                                     "image": image,
                                     **({"args": args} if args else {}),
                                     **({"env": env_list} if env_list else {}),
@@ -186,10 +191,10 @@ def get_kubernetes_manifest(
                 service = {
                     "apiVersion": "v1",
                     "kind": "Service",
-                    "metadata": {"name": name},
+                    "metadata": {"name": k3s_name},
                     "spec": {
                         "type": svc_type,
-                        "selector": {"app": name},
+                        "selector": {"app": k3s_name},
                         "ports": service_ports,
                     },
                 }

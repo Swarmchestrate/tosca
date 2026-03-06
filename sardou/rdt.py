@@ -5,9 +5,6 @@ from ruamel.yaml import YAML
 rdt_yaml = YAML()
 rdt_yaml.default_flow_style = False
 
-rdt_yaml = YAML()
-rdt_yaml.default_flow_style = False
-
 def generate_rdt(template, selected_offer: list, output_path: str = "rdt.yaml") -> dict:
     if isinstance(selected_offer, list):
         selected_offer = selected_offer[0]
