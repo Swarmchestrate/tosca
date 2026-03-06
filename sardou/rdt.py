@@ -1,64 +1,47 @@
-import requests
+import copy
+
 from ruamel.yaml import YAML
-
-SWCH_IMPORT_URL = "https://raw.githubusercontent.com/Swarmchestrate/tosca/refs/heads/main/profiles/eu.swarmchestrate/profile.yaml"
-
 
 rdt_yaml = YAML()
 rdt_yaml.default_flow_style = False
 
-def fetch_cdt(cdt_path: str) -> dict:
-    if cdt_path.startswith("http://") or cdt_path.startswith("https://"):
-        response = requests.get(cdt_path)
-        response.raise_for_status()
-        return rdt_yaml.load(response.text)
-    else:
-        with open(cdt_path, "r") as f:
-            return rdt_yaml.load(f)
+rdt_yaml = YAML()
+rdt_yaml.default_flow_style = False
 
-def generate_rdt(
-    selected_offer: list, cdt_path: str, output_path: str = "rdt.yaml"
-) -> dict:
+def generate_rdt(template, selected_offer: list, output_path: str = "rdt.yaml") -> dict:
     if isinstance(selected_offer, list):
         selected_offer = selected_offer[0]
 
-    cdt = fetch_cdt(cdt_path)
-    cdt_templates = cdt.get("service_template", {}).get("node_templates", {})
+    rdt = copy.deepcopy(template.raw._to_dict())
 
-    imports = [
-        {"namespace": "swch", "url": SWCH_IMPORT_URL},
-        {"namespace": "cap-def", "url": cdt_path},
-    ]
-
-    node_templates = {}
-
-    for resource_key, resource_data in selected_offer.items():
-        instance_type = resource_data.get("instance_type", "")
-
-        try:
-            node_templates[resource_key] = dict(cdt_templates[instance_type])
-        except KeyError:
-            raise KeyError(
-                f"Instance_type '{instance_type}' not found in CDT."
-            )
-        
-        node_templates[resource_key]["type"] = f"cap-def:{node_templates[resource_key]['type']}"
-
-    rdt = {
-        "tosca_definitions_version": "tosca_2_0",
-        "description": "Resource Definition Template generated from selected offer",
-        "metadata": {
+    rdt["description"] = "Resource Definition Template generated from selected offer"
+    rdt.setdefault("metadata", {}).update(
+        {
             "name": "rdt-generated",
             "author": "University of Westminster",
             "version": "0.1",
-        },
-        "imports": imports,
-        "service_template": {"node_templates": node_templates},
-    }
+            "kind": "RDT",
+        }
+    )
+
+    try:
+        cdt_nodes = rdt.get("service_template", {})["node_templates"]
+    except KeyError:
+        raise ValueError("Invalid RDT: 'node_templates' not found")
+
+    new_node_templates = {}
+    for offer_key, offer_data in selected_offer.items():
+        res_id = offer_data["res_id"]
+        if res_id not in cdt_nodes:
+            raise KeyError(f"res_id '{res_id}' not found in CDT node_templates")
+        node = copy.deepcopy(cdt_nodes[res_id])
+        node["count"] = offer_data.get("count", 1)
+        new_node_templates[offer_key] = node
+
+    rdt["service_template"]["node_templates"] = new_node_templates
 
     with open(output_path, "w") as f:
         rdt_yaml.width = 4096
         rdt_yaml.dump(rdt, f)
 
-    print(f"[sardou] RDT generated → {output_path}")
     return rdt
