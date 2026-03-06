@@ -1,10 +1,11 @@
 [project]
 name = "Sardou"
-version = "0.5.0"
+version = "0.6.0"
 description = "Sardou TOSCA Library"
 readme = "README.md"
 authors = [
-    { name="Jay DesLauriers", email="j.deslauriers@westminster.ac.uk" }
+    { name="Jay DesLauriers", email="j.deslauriers@westminster.ac.uk" },
+    { name="Prachi Bhatt", email="p.bhatt1@westminster.ac.uk" }
 ]
 dependencies = [
     "ruamel-yaml",
