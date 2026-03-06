@@ -115,71 +115,55 @@ node_types:
             default: non-green
 
 
-  m2-medium-sztaki:
-    derived_from: OpenStackBase
-    properties:
-      flavor_name:
-        default: m2.medium
-      key_name:
-        default: fuelics
-    capabilities:
-      capacity:
-        properties:
-          instances:
-            default: 4
-      host:
-        properties:
-          num-cpus: 
-            default: 4
-          mem-size:
-            default: 8
-      energy:
-        properties:
-          consumption: 
-            default: 0.10
+service_template:
+  node_templates:
+    m2-medium-sztaki:
+      type: OpenStackBase
+      properties:
+        flavor_name: m2.medium
+        key_name: fuelics
+      capabilities:
+        capacity:
+          properties:
+            instances: 4
+        host:
+          properties:
+            num-cpus: 4
+            mem-size: 8
+        energy:
+          properties:
+            consumption: 0.10
 
-  m2-small-sztaki:
-    derived_from: OpenStackBase
-    properties:
-      flavor_name:
-        default: m2.small
-      key_name:
-        default: fuelics
-    capabilities:
-      host:
-        properties:
-          num-cpus:
-            default: 2
-          mem-size:
-            default: 4
-      energy:
-        properties:
-          consumption: 
-            default: 0.10
+    m2-small-sztaki:
+      type: OpenStackBase
+      properties:
+        flavor_name: m2.small
+        key_name: fuelics
+      capabilities:
+        host:
+          properties:
+            num-cpus: 2
+            mem-size: 4
+        energy:
+          properties:
+            consumption: 0.10
 
-  specific-small-sztaki:
-    derived_from: OpenStackBase
-    properties:
-      flavor_name:
-        default: m2.small
-      key_name:
-        default: fuelics
-    capabilities:
-      capacity:
-        properties:
-          instances:
-            default: 1
-      host:
-        properties:
-          num-cpus: 
-            default: 2
-          mem-size:
-            default: 4
-      resource:
-        properties:
-          labels:
-            default: {"key_name": "my_specific_resource"}
-      energy:
-        properties:
-          consumption: 
-            default: 0.10
+    specific-small-sztaki:
+      type: OpenStackBase
+      properties:
+        flavor_name: m2.small
+        key_name: fuelics
+      capabilities:
+        capacity:
+          properties:
+            instances: 1
+        host:
+          properties:
+            num-cpus: 2
+            mem-size: 4
+        resource:
+          properties:
+            labels: {"key_name": "my_specific_resource"}
+        energy:
+          properties:
+            consumption: 0.10

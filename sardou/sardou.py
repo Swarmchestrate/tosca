@@ -91,8 +91,8 @@ class Sardou(DotDict):
         nodes = self.nodeTemplates._to_dict()
         return extract_capacities(nodes)
 
-    def generate_rdt(self, selected_offer, cdt_path, output_path="rdt.yaml"):
-        return _generate_rdt(selected_offer, cdt_path=cdt_path, output_path=output_path)
+    def generate_rdt(self, selected_offer, output_path="rdt.yaml"):
+        return _generate_rdt(self, selected_offer, output_path=output_path)
 
     def get_cluster(self, resource_suffix=None):
         # Cloud alias

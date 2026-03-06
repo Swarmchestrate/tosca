@@ -93,28 +93,24 @@ node_types:
             default: non-green
 
 
-  t2-medium-uow:
-    derived_from: EC2Base
-    properties:
-      instance_type:
-        default: t2.medium
-      key_name:
-        default: g-key
-    capabilities:
-      capacity:
-        properties:
-          instances: 4
-      host:
-        properties:
-          num-cpus: 
-            default: 4
-          mem-size:
-            default: 8 GB
-      cost:
-        properties:
-          cost:
-            default: 0.20
-      energy:
-        properties:
-          consumption: 
-            default: 0.10
+service_template:
+  node_templates:
+    t2-medium-uow:
+      type: EC2Base
+      properties:
+        instance_type: t2.medium
+        key_name: g-key
+      capabilities:
+        capacity:
+          properties:
+            instances: 4
+        host:
+          properties:
+            num-cpus: 4
+            mem-size: 8
+        cost:
+          properties:
+            cost: 0.20
+        energy:
+          properties:
+            consumption: 0.10

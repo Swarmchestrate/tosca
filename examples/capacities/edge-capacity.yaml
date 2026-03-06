@@ -26,7 +26,7 @@ node_types:
           num-cpus:
             default: 2
           mem-size:
-            default: 2 GB
+            default: 2
           disk-size:
             default: 20
           bandwidth:
@@ -76,26 +76,24 @@ node_types:
           consumption: 
             default: 0.10
 
-  edge-device-a2bc:
-    derived_from: FuelicsEdge
-    properties:
-      ip:
-        default: 192.168.1.100
+service_template:
+  node_templates:
+    edge-device-a2bc:
+      type: FuelicsEdge
+      properties:
+        ip: 192.168.1.100
 
-  edge-device-rr2x:
-    derived_from: FuelicsEdge
-    properties:
-      ip:
-        default: 192.168.1.101
+    edge-device-rr2x:
+      type: FuelicsEdge
+      properties:
+        ip: 192.168.1.101
 
-  edge-device-x9yz:
-    derived_from: FuelicsEdge
-    properties:
-      ip:
-        default: 192.168.1.102
+    edge-device-x9yz:
+      type: FuelicsEdge
+      properties:
+        ip: 192.168.1.102
 
-  edge-device-l5mn:
-    derived_from: FuelicsEdge
-    properties:
-      ip:
-        default: 192.168.1.103
+    edge-device-l5mn:
+      type: FuelicsEdge
+      properties:
+        ip: 192.168.1.103

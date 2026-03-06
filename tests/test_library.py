@@ -422,3 +422,64 @@ class TestSardouSATAPI:
 
     def test_raw_attribute_accessible(self, bookinfo):
         assert hasattr(bookinfo, "raw")
+
+
+@requires_puccini
+class TestSardouRDTAPI:
+    """Tests for RDT generation from a CDT and a selected offer."""
+
+    OFFER_PATH = Path(__file__).parent / "templates" / "offer" / "sample-offer.json"
+    CDT_PATH = Path(__file__).parent / "templates" / "cdt" / "cloud-overall.yaml"
+
+    @pytest.fixture
+    def cdt(self):
+        return Sardou(str(self.CDT_PATH))
+
+    @pytest.fixture
+    def offer(self):
+        return json.loads(self.OFFER_PATH.read_text())
+
+    @pytest.fixture
+    def rdt(self, cdt, offer, tmp_path):
+        out = str(tmp_path / "rdt.yaml")
+        cdt.generate_rdt(offer, out)
+        return Sardou(out)
+
+    def test_rdt_has_one_node_per_offer_entry(self, rdt, offer):
+        offer = offer[0]
+        nodes = rdt.nodeTemplates._to_dict()
+        assert set(nodes.keys()) == set(offer.keys())
+
+    def test_rdt_nodes_keyed_by_offer_key(self, rdt):
+        nodes = rdt.nodeTemplates._to_dict()
+        for key in ("resource-1", "resource-2", "resource-3", "resource-4"):
+            assert key in nodes
+
+    def test_rdt_node_has_count(self, rdt):
+        nodes = rdt.nodeTemplates._to_dict()
+        for node in nodes.values():
+            assert "count" in node
+
+    def test_duplicate_res_id_produces_separate_nodes(self, rdt):
+        """resource-1 and resource-4 both map to m2-medium but are separate nodes."""
+        nodes = rdt.nodeTemplates._to_dict()
+        assert "resource-1" in nodes
+        assert "resource-4" in nodes
+
+    def test_rdt_node_inherits_cdt_type(self, cdt, rdt, offer):
+        offer = offer[0]
+        cdt_nodes = cdt.nodeTemplates._to_dict()
+        rdt_nodes = rdt.nodeTemplates._to_dict()
+        for offer_key, offer_data in offer.items():
+            res_id = offer_data["res_id"]
+            cdt_types = set(cdt_nodes[res_id]["types"])
+            rdt_types = set(rdt_nodes[offer_key]["types"])
+            assert cdt_types.issubset(rdt_types)
+
+    def test_rdt_metadata_has_kind(self, rdt):
+        assert rdt.metadata._to_dict().get("kind") == "RDT"
+
+    def test_invalid_res_id_raises(self, cdt):
+        bad_offer = {"x": {"res_id": "nonexistent", "count": 1}}
+        with pytest.raises(KeyError):
+            cdt.generate_rdt(bad_offer, "/dev/null")
