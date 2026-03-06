@@ -15,17 +15,17 @@ yaml = YAML()
 def prevalidate(file_path: Path) -> bool:
     # Check if file exists
     if not file_path.exists():
-        print(f"File does not exist: {file_path}")
+        print(f"File does not exist: {file_path}", file=sys.stderr)
         return False
 
     try:
         with file_path.open("r") as f:
             data = yaml.load(f)
     except Exception as e:
-        print(f"Error reading YAML file {file_path}: {e}")
+        print(f"Error reading YAML file {file_path}: {e}", file=sys.stderr)
         return False
     if not data:
-        print("No YAML content found")
+        print("No YAML content found", file=sys.stderr)
         return False
     imports = data.get("imports", [])
     template = data.get("service_template", {})
@@ -40,30 +40,36 @@ def prevalidate(file_path: Path) -> bool:
     return data
 
 
-def check_is_sat(template) -> str:
-    # Check for invalid node type combinations
-    if not template._to_dict().get('nodeTemplates'):
-        return False
-    
-    nodes = template.nodeTemplates._to_dict()
+def classify_template(template) -> str:
+    """Classify a parsed template as 'sat', 'cdt', 'rdt', 'tdt'."""
 
-    has_capacity = (
+    valid_kinds = ["sat", "cdt", "rdt", "tdt"]
+    kind = template._to_dict()["metadata"].get("kind", "").lower()
+    if kind in valid_kinds:
+        return kind
+
+    nodes = template.nodeTemplates._to_dict()
+    if not nodes:
+        return "tdt"
+
+    has_capacity = any(
         any(k.endswith("::Capacity") for k in node.get("types", {}))
         for node in nodes.values()
     )
-    has_microservice = (
+    has_microservice = any(
         any(k.endswith("::Microservice") for k in node.get("types", {}))
         for node in nodes.values()
     )
 
-    if any(has_capacity) and any(has_microservice):
+    if has_capacity and has_microservice:
         raise ValueError(
-            "Invalid: cannot have both Capacity and Microservice node types"
+            "Invalid template: cannot have both Capacity and Microservice definitions"
         )
-    elif any(has_capacity):
-        return False
 
-    return True
+    if has_capacity:
+        return "cdt"
+
+    return "sat"
 
 
 def validate_template(file_path: Path) -> bool:
@@ -84,12 +90,15 @@ def validate_template(file_path: Path) -> bool:
                 print(f"Processed successfully: {file_path} \n")
                 return result
             else:
-                print(f"Failed to process: {file_path} \n")
-                print("==== Error Output ====")
-                print(result.stderr.strip() or result.stdout.strip())
-                print("======================")
+                print(f"Failed to process: {file_path} \n", file=sys.stderr)
+                print("==== Error Output ====", file=sys.stderr)
+                print(result.stderr.strip() or result.stdout.strip(), file=sys.stderr)
+                print("======================", file=sys.stderr)
                 return None
 
         except FileNotFoundError:
-            print(f"Puccini not found at {PUCCINI_CMD}. Please install it first.")
+            print(
+                f"Puccini not found at {PUCCINI_CMD}. Please install it first.",
+                file=sys.stderr,
+            )
             sys.exit(1)
