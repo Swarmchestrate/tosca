@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 import pytest
+from ruamel.yaml import YAML
 
 from sardou import Sardou
 from sardou.sardou import Sardou as SardouInternal
@@ -11,6 +12,18 @@ from tests.marks import requires_puccini
 
 CDT_DIR = Path(__file__).parent / "templates" / "cdt"
 SAT_DIR = Path(__file__).parent / "templates" / "sat"
+
+_yaml = YAML(typ="safe")
+
+
+def _load_sardou(filepath, mode):
+    """Create a Sardou instance from *filepath* using the given input mode."""
+    if mode == "path":
+        return Sardou(str(filepath))
+    # mode == "dict"
+    with open(filepath) as f:
+        data = _yaml.load(f)
+    return Sardou(content=data)
 
 
 # ---------------------------------------------------------------------------
@@ -344,83 +357,89 @@ class TestExtractCapacities:
 
 
 @requires_puccini
+@pytest.mark.parametrize("mode", ["path", "dict"])
 class TestSardouCDTAPI:
     """Tests for the Sardou class used as a library, not via CLI."""
 
     @pytest.fixture
-    def cloud_overall(self):
-        return Sardou(str(CDT_DIR / "cloud-overall.yaml"))
+    def cloud_overall(self, mode):
+        return _load_sardou(CDT_DIR / "cloud-overall.yaml", mode)
 
     @pytest.fixture
-    def cloud_instances(self):
-        return Sardou(str(CDT_DIR / "cloud-instances.yaml"))
+    def cloud_instances(self, mode):
+        return _load_sardou(CDT_DIR / "cloud-instances.yaml", mode)
 
-    def test_sardou_raises_on_missing_file(self):
+    def test_sardou_raises_on_missing_file(self, mode):
+        if mode == "dict":
+            pytest.skip("missing-file check only applies to path mode")
         with pytest.raises(FileNotFoundError):
             Sardou("/tmp/definitely_does_not_exist.yaml")
 
-    def test_sardou_instance_has_path(self, cloud_overall):
-        assert cloud_overall.path is not None
+    def test_sardou_instance_has_path(self, cloud_overall, mode):
+        if mode == "path":
+            assert cloud_overall.path is not None
+        else:
+            assert cloud_overall.path is None
 
-    def test_kind_cdt_for_capacity_template(self, cloud_overall):
+    def test_kind_cdt_for_capacity_template(self, cloud_overall, mode):
         assert cloud_overall.kind == "cdt"
 
-    def test_get_capacities_returns_dict(self, cloud_overall):
+    def test_get_capacities_returns_dict(self, cloud_overall, mode):
         caps = cloud_overall.get_capacities()
         assert isinstance(caps, dict)
         assert "flavour" in caps
 
-    def test_get_capacities_raises_on_sat(self):
+    def test_get_capacities_raises_on_sat(self, mode):
         """get_capacities() must raise TypeError when called on a SAT."""
-        # Build a minimal fake Sardou without going through __init__
         fake = object.__new__(SardouInternal)
         fake.kind = "sat"
         with pytest.raises(TypeError):
             fake.get_capacities()
 
-    def test_get_requirements_returns_dict(self, cloud_overall):
+    def test_get_requirements_returns_dict(self, cloud_overall, mode):
         reqs = cloud_overall.get_requirements()
         assert isinstance(reqs, dict)
 
-    def test_get_cluster_returns_valid_json(self, cloud_overall):
+    def test_get_cluster_returns_valid_json(self, cloud_overall, mode):
         cluster_json = cloud_overall.get_cluster()
         parsed = json.loads(cluster_json)
         assert isinstance(parsed, dict)
 
-    def test_raw_attribute_is_accessible(self, cloud_overall):
+    def test_raw_attribute_is_accessible(self, cloud_overall, mode):
         assert hasattr(cloud_overall, "raw")
 
-    def test_cloud_instances_parses(self, cloud_instances):
+    def test_cloud_instances_parses(self, cloud_instances, mode):
         assert cloud_instances.kind == "cdt"
 
 
 @requires_puccini
+@pytest.mark.parametrize("mode", ["path", "dict"])
 class TestSardouSATAPI:
     """Tests for the Sardou class loaded with a SAT (service application template)."""
 
     @pytest.fixture
-    def bookinfo(self):
-        return Sardou(str(SAT_DIR / "BookInfo.yaml"))
+    def bookinfo(self, mode):
+        return _load_sardou(SAT_DIR / "BookInfo.yaml", mode)
 
-    def test_is_sat_true(self, bookinfo):
+    def test_is_sat_true(self, bookinfo, mode):
         assert bookinfo.kind == "sat"
 
-    def test_get_requirements_returns_dict(self, bookinfo):
+    def test_get_requirements_returns_dict(self, bookinfo, mode):
         reqs = bookinfo.get_requirements()
         assert isinstance(reqs, dict)
 
-    def test_get_qos_returns_list(self, bookinfo):
+    def test_get_qos_returns_list(self, bookinfo, mode):
         assert isinstance(bookinfo.get_qos(), list)
 
-    def test_get_capacities_raises_type_error(self, bookinfo):
+    def test_get_capacities_raises_type_error(self, bookinfo, mode):
         with pytest.raises(TypeError):
             bookinfo.get_capacities()
 
-    def test_get_cluster_returns_valid_json(self, bookinfo):
+    def test_get_cluster_returns_valid_json(self, bookinfo, mode):
         parsed = json.loads(bookinfo.get_cluster())
         assert isinstance(parsed, dict)
 
-    def test_raw_attribute_accessible(self, bookinfo):
+    def test_raw_attribute_accessible(self, bookinfo, mode):
         assert hasattr(bookinfo, "raw")
 
 
@@ -430,18 +449,19 @@ class TestSardouSATAPI:
 
 
 @requires_puccini
+@pytest.mark.parametrize("mode", ["path", "dict"])
 class TestSATTemplateOutput:
     """Verify that SAT templates produce meaningful, non-empty results."""
 
     @pytest.fixture
-    def bookinfo(self):
-        return Sardou(str(SAT_DIR / "BookInfo.yaml"))
+    def bookinfo(self, mode):
+        return _load_sardou(SAT_DIR / "BookInfo.yaml", mode)
 
-    def test_bookinfo_requirements_non_empty(self, bookinfo):
+    def test_bookinfo_requirements_non_empty(self, bookinfo, mode):
         reqs = bookinfo.get_requirements()
         assert reqs, "BookInfo SAT should produce non-empty requirements"
 
-    def test_bookinfo_requirements_have_capabilities(self, bookinfo):
+    def test_bookinfo_requirements_have_capabilities(self, bookinfo, mode):
         reqs = bookinfo.get_requirements()
         for node_name, entry in reqs.items():
             assert "capabilities" in entry, (
@@ -451,7 +471,7 @@ class TestSATTemplateOutput:
                 f"Capabilities for '{node_name}' should be non-empty"
             )
 
-    def test_bookinfo_requirements_have_metadata(self, bookinfo):
+    def test_bookinfo_requirements_have_metadata(self, bookinfo, mode):
         reqs = bookinfo.get_requirements()
         for node_name, entry in reqs.items():
             assert "metadata" in entry, (
@@ -460,23 +480,24 @@ class TestSATTemplateOutput:
 
 
 @requires_puccini
+@pytest.mark.parametrize("mode", ["path", "dict"])
 class TestCDTTemplateOutput:
     """Verify that CDT templates produce meaningful, non-empty capacities."""
 
     @pytest.fixture(params=["cloud-overall.yaml", "cloud-instances.yaml", "edge.yaml"])
-    def cdt(self, request):
-        return Sardou(str(CDT_DIR / request.param))
+    def cdt(self, request, mode):
+        return _load_sardou(CDT_DIR / request.param, mode)
 
-    def test_capacities_non_empty(self, cdt):
+    def test_capacities_non_empty(self, cdt, mode):
         caps = cdt.get_capacities()
         assert caps, "CDT should produce non-empty capacities"
 
-    def test_capacities_have_flavour(self, cdt):
+    def test_capacities_have_flavour(self, cdt, mode):
         caps = cdt.get_capacities()
         assert "flavour" in caps
         assert caps["flavour"], "CDT flavour dict should be non-empty"
 
-    def test_flavour_entries_have_properties(self, cdt):
+    def test_flavour_entries_have_properties(self, cdt, mode):
         caps = cdt.get_capacities()
         for flavour_name, flavour in caps["flavour"].items():
             assert flavour, (
