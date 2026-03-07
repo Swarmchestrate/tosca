@@ -164,12 +164,6 @@ capability_types:
 
 
 node_types:
-
-  ## Future
-  # CloudCapacity:
-  #   description: >
-  #     The Swarmchestrate Cloud Capacity Node
-  #   derived_from: Capacity
   
   OverallCapacity:
     description: >
@@ -201,6 +195,17 @@ node_types:
       trust:
         type: TrustCap      
   
+  CloudCapacity:
+    description: >
+      The Swarmchestrate Cloud Capacity Node
+    derived_from: Capacity
+
+    capabilities:
+      resource:
+        properties:
+          type:
+            default: cloud
+
   EdgeCapacity:
     description: >
       The Swarmchestrate Edge Capacity Node
@@ -216,3 +221,9 @@ node_types:
         required: false
         description: Map of credentials (e.g. token, basic auth)
         entry_schema: string
+
+    capabilities:
+      resource:
+        properties:
+          type:
+            default: edge
