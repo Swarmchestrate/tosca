@@ -14,13 +14,12 @@ Swarmchestrate profile.
 Start every CDT with the same structure used in a SAT: `tosca_definitions_version`, a
 human-friendly `description`, and optional `metadata` that records authorship and tagging
 Follow with your profile identifier and imports.
-
 ```yaml
-tosca_definitions_version: tosca_2_0
+tosca_definitions_version: tosca_2_0 # (1)!
 
-description: AWS EC2 capacity in US East
+description: AWS EC2 capacity in US East # (2)!
 
-metadata:
+metadata: # (3)!
   name: cap-aws-uow-us
   author: University of Westminster
   date: 2026-01-12
@@ -28,178 +27,151 @@ metadata:
   tags:
   - provider: aws
   - region: us-east-1
+  kind: CDT # (4)!
 
-imports:
+imports: # (5)!
 - namespace: swch
   url: https://raw.githubusercontent.com/Swarmchestrate/tosca/refs/heads/main/profiles/eu.swarmchestrate/profile.yaml
 ```
 
+1. This line indicates the TOSCA version and is **mandatory**.
+2. A `description` of the capacity is *recommended*.
+3. Providing `metadata` is *optional* - you may add additional custom fields.
+4. `kind` is entirely *optional*, but please do not create a custom field with this name.
+5. Importing the Swarmchestrate profile from this `url` is required. We recommend a namespace called `swch`.
+
 ## Define a Base Resource Type (recommended)
 
-Create a base node type for the capacity provider. In this example `EC2` captures the generic
-AWS EC2 shape and shared properties for all instance sizes.
+Create a base node type or blueprint for the capacity provider. This type should
+derive from one of the supported capacity types:
+
+- `EC2Capacity` for capacities providing AWS EC2 instances
+- `OSCapacity` for capacities providing OpenStack instances
+- `EdgeCapacity` for capacities providing edge devices
+
+!!! tip
+
+    Each capacity type will require different properties to ensure successful deployment.
+    Click on the capacity type in the list above to see what properties are required.
+
+In the below example `UoW-EC2` will extend the generic `EC2Capacity` with capabilities and
+properties that are specific to instance types from the University of Westminster AWS
+provision. We will use this type to simplify our definition of concrete instances later.
 
 ```yaml
+# (1)!
 node_types:
-  EC2:
+
+  UoW-EC2: # (2)!
+    derived_from: swch:EC2Capacity # (3)!
+
+    description: > # (4)!
+      Blueprint for an EC2 compute node from the UoW provision
+```
+
+1. This is a top-level key. If you are familiar with the SAT, note we are not yet in a `service_template`.
+2. A name for this base node type, which you will reference later.
+3. The type tells the orchestrator that this represents a resource capacity.
+4. A `description` is *optional*. The `>` is YAML syntax for multi-line strings.
+
+### Define Common Properties
+
+Properties provide the configuration required for deploying or configuring
+resources. Where these are common across instances in your capacity, it is
+recommended to bake them into the base resource type. In the example below, we
+set defaults for `region_name` and `image_id`, since all instances from our
+provision are deployed in the same region and use the same Amazon Machine Image.
+
+!!! tip
+    Recall that each capacity type will *require* certain properties. Not all
+    required properties need to be defined here - some will be defined later
+    when authoring concrete instances.
+
+```yaml
+node_types: # (1)!
+  UoW-EC2:
+    derived_from: swch:EC2Capacity
     description: >
-      An EC2 compute node from the University of Westminster provision
+      Blueprint for an EC2 compute node from the UoW provision
+
+    properties:
+
+      region_name: # (2)!
+        default: us-east-1
+
+      image_id:
+        default: ami-0c02fb55956c7d316
+```
+
+1. As above.
+2. We can set defaults for multiple properties like so.
+
+### Define Common Capabilities
+
+Capabilities describe the attributes of a cloud instance or edge device.
+These are used during matchmaking to assign the appropriate resource to
+host the microservices of an application.
+
+```yaml
+node_types: # (1)!
+  UoW-EC2:
+    derived_from: swch:EC2Capacity
+    description: >
+      Blueprint for an EC2 compute node from the UoW provision
     properties:
       region_name:
-        type: string
-        required: true
-        description: >
-          AWS region defaults to us-east-1
         default: us-east-1
       image_id:
-        type: string
-        required: true
-        description: >
-          The ID of the Amazon Machine Image (AMI) used to launch the EC2 instance.
         default: ami-0c02fb55956c7d316
-      instance_type:
-        type: string
-        required: true
-        description: >
-          The type of EC2 instance (e.g., t2.micro, m5.large) specifying compute resources.
-      key_name:
-        type: string
-        required: false
-        description: >
-          The name of the SSH key pair used to access the EC2 instance.
-        default: g-key
-      security_group_ids:
-        type: list
-        required: false
-        entry_schema: string
-        description: >
-          A list of security group IDs that control inbound and outbound traffic for the EC2 instance.
-        default:
-        - sg-0bb1c123456789abc
-      tags:
-        type: map
-        required: false
-        entry_schema: string
-        description: >
-          Key-value pairs used to tag and categorise the EC2 instance (e.g., environment: production).
-        default:
-          managed_by: swarmchestrate
+
     capabilities:
-      capacity:
-        properties:
-          instances:
-            type: integer
-            required: true
-            description: Number of instances
-      host:
-        properties:
-          num-cpus:
-            type: string
-            required: true
-            description: Number of vCPUs
-          mem-size:
-            type: string
-            required: true
-            description: Memory size in GB
-          disk-size:
-            type: string
-            required: true
-            description: Disk size in GB
-          bandwidth:
-            type: string
-            required: true
-            description: Network bandwidth in Mbps
-      os:
+
+      os: # (2)!
         properties:
           type:
-            type: string
-            required: true
-            description: Operating system type
             default: linux
           version:
-            type: string
-            required: true
-            description: Operating system version
             default: "22.04"
           distribution:
-            type: string
-            required: true
-            description: Operating system distribution
             default: ubuntu
-      resource:
+
+      resource: # (3)!
         properties:
-          provider:
-            type: string
-            required: true
-            description: Resource provider
-            default: Amazon
           capacity-provider:
-            type: string
-            required: true
-            description: Capacity provider
             default: uow
-          type:
-            type: string
-            required: true
-            description: Resource type
-            default: cloud
-      pricing:
-        properties:
-          cost:
-            type: float
-            required: true
-            description: Cost per hour in USD
-      locality:
+
+      locality: # (4)!
         properties:
           continent:
-            type: string
-            required: true
-            description: Continent where the resource is located
             default: N.America
           country:
-            type: string
-            required: true
-            description: Country where the resource is located
             default: USA
           city:
-            type: string
-            required: true
-            description: City where the resource is located
             default: N.Virginia
-      energy:
-        properties:
-          consumption:
-            type: float
-            required: true
-            description: Energy consumption in watts per hour
-          powered-type:
-            type: string
-            required: false
-            description: Type of power used (e.g., renewable, non-renewable)
-            default: mains-powered
-          energy-type:
-            type: string
-            required: false
-            description: Specific type of energy (e.g., solar, wind, coal)
-            default: non-green
 ```
+
+1. As above.
+2. Here we describe the operating system set by our default `image_id`.
+3. We set ourselves as the `capacity-provider`.
+4. Describing the location of the default region we have set in this blueprint.
 
 ## Derive Specific Instance Flavours
 
-Derive specific instance types from the base to encode size-specific defaults. Override only what differs: e.g. `instance_type`, host capacity, pricing, and energy metrics.
+Derive specific instance types from the base to encode size-specific defaults. Override only what differs: e.g. `instance_type`, host capacity, pricing, and energy capabilities.
 
 ```yaml
 service_template:
 
-  node_templates:
+  node_templates: # (1)!
 
-    EC2.t3.micro:
-      type: EC2
-      description: >
-        An EC2 t3.micro compute node from the University of Westminster provision
+    t3-micro: # (2)!
+
+      type: UoW-EC2 # (3)!
+
       properties:
-        instance_type: t3.micro
-      capabilities:
+        instance_type: t3.micro # (4)!
+
+      capabilities: # (5)!
         capacity:
           properties:
             instances: 100
@@ -215,63 +187,60 @@ service_template:
         energy:
           properties:
             consumption: 13.0
-
-    EC2.t3.small:
-      type: EC2
-      description: >
-        An EC2 t3.small compute node from the University of Westminster provision
-      properties:
-        instance_type: t3.small
-      capabilities:
-        capacity:
-          properties:
-            instances: 100
-        host:
-          properties:
-            num-cpus: 2
-            mem-size: 2
-            disk-size: 20
-            bandwidth: 100
-        pricing:
-          properties:
-            cost: 0.02
-        energy:
-          properties:
-            consumption: 15.0
 ```
 
-Repeat for other sizes (e.g. `EC2.t3.medium`, `EC2.t3.large`)
+1. The `node_templates` key sits under the `service_template` key.
+2. A name for the resource your are offering.
+3. Using the base resource type we defined above.
+4. Configuration options for this specific resource - here only the EC2 `instance_type`.
+5. Specifying the capabilities according to the chosen `instance_type`.
+
+Repeat for other sizes (e.g. `t3.medium`, `t3.large`)
 changing type, CPU, memory, disk, bandwidth, cost, and energy to match the 
 resource you provide.
 
 ### Edge
 
-Edge node definitions are a work-in-progress but follow the same structure.
-Here is a small example:
+Edge node definitions follow the same structure. Here is a small example:
 
 ```yaml
-    Edge.rPi:
-      type: Edge
-      description: >
-        A Raspberry Pi edge node from the University of Westminster provision
+node_types:
+  UoW-rPi:
+    derived_from: swch:EdgeCapacity
+    description: >
+      A Raspberry Pi edge node from the University of Westminster
+    properties:
+      ssh_user:
+        default: ubuntu
+    capabilities:
+      host:
+        properties:
+          num-cpus:
+            default: 4
+          mem-size:
+            default: 16
+          disk-size:
+            default: 200
+          bandwidth:
+            default: 1000
+      pricing:
+        properties:
+          cost:
+            default: 0.00
+      energy:
+        properties:
+          consumption:
+            default: 0.01
+
+service_template:
+  node_templates:
+    device-1:
+      type: UoW-rPi
       properties:
-        ip: 192.168.2.1
-        credentials:
-          token: asb1823n19a9asnd929d9n2
-      capabilities:
-        capacity:
-          properties:
-            instances: 1
-        host:
-          properties:
-            num-cpus: 4
-            mem-size: 16
-            disk-size: 200
-            bandwidth: 1000
-        pricing:
-          properties:
-            cost: 0.00
-        energy:
-          properties:
-            consumption: 5.0
+        ip: 172.12.1.1
+
+    device-2:
+      type: UoW-rPi
+      properties:
+        ip: 172.12.1.2
 ```
