@@ -45,8 +45,6 @@ node_types:
             default: Fuelics
           capacity-provider:
             default: Fuelics
-          type:
-            default: edge
       network:
         properties:
           ipv4_enabled:

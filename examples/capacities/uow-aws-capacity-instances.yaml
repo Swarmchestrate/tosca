@@ -16,33 +16,14 @@ imports:
 
 node_types:
 
-  EC2Base:
-    derived_from: swch:Capacity
+  UoWBase:
+    derived_from: swch:EC2Capacity
     description: >
       An base compute node from the UoW AWS provision
     properties:
       ami:
-        type: string
-        required: true
-        description: >
-          The Amazon Machine ID of the image used to launch the instance.
         default: b2be6f4e-ebd8-42af-a526-63691a4d90ea
-      instance_type:
-        type: string
-        required: true
-        description: >
-          The AWS instance type (e.g., t2.micro) specifying compute resources.
-      key_name:
-        type: string
-        required: false
-        description: >
-          The name of the SSH key pair used to access the instance.
       security_groups:
-        type: list
-        required: false
-        entry_schema: string
-        description: >
-          A list of security group IDs that control inbound and outbound traffic for the instance.
         default:
         - 0eb63f2b-b656-47a1-a0e7-3da0a993379e
 
@@ -67,8 +48,6 @@ node_types:
             default: UoW
           capacity-provider:
             default: UoW
-          type:
-            default: cloud
       network:
         properties:
           ipv4_enabled:
@@ -96,7 +75,7 @@ node_types:
 service_template:
   node_templates:
     t2-medium-uow:
-      type: EC2Base
+      type: UoWBase
       properties:
         instance_type: t2.medium
         key_name: g-key
