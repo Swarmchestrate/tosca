@@ -111,6 +111,10 @@ capability_types:
         type: string
         required: true
         description: Resource type
+      compute:
+        type: string
+        required: true
+        description: Compute service type (e.g., nova, ec2)
       labels:
         type: map
         required: false
@@ -227,3 +231,86 @@ node_types:
         properties:
           type:
             default: edge
+          compute:
+            default: edge
+
+  OpenStackCapacity:
+    derived_from: CloudCapacity
+    description: >
+      A Nova compute node from OpenStack
+    properties:
+      image_id:
+        type: string
+        required: true
+        description: >
+          The ID of the image used to launch the instance.
+      network_id:
+        type: string
+        required: true
+        description: >
+          The ID of the network connected by this instance
+      flavor_name:
+        type: string
+        required: true
+        description: >
+          The type of OpenStack instance (e.g., m2.medium) specifying compute resources.
+      volume_size:
+        type: integer
+        required: true
+        description: >
+          Size of instance disk volume in GB
+      project_id:
+        type: string
+        required: false
+        description: >
+          OpenStack project ID
+      key_name:
+        type: string
+        required: false
+        description: >
+          The name of the SSH key pair used to access the instance.
+      security_groups:
+        type: list
+        required: false
+        entry_schema: string
+        description: >
+          A list of security group IDs that control inbound and outbound traffic for the instance.
+
+    capabilities:
+      resource:
+        properties:
+          compute:
+            default: nova
+
+  EC2Capacity:
+    derived_from: CloudCapacity
+    description: >
+      An base EC2 compute node from AWS
+    properties:
+      ami:
+        type: string
+        required: true
+        description: >
+          The Amazon Machine ID of the image used to launch the instance.
+      instance_type:
+        type: string
+        required: true
+        description: >
+          The AWS instance type (e.g., t2.micro) specifying compute resources.
+      key_name:
+        type: string
+        required: false
+        description: >
+          The name of the SSH key pair used to access the instance.
+      security_groups:
+        type: list
+        required: false
+        entry_schema: string
+        description: >
+          A list of security group IDs that control inbound and outbound traffic for the instance.
+
+    capabilities:
+      resource:
+        properties:
+          compute:
+            default: ec2
