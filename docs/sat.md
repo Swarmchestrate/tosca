@@ -90,7 +90,7 @@ options are defined under the `properties` key.
 
 The only required property is `image`, which should define the full
 path to the OCI container image for the microservice. Other available
-properties are defined in the [SAT Microservice Specification](application.md).
+properties are defined in the [SAT Microservice Specification](microservice.md).
 `
 
 ```yaml

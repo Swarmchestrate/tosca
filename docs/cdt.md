@@ -45,9 +45,9 @@ imports: # (5)!
 Create a base node type or blueprint for the capacity provider. This type should
 derive from one of the supported capacity types:
 
-- `EC2Capacity` for capacities providing AWS EC2 instances
-- `OSCapacity` for capacities providing OpenStack instances
-- `EdgeCapacity` for capacities providing edge devices
+- [`EC2Capacity`](capacity.md#ec2capacity)for capacities providing AWS EC2 instances
+- [`OpenStackCapacity`](capacity.md#openstackcapacity) for capacities providing OpenStack instances
+- [`EdgeCapacity`](capacity.md#edgecapacity) for capacities providing edge devices
 
 !!! tip
 
@@ -214,7 +214,7 @@ energy to match the resource you provide.
 ??? important "Overall Capacity"
 
     If the amount of resource you can provide from this capacity is limited by
-    hardware, you should specify an [`OverallCapacity`](/capacity/#overallcapacity),
+    hardware, you should specify an [`OverallCapacity`](capacity.md#overallcapacity),
     indicating the total CPU, memory, disk and/or bandwidth available. This sits
     under `node_templates` and is by convention the first node in your `CDT`.
 
