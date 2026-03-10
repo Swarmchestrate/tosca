@@ -6,7 +6,7 @@ and translate various information from a Swarmchestrate TOSCA template.
 
 ## Quickstart
 
-Install Puccini:
+Install [Puccini](https://github.com/tliron/go-puccini/).
 
 ```bash
 wget https://github.com/Swarmchestrate/tosca/releases/download/v0.2.4/go-puccini_0.22.7-SNAPSHOT-3e85b40_linux_amd64.deb
@@ -27,11 +27,25 @@ sardou templates/BookInfo.yaml
 
 ## Setup
 
-### Prerequisites
+### System Requirements
 
 * Python 3.12
 * Minimum GLIBC 2.34 (Ubuntu 22.04 or higher)
-* Puccini: Should work with any 0.22.x version, but prefer the latest (currently unreleased) version. Build from source from [Go-Puccini](https://github.com/tliron/go-puccini) or use the prebuilts attached to [this release](https://github.com/Swarmchestrate/tosca/releases/tag/v0.2.4) in this repository
+
+### Puccini
+
+[Puccini](https://github.com/tliron/go-puccini) provides a TOSCA Parser, which
+Swarmchestrate uses to validate templates and complete the representation graph.
+It must be installed before using Sardou.
+
+Prefer the latest (currently unreleased) version. Build from source from
+[Go-Puccini](https://github.com/tliron/go-puccini) or use the prebuilts attached to
+[this Sardou release](https://github.com/Swarmchestrate/tosca/releases/tag/v0.2.4).
+
+??? note "Rust Puccini"
+
+	Puccini is being [re-written in Rust](https://github.com/tliron/puccini). Until its release, we are using the
+	Go version of Puccini, 0.22.x
   
 You can install the recommended Puccini on Linux with:
 ```sh
@@ -39,9 +53,10 @@ wget https://github.com/Swarmchestrate/tosca/releases/download/v0.2.4/go-puccini
 sudo dpkg -i go-puccini_0.22.7-SNAPSHOT-3e85b40_linux_amd64.deb || sudo apt --fix-broken install -y
 ```
 
-### Install
 
-Install from PyPi using uv or pip
+### Sardou
+
+You may then install Sardou from PyPi using `uv` or `pip`.
 
 === "uv"
 
@@ -56,18 +71,16 @@ Install from PyPi using uv or pip
 	pip install Sardou
 	```
 
-## Usage
-
-### Command-line Interface
+## Command-line Usage
 
 The Sardou CLI currently only performs validation. Run it against
-any SAT or CDT. If processed succesfully, the template is valid.
+any SAT or CDT. If *processed succesfully*, the template is valid.
 
 ```bash
 sardou templates/BookInfo.yaml
 ```
 
-### Library
+## Library Usage
 
 Import the Sardou TOSCA Library
 
@@ -75,81 +88,66 @@ Import the Sardou TOSCA Library
 from sardou import Sardou # note the uppercase S
 ```
 
-#### Validation
+### Validation
 
-Create a new `Sardou` object, passing it the path to your Swarmchestrate TOSCA template.
+To validate a TOSCA template, create a new `Sardou` object, passing it an SAT or CDT.
 This will validate the template and complete the representation, inheriting from parent
 types.
 
 ```python
->>> tosca = Sardou("my_app.yaml")
+>>> sat = Sardou("my_app.yaml")
 Processed successfully: my_app.yaml
 
->>> tosca
+>>> sat
 {'description': 'stressng on Swarmchestrate', 'nodeTemplates': {'resource-1': {'metadata': {}, 'description': '', 'types': {'eu.swarmchestrate:0.1::EC2.micro.t3': {'description': 'An EC2 compute node from the University of Westminster provision\n', 'parent': 'eu.swarmchestrate:0.1::Resource'} ...
 ```
 
 The template is not resolved at this point (i.e. statisfied requirements and created
-relationships) - that functionality to come. If there are errors or warnings, they will be
-presented at this time.
+relationships) - that functionality is to come. If there are errors or warnings, they
+will be presented at this time.
 
-### Exploring the Template
+#### Exploring the Template
 
 Get the raw, uncompleted (original YAML) with the `raw` attribute.
 
 ```python
->>> tosca.raw
+>>> sat.raw
 {'tosca_definitions_version': 'tosca_2_0', 'description': 'stressng on Swarmchestrate', 'imports': [{'namespace': 'swch' ...
 ```
 
 You can traverse YAML maps using dot notation if needed (which leads to some unexpected behaviour,
-so this may not be a long-term feature)
+so this may not be a long-term feature):
 
 ```python
->>> tosca.nodeTemplates
+>>> sat.nodeTemplates
 {'resource-1': {'metadata': {}, 'description': '', 'types': {'eu.swarmchestrate:0.1::EC2.micro.t3' ...
 ```
 
-### Capacities Detail
+### Applications
 
-**NOTE** This only works on CDTs.
+!!! warning
 
-Grab capacity detail from a CDT using `get_capacities()`
+	The functionality described here only works on Swarm Application Templates.
 
-```python
->>> tosca.get_capacities()
-t.get_capacities()
-({'m2-medium-sztaki': {'capacity': {'instances': 4}, 'energy': {'consumption': 0.1, 'energy-type': 'non-green', 'powered-type': 'mains-powered'}, 'host': {'bandwidth': '1000', 'disk-size': '20', 'mem-size': '8 GB', 'num-cpus': 4},
-```
 
-### Quality of Service Policies
+#### Quality of Service Policies
 
 Grab the QoS requirements as a Python object with `get_qos()`
 You could dump this to JSON or YAML.
 
 ```python
->>> tosca.get_qos()
+>>> sat.get_qos()
 [{'energy': {'type': 'swch:QoS.Energy.Budget', 'properties': {'priority': 0.3, 'target': 10}}}...
 ```
 
-### Resource Requirements
+#### Resource Requirements
 
 Grab the Resource requirements as a Python object with `get_requirements()`
 You could dump this to JSON or YAML.
 
 ```python
->>> tosca.get_requirements()
+>>> sat.get_requirements()
 {'worker-node': {'metadata': {'created_by': 'floria-tosca-lib', 'created_at': '2025-09-16T14:51:24Z', 'description': 'Generated from node worker-node', 'version': '1.0'}, 'capabilities': {'host': {'properties': {'num-cpus': {'$greater_than': 4}, 'mem-size': {'$greater_than': '8 GB'}}}, ...
-```
-
-### Cluster Configuration Details
-
-Get the cluster configuration details for the resources as a Python object with `get_cluster()`
-You could dump this to JSON or YAML.
-
-```python
->>> tosca.get_cluster()
-{'resource-1': {'image_id': 'ami-0c02fb291006c7d929', 'instance_type': 't3.micro', 'key_name': 'mykey', 'region_name': 'us-east-1' ...
 ```
 
 ### Kubernetes Manifests (manifestGenerator.py)
@@ -173,3 +171,65 @@ You could dump this to JSON or YAML.
 ```python
 python3 run_manifest_generator.py
 ```
+
+### Capacities
+
+You can create a Sardou object from a CDT with the same approach as for SATs.
+
+```python
+>>> cdt = Sardou("my_cap.yaml")
+Processed successfully: my_cap.yaml
+```
+
+!!! warning
+
+	The below methods only work on Capacity Description Templates.
+
+#### Capacity Details
+
+Given a CDT, Sardou can extract the capability details of each available flavour,
+as well as the [overall capacity](cdt.md#cdt-overall-capacity), if defined.
+
+```python
+>>> cdt.get_capacities()
+t.get_capacities()
+({'m2-medium-sztaki': {'capacity': {'instances': 4}, 'energy': {'consumption': 0.1, 'energy-type': 'non-green', 'powered-type': 'mains-powered'}, 'host': {'bandwidth': '1000', 'disk-size': '20', 'mem-size': '8 GB', 'num-cpus': 4},
+```
+
+#### Resource Description Templates
+
+You can generate a Resource Description Template (RDT) with a CDT and an
+accepted offer. An RDT is an internal template used to pass deployment
+configuration for the Swarm to the Cluster Builder component.
+
+```python
+>>> offer = json.load("ra-sztaki-offer.json")
+>>> cdt.generate_rdt(selected_offer=offer, output_path="sztaki-rdt.yaml")
+```
+
+Which will generate an RDT at the given `output_path`.
+
+### Resources
+
+You can then create a new Sardou object from an RDT.
+
+```python
+>>> rdt = Sardou("sztaki-rdt.yaml")
+Processed successfully: sztaki-rdt.yaml
+```
+
+!!! warning
+
+	This method only works on Resource Description Templates.
+
+
+#### Cluster Configuration Details
+
+Get the cluster configuration details for the resources as a Python object with `get_cluster()`
+You could dump this to JSON or YAML.
+
+```python
+>>> rdt.get_cluster()
+{'resource-1': {'image_id': 'ami-0c02fb291006c7d929', 'instance_type': 't3.micro', 'key_name': 'mykey', 'region_name': 'us-east-1' ...
+```
+

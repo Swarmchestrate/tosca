@@ -210,6 +210,7 @@ service_template:
 
 Repeat for other flavours changing type, CPU, memory, disk, bandwidth, cost, and
 energy to match the resource you provide.
+{ #cdt-overall-capacity }
 
 ??? important "Overall Capacity"
 
