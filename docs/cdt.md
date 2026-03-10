@@ -155,9 +155,19 @@ node_types: # (1)!
 3. We set ourselves as the `capacity-provider`.
 4. Describing the location of the default region we have set in this blueprint.
 
+
 ## Derive Specific Instance Flavours
 
-Derive specific instance types from the base to encode size-specific defaults. Override only what differs: e.g. `instance_type`, host capacity, pricing, and energy capabilities.
+Derive specific instance types from the base to encode size-specific defaults. Override only what differs. Typically, with cloud instances, this will always be the *instance type* as well as the capabilities that are specific to that type, such as host hardware, price, and energy. However,
+it may be necessary to set other properties or capabilities depending on your specific case.
+
+!!! important "Capacity by Flavour"
+
+    At this time, you may specify the number of available instances of this specific
+    flavour, by specifying the `instances` property on the `capacity` capability. See
+    the note on **Overall Capacity** below if you are limited not by number of instances,
+    but by hardware.
+
 
 ```yaml
 service_template:
@@ -171,11 +181,13 @@ service_template:
       properties:
         instance_type: t3.micro # (4)!
 
-      capabilities: # (5)!
-        capacity:
+      capabilities: 
+
+        capacity: # (5)!
           properties:
             instances: 100
-        host:
+
+        host: # (6)!
           properties:
             num-cpus: 2
             mem-size: 1
@@ -189,19 +201,46 @@ service_template:
             consumption: 13.0
 ```
 
-1. The `node_templates` key sits under the `service_template` key.
+1. These will already exist if you specified OverallCapacity in the step above.
 2. A name for the resource your are offering.
 3. Using the base resource type we defined above.
 4. Configuration options for this specific resource - here only the EC2 `instance_type`.
-5. Specifying the capabilities according to the chosen `instance_type`.
+5. Specifying the number of available instances of this flavour.
+6. The rest of the capabilities according to the chosen `instance_type`.
 
-Repeat for other sizes (e.g. `t3.medium`, `t3.large`)
-changing type, CPU, memory, disk, bandwidth, cost, and energy to match the 
-resource you provide.
+Repeat for other flavours changing type, CPU, memory, disk, bandwidth, cost, and
+energy to match the resource you provide.
 
-### Edge
+??? important "Overall Capacity"
 
-Edge node definitions follow the same structure. Here is a small example:
+    If the amount of resource you can provide from this capacity is limited by
+    hardware, you should specify an [`OverallCapacity`](/capacity/#overallcapacity),
+    indicating the total CPU, memory, disk and/or bandwidth available. This sits
+    under `node_templates` and is by convention the first node in your `CDT`.
+
+    ```yaml
+    service_template:
+
+      node_templates:
+
+        MyOverall: # (1)!
+          type: swch:OverallCapacity
+
+          capabilities: # (2)!
+            capacity:
+              properties:
+                num-cpus: 40
+                mem-size: 1000
+                disk: 10000
+    ```
+
+    1. The name of this node can be anything you choose, but you must refer to the `OverallCapacity` node from the profile.
+    2. Specify the total amounts of resource available under the `capacity` key.
+
+## Edge
+
+Edge nodes are defined in the same way, just use the `EdgeCapacity` type from the
+profile to create these. Here is a small example:
 
 ```yaml
 node_types:
