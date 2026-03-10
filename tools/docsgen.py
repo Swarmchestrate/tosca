@@ -67,40 +67,59 @@ def extract_types(types_dict):
     return types
 
 
-def extract_capability_types(node_types_dict, capability_types_dict):
-    """Convert node_types with capability references to template `types` format.
+def extract_capacity_fields(node_types_dict, capability_types_dict):
+    """Convert node_types to fields format with grouped capabilities.
 
-    Resolves capability type references (e.g. ``type: HostCap``) against
-    *capability_types_dict* so that properties are included in the output.
+    Each node type becomes a top-level field.  Its capabilities are grouped
+    so that e.g. ``locality`` appears as a heading with ``continent``,
+    ``city``, etc. nested underneath (instead of flat ``locality.continent``).
     """
-    types = {}
+    fields = {}
     for node_name, node_value in node_types_dict.items():
-        fields = []
+        # Node-level properties (e.g. ip, image_id)
+        node_props = [
+            {
+                "name": prop_name,
+                "required": prop_value.get("required", False),
+                "type": prop_value.get("type", ""),
+                "description": prop_value.get(
+                    "description", "No description available"
+                ),
+            }
+            for prop_name, prop_value in node_value.get("properties", {}).items()
+        ]
+
+        # Capabilities with their properties grouped
+        capabilities = []
         for cap_name, cap_value in node_value.get("capabilities", {}).items():
-            # Prefer inline properties; fall back to the referenced cap type
             props = cap_value.get("properties", {})
             if not props:
                 cap_type = cap_value.get("type", "")
                 if cap_type in capability_types_dict:
                     props = capability_types_dict[cap_type].get("properties", {})
 
-            for prop_name, prop_value in props.items():
-                fields.append(
-                    {
-                        "name": f"{cap_name}.{prop_name}",
-                        "required": prop_value.get("required", False),
-                        "type": prop_value.get("type", ""),
-                        "description": prop_value.get(
-                            "description", "No description available"
-                        ),
-                    }
-                )
+            cap_fields = [
+                {
+                    "name": prop_name,
+                    "required": prop_value.get("required", False),
+                    "type": prop_value.get("type", ""),
+                    "default": prop_value.get("default", ""),
+                    "description": prop_value.get(
+                        "description", "No description available"
+                    ),
+                }
+                for prop_name, prop_value in props.items()
+            ]
+            if cap_fields:
+                cap_desc = cap_value.get("description", "")
+                capabilities.append({"name": cap_name, "description": cap_desc, "fields": cap_fields})
 
-        types[node_name] = {
+        fields[node_name] = {
             "description": node_value.get("description", "No description available"),
-            "fields": fields,
+            "capabilities": capabilities,
+            "props": node_props,
         }
-    return types
+    return fields
 
 
 # --- Page definitions ---
@@ -124,11 +143,10 @@ pages = [
     },
     {
         "name": "Capacity",
-        "types": extract_capability_types(
+        "fields": extract_capacity_fields(
             data["capacity"].get("node_types", {}),
             data["capacity"].get("capability_types", {}),
         ),
-        "show_primitives": True,
     },
     {
         "name": "Monitoring",
@@ -150,4 +168,3 @@ for page in pages:
     write_path = DOCS_LOC / f"{file_name}.md"
     with open(write_path, "w") as f:
         f.write(rendered)
-
