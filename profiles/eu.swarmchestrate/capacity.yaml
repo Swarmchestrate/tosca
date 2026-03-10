@@ -23,15 +23,15 @@ capability_types:
       mem-size:
         type: integer
         required: true
-        description: Memory size in GB
+        description: Memory size (GB)
       disk-size:
         type: integer
         required: true
-        description: Disk size in GB
+        description: Disk size (GB)
       bandwidth:
         type: integer
         required: true
-        description: Network bandwidth in Mbps
+        description: Network bandwidth (Mbps)
       architecture:
         type: string
         required: false
@@ -42,33 +42,34 @@ capability_types:
       instances:
         type: integer
         required: false
-        description: Number of instances
+        description: >
+          Number of instances of this type offered by the capacity 
 
   CapacityCap:
     properties:
       num-cpus:
         type: integer
         required: false
-        description: Number of vCPUs
+        description: Number of vCPUs offered by the capacity
       mem-size:
         type: integer
         required: false
-        description: Memory size in GB
+        description: Memory size (GB) offered by the capacity
       disk-size:
         type: integer
         required: false
-        description: Disk size in GB
+        description: Disk size (GB) offered by the capacity
       bandwidth:
         type: integer
         required: false
-        description: Network bandwidth in Mbps
+        description: Network bandwidth (Mbps) offered by the capacity
 
   OSCap:
     properties:
       type:
         type: string
         required: true
-        description: Operating system type
+        description: Operating system type (e.g. Linux, Windows)
       version:
         type: string
         required: true
@@ -76,7 +77,7 @@ capability_types:
       distribution:
         type: string
         required: true
-        description: Operating system distribution
+        description: Operating system distribution (e.g. Ubuntu, Amazon Linux)
 
   NetworkCap:
     properties:
@@ -102,15 +103,15 @@ capability_types:
       provider:
         type: string
         required: true
-        description: Resource provider
+        description: Resource provider. Typically a cloud provider or, in the case of edge, an organisation (e.g. aws, openstack, uow)
       capacity-provider:
         type: string
         required: true
-        description: Capacity provider
+        description: Capacity provider, always an organisation (e.g. uow, sztaki, fuelics)
       type:
         type: string
         required: true
-        description: Resource type
+        description: Resource type (e.g. cloud, edge)
       compute:
         type: string
         required: true
@@ -119,14 +120,14 @@ capability_types:
         type: map
         required: false
         entry_schema: string
-        description: Labels associated with the resource
+        description: Any labels associated with the resource
 
   PricingCap:
     properties:
       cost:
         type: float
         required: true
-        description: Cost per hour in USD
+        description: Cost per hour in EUR
 
   LocalityCap:
     properties:
@@ -171,32 +172,57 @@ node_types:
   
   OverallCapacity:
     description: >
-      The Swarmchestrate Overall Capacity Node
+      Used for specfying the total available resource offered from a capacity.
     capabilities:
       capacity:
+        description: >
+          Available raw compute resources (vCPUs, memory, disk, bandwidth).
         type: CapacityCap
 
   Capacity:
     description: >
-      The Swarmchestrate Capacity Node
+      The base type for capacity nodes, representing a provider's offering.
     capabilities:
       host:
+        description: >
+          Used to specify the hardware specification of a specific instance flavour
+          in a capacity.
         type: HostCap
       capacity:
+        description: >
+          Used to specify the available resource offered from a capacity, in terms
+          of number of instances of a given flavour.
         type: CapacityInstanceCap
       os:
+        description: >
+          Used to specify the operating system of a specific instance flavour in
+          a capacity.
         type: OSCap
       network:
+        description: >
+          Used to specify network information of a specific instance flavour in
+          a capacity.
         type: NetworkCap
       resource:
+        description: >
+          Used to specify higher-level information about the instance flavour being
+          offered by the capacity.
         type: ResourceCap
       pricing:
+        description: >
+          Used to specify the cost of a specific instance flavour in a capacity.
         type: PricingCap
       locality:
+        description: >
+          Used to specify the location of a specific instance flavour in a capacity.
         type: LocalityCap
       energy:
+        description: >
+          Used to specify the energy consumption of a specific instance flavour in a capacity.
         type: EnergyCap
       trust:
+        description: >
+          Used to specify the trust level of a specific instance flavour in a capacity.
         type: TrustCap      
   
   CloudCapacity:
@@ -208,6 +234,8 @@ node_types:
       resource:
         properties:
           type:
+            description: >
+              Setting a default, knowing that all instances of this type will be cloud-based.
             default: cloud
 
   EdgeCapacity:
@@ -230,8 +258,12 @@ node_types:
       resource:
         properties:
           type:
+            description: >
+              Setting a default, knowing that all instances of this type will be edge-based.
             default: edge
           compute:
+            description: >
+              Setting the default to edge, as above.
             default: edge
 
   OpenStackCapacity:
@@ -280,6 +312,8 @@ node_types:
       resource:
         properties:
           compute:
+            description: >
+              Setting a default, given that OpenStack Nova is providing the compute.
             default: nova
 
   EC2Capacity:
@@ -313,4 +347,6 @@ node_types:
       resource:
         properties:
           compute:
+            description: >
+              Setting a default, given that AWS EC2 is providing the compute.
             default: ec2
