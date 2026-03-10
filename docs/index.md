@@ -1,10 +1,10 @@
-# TOSCA in Swarmchestrate
+# The Swarmchestrate Docs
 
 ![](img/logo-horizontal.png)
 
-Welcome to the TOSCA documentation pages for the Swarmchestrate project.
+Welcome to the documentation pages for the Swarmchestrate project.
 This resource contains information for application owners, capacity
-registrars and Swarmchestrate developers.
+providers and Swarmchestrate developers.
 
 ## Key Terms
 
@@ -23,6 +23,6 @@ Sardou provides fsuch eatures as validation, translation and extraction.
 
 ## First Steps
 
-* If you are an application owner, visit the [Author Guide](sat.md).
-* If you are a capacity administrator, visit the [Capacity Definition](cdt.md).
-* If you are a Swarmchestrate dev, visit the [Sardou library page](sardou.md).
+* If you are an application owner, visit the [Application Authoring Guide](sat.md).
+* If you are a capacity provider, visit the [Capacity Authoring Guide](cdt.md).
+* If you are a Swarmchestrate dev, visit the [Sardou library docs](sardou.md).
