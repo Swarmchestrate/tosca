@@ -1,6 +1,6 @@
 # Authoring Applications
 
-The Swarmchestrate Application Template (SAT) conforms closely to the v2.0 of
+The Swarm Application Template (SAT) conforms closely to the v2.0 of
 the TOSCA Specification and uses a custom Swarmchestrate profile being developed
 by the project.
 

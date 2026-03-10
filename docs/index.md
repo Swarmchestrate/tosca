@@ -8,7 +8,7 @@ providers and Swarmchestrate developers.
 
 ## Key Terms
 
-* **SAT** - a **S**warmchestrate **A**pplication **T**emplate is the main
+* **SAT** - a **S**warm **A**pplication **T**emplate is the main
 application input to a Swarmchestrate Universe. Application owners author
 a SAT, which defines the microservices and resource requirements that make
 up an application.
