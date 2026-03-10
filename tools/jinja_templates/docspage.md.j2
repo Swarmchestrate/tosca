@@ -48,7 +48,7 @@ The specification for {{ name | replace("_", " ") }} has the following fields.
 {% else -%}
 `{{ key }}`{ #{{ key | lower | replace("_", "-") | replace("*", "") }} }
 
-:   {% if value.type or (value.required is defined and value.required == True) or (value.schema is defined and value.schema) %}*{{ value.type if value.type is defined else "" }} {{ "of [" + value.schema + "](#types." + value.schema + ")" if value.schema is defined and value.schema else "" }}*{% if value.required is defined and value.required == True %} **(required)**{% endif %}<br>
+:   {% if value.type or (value.required is defined and value.required == True) or (value.schema is defined and value.schema) %}*{{ value.type if value.type is defined else "" }} {{ "of [" + value.schema + "](#types." + value.schema | lower + ")" if value.schema is defined and value.schema else "" }}*{% if value.required is defined and value.required == True %} **(required)**{% endif %}<br>
     {% endif %}{{ (value.description | indent(4, False)) }}
 
 {% endif -%}
