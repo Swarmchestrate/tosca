@@ -1,5 +1,9 @@
 ## Repo specific
 demo/
+docs/microservice.md
+docs/monitoring.md
+docs/capacity.md
+docs/policy.md
 
 ## GitHub copypasta
 # Byte-compiled / optimized / DLL files
