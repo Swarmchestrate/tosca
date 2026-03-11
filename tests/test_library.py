@@ -14,24 +14,24 @@ SAT_DIR = Path(__file__).parent / "templates" / "sat"
 
 
 # ---------------------------------------------------------------------------
-# requirements.py — convert_node_filter_to_capabilities
+# requirements.py — build_expression
 # ---------------------------------------------------------------------------
 
 
-class TestConvertNodeFilterToCapabilities:
+class TestBuildExpression:
     @pytest.fixture
-    def convert(self):
-        from sardou.requirements import convert_node_filter_to_capabilities
+    def build(self):
+        from sardou.requirements import build_expression
 
-        return convert_node_filter_to_capabilities
+        return build_expression
 
-    def test_empty_filter_returns_empty_dict(self, convert):
-        assert convert({}) == {}
+    def test_empty_filter_returns_empty_lambda(self, build):
+        assert build({}) == "lambda vals: ()"
 
-    def test_no_and_key_returns_empty_dict(self, convert):
-        assert convert({"$or": []}) == {}
+    def test_no_and_key_returns_empty_lambda(self, build):
+        assert build({"$or": []}) == "lambda vals: ()"
 
-    def test_equal_constraint_extracted(self, convert):
+    def test_equal_constraint(self, build):
         node_filter = {
             "$and": [
                 {
@@ -50,10 +50,10 @@ class TestConvertNodeFilterToCapabilities:
                 }
             ]
         }
-        result = convert(node_filter)
-        assert result["host"]["properties"]["num-cpus"] == 4
+        result = build(node_filter)
+        assert result == "lambda vals: ((vals['host.num-cpus'] == 4))"
 
-    def test_non_equal_constraint_stored_as_dict(self, convert):
+    def test_greater_or_equal_constraint(self, build):
         node_filter = {
             "$and": [
                 {
@@ -67,19 +67,41 @@ class TestConvertNodeFilterToCapabilities:
                                 "mem-size",
                             ]
                         },
-                        "2 GB",
+                        2,
                     ]
                 }
             ]
         }
-        result = convert(node_filter)
-        assert result["host"]["properties"]["mem-size"] == {"$greater_or_equal": "2 GB"}
+        result = build(node_filter)
+        assert result == "lambda vals: ((vals['host.mem-size'] >= 2))"
 
-    def test_multiple_capabilities_grouped(self, convert):
+    def test_string_value_quoted(self, build):
         node_filter = {
             "$and": [
                 {
                     "$equal": [
+                        {
+                            "$get_property": [
+                                "SELF",
+                                "TARGET",
+                                "CAPABILITY",
+                                "locality",
+                                "city",
+                            ]
+                        },
+                        "budapest",
+                    ]
+                }
+            ]
+        }
+        result = build(node_filter)
+        assert result == "lambda vals: ((vals['locality.city'] == 'budapest'))"
+
+    def test_multiple_conditions_joined_with_and(self, build):
+        node_filter = {
+            "$and": [
+                {
+                    "$greater_or_equal": [
                         {
                             "$get_property": [
                                 "SELF",
@@ -93,28 +115,92 @@ class TestConvertNodeFilterToCapabilities:
                     ]
                 },
                 {
-                    "$equal": [
+                    "$greater_or_equal": [
                         {
                             "$get_property": [
                                 "SELF",
                                 "TARGET",
                                 "CAPABILITY",
-                                "os",
-                                "distribution",
+                                "host",
+                                "mem-size",
                             ]
                         },
-                        "ubuntu",
+                        4,
                     ]
                 },
             ]
         }
-        result = convert(node_filter)
-        assert result["host"]["properties"]["num-cpus"] == 2
-        assert result["os"]["properties"]["distribution"] == "ubuntu"
+        result = build(node_filter)
+        assert result == "lambda vals: ((vals['host.num-cpus'] >= 2) and (vals['host.mem-size'] >= 4))"
+
+    def test_short_property_path_skipped(self, build):
+        node_filter = {
+            "$and": [
+                {
+                    "$equal": [
+                        {"$get_property": ["SELF", "TARGET"]},
+                        4,
+                    ]
+                }
+            ]
+        }
+        assert build(node_filter) == "lambda vals: ()"
 
 
 # ---------------------------------------------------------------------------
-# requirements.py — extract_nodes_with_filter
+# requirements.py — extract_colocation_groups
+# ---------------------------------------------------------------------------
+
+
+class TestExtractColocationGroups:
+    @pytest.fixture
+    def extract(self):
+        from sardou.requirements import extract_colocation_groups
+
+        return extract_colocation_groups
+
+    def test_no_policies_returns_empty(self, extract):
+        assert extract({"service_template": {}}) == []
+
+    def test_non_colocation_policy_ignored(self, extract):
+        tosca = {
+            "service_template": {
+                "policies": [
+                    {"p1": {"type": "swch:Scheduling.AntiColocation", "targets": ["a", "b"]}}
+                ]
+            }
+        }
+        assert extract(tosca) == []
+
+    def test_colocation_targets_extracted(self, extract):
+        tosca = {
+            "service_template": {
+                "policies": [
+                    {"p1": {"type": "swch:Scheduling.Colocation", "targets": ["a", "b", "c"]}}
+                ]
+            }
+        }
+        result = extract(tosca)
+        assert result == [["a", "b", "c"]]
+
+    def test_multiple_colocation_groups(self, extract):
+        tosca = {
+            "service_template": {
+                "policies": [
+                    {"p1": {"type": "swch:Scheduling.Colocation", "targets": ["a", "b"]}},
+                    {"p2": {"type": "swch:Scheduling.Colocation", "targets": ["c", "d"]}},
+                ]
+            }
+        }
+        result = extract(tosca)
+        assert len(result) == 2
+
+    def test_empty_dict_returns_empty(self, extract):
+        assert extract({}) == []
+
+
+# ---------------------------------------------------------------------------
+# requirements.py — extract_reqs_with_filter
 # ---------------------------------------------------------------------------
 
 
@@ -165,7 +251,7 @@ class TestToscaToAskDict:
         tosca = {"service_template": {"node_templates": {"app": {"type": "X"}}}}
         assert to_ask(tosca) == {}
 
-    def test_output_has_metadata_and_capabilities(self, to_ask):
+    def test_output_has_expression_and_colocated(self, to_ask):
         tosca = {
             "service_template": {
                 "node_templates": {
@@ -176,7 +262,7 @@ class TestToscaToAskDict:
                                     "node_filter": {
                                         "$and": [
                                             {
-                                                "$equal": [
+                                                "$greater_or_equal": [
                                                     {
                                                         "$get_property": [
                                                             "SELF",
@@ -200,11 +286,11 @@ class TestToscaToAskDict:
         }
         result = to_ask(tosca)
         assert "worker" in result
-        assert "metadata" in result["worker"]
-        assert "capabilities" in result["worker"]
-        assert result["worker"]["capabilities"]["host"]["properties"]["num-cpus"] == 4
+        assert "expression" in result["worker"]
+        assert "colocated" in result["worker"]
+        assert "vals['host.num-cpus'] >= 4" in result["worker"]["expression"]
 
-    def test_metadata_fields_present(self, to_ask):
+    def test_colocated_empty_when_no_policies(self, to_ask):
         tosca = {
             "service_template": {
                 "node_templates": {
@@ -212,9 +298,63 @@ class TestToscaToAskDict:
                 }
             }
         }
-        meta = to_ask(tosca)["svc"]["metadata"]
-        for field in ("created_by", "created_at", "description", "version"):
-            assert field in meta
+        result = to_ask(tosca)
+        assert result["svc"]["colocated"] == []
+
+    def test_colocation_groups_representative_only(self, to_ask):
+        tosca = {
+            "service_template": {
+                "node_templates": {
+                    "a": {"requirements": [{"host": {"node_filter": {"$and": []}}}]},
+                    "b": {"requirements": [{"host": {"node_filter": {"$and": []}}}]},
+                },
+                "policies": [
+                    {"col": {"type": "swch:Scheduling.Colocation", "targets": ["a", "b"]}}
+                ],
+            }
+        }
+        result = to_ask(tosca)
+        assert "a" in result
+        assert "b" not in result
+        assert result["a"]["colocated"] == ["b"]
+
+    def test_expression_is_evaluable_lambda(self, to_ask):
+        tosca = {
+            "service_template": {
+                "node_templates": {
+                    "svc": {
+                        "requirements": [
+                            {
+                                "host": {
+                                    "node_filter": {
+                                        "$and": [
+                                            {
+                                                "$greater_or_equal": [
+                                                    {
+                                                        "$get_property": [
+                                                            "SELF",
+                                                            "TARGET",
+                                                            "CAPABILITY",
+                                                            "host",
+                                                            "num-cpus",
+                                                        ]
+                                                    },
+                                                    2,
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+        result = to_ask(tosca)
+        fn = eval(result["svc"]["expression"])
+        assert fn({"host.num-cpus": 4}) is True
+        assert fn({"host.num-cpus": 1}) is False
 
 
 # ---------------------------------------------------------------------------
@@ -382,11 +522,6 @@ class TestSardouCDTAPI:
         reqs = cloud_overall.get_requirements()
         assert isinstance(reqs, dict)
 
-    def test_get_cluster_returns_valid_json(self, cloud_overall):
-        cluster_json = cloud_overall.get_cluster()
-        parsed = json.loads(cluster_json)
-        assert isinstance(parsed, dict)
-
     def test_raw_attribute_is_accessible(self, cloud_overall):
         assert hasattr(cloud_overall, "raw")
 
@@ -441,21 +576,35 @@ class TestSATTemplateOutput:
         reqs = bookinfo.get_requirements()
         assert reqs, "BookInfo SAT should produce non-empty requirements"
 
-    def test_bookinfo_requirements_have_capabilities(self, bookinfo):
+    def test_bookinfo_requirements_have_expression(self, bookinfo):
         reqs = bookinfo.get_requirements()
         for node_name, entry in reqs.items():
-            assert "capabilities" in entry, (
-                f"Requirement entry '{node_name}' should have capabilities"
+            assert "expression" in entry, (
+                f"Requirement entry '{node_name}' should have expression"
             )
-            assert entry["capabilities"], (
-                f"Capabilities for '{node_name}' should be non-empty"
+            assert entry["expression"], (
+                f"Expression for '{node_name}' should be non-empty"
             )
 
-    def test_bookinfo_requirements_have_metadata(self, bookinfo):
+    def test_bookinfo_requirements_have_colocated(self, bookinfo):
         reqs = bookinfo.get_requirements()
         for node_name, entry in reqs.items():
-            assert "metadata" in entry, (
-                f"Requirement entry '{node_name}' should have metadata"
+            assert "colocated" in entry, (
+                f"Requirement entry '{node_name}' should have colocated"
+            )
+
+    def test_bookinfo_colocation_applied(self, bookinfo):
+        reqs = bookinfo.get_requirements()
+        # details_v1 and productpage_v1 are colocated; only details_v1 should be representative
+        has_colocated = any(len(e["colocated"]) > 0 for e in reqs.values())
+        assert has_colocated, "At least one node should have colocated peers"
+
+    def test_bookinfo_expressions_are_evaluable(self, bookinfo):
+        reqs = bookinfo.get_requirements()
+        for node_name, entry in reqs.items():
+            fn = eval(entry["expression"])
+            assert callable(fn), (
+                f"Expression for '{node_name}' should be a callable lambda"
             )
 
 
@@ -543,3 +692,8 @@ class TestSardouRDTAPI:
         bad_offer = {"x": {"res_id": "nonexistent", "count": 1}}
         with pytest.raises(KeyError):
             cdt.generate_rdt(bad_offer, "/dev/null")
+
+    def test_get_cluster_returns_valid_json(self, rdt):
+        cluster_json = rdt.get_cluster()
+        parsed = json.loads(cluster_json)
+        assert isinstance(parsed, dict)
