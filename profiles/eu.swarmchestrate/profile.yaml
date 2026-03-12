@@ -589,6 +589,17 @@ relationship_types:
   HostedOn:
     description: >
       This relationship indicates that a node is hosted on another node.
+    properties:
+      ingress-rules:
+        type: list
+        entry_schema: PortRules
+        required: false
+        description: Ingress port rules
+      egress-rules:
+        type: list
+        entry_schema: PortRules
+        required: false
+        description: Egress port rules
 
   AttachesTo:
     description: >
