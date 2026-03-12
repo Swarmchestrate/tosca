@@ -1,0 +1,97 @@
+{
+    "details_v1": {
+        "ra-sztaki-cloud-hu_swarm2_details_v1_m2-medium-sztaki": {
+            "ids": {
+                "offer_id": "ra-sztaki-cloud-hu_swarm2_details_v1_m2-medium-sztaki",
+                "ra_id": "ra-sztaki-cloud-hu",
+                "swarm_id": "swarm2",
+                "ms_id": "details_v1",
+                "provider_id": "sztaki",
+                "res_type": "cloud",
+                "res_id": "m2-medium-sztaki"
+            },
+            "characteristics": {
+                "pricing.cost": 0,
+                "energy.consumption": 0.1,
+                "host.bandwidth": "1000"
+            }
+        },
+        "ra-sztaki-cloud-hu_swarm2_details_v1_m2.large-sztaki": {
+            "ids": {
+                "offer_id": "ra-sztaki-cloud-hu_swarm2_details_v1_m2.large-sztaki",
+                "ra_id": "ra-sztaki-cloud-hu",
+                "swarm_id": "swarm2",
+                "ms_id": "details_v1",
+                "provider_id": "sztaki",
+                "res_type": "cloud",
+                "res_id": "m2.large-sztaki"
+            },
+            "characteristics": {
+                "pricing.cost": 0,
+                "energy.consumption": 0.1,
+                "host.bandwidth": "1000"
+            }
+        }
+    },
+    "productpage_v1": {
+        "colocated": "details_v1"
+    },
+    "ratings_v1": {
+        "ra-sztaki-cloud-hu_swarm2_ratings_v1_m2-medium-sztaki": {
+            "ids": {
+                "offer_id": "ra-sztaki-cloud-hu_swarm2_ratings_v1_m2-medium-sztaki",
+                "ra_id": "ra-sztaki-cloud-hu",
+                "swarm_id": "swarm2",
+                "ms_id": "ratings_v1",
+                "provider_id": "sztaki",
+                "res_type": "cloud",
+                "res_id": "m2-medium-sztaki"
+            },
+            "characteristics": {
+                "pricing.cost": 0,
+                "energy.consumption": 0.1,
+                "host.bandwidth": "1000"
+            }
+        },
+        "ra-sztaki-cloud-hu_swarm2_ratings_v1_m2.large-sztaki": {
+            "ids": {
+                "offer_id": "ra-sztaki-cloud-hu_swarm2_ratings_v1_m2.large-sztaki",
+                "ra_id": "ra-sztaki-cloud-hu",
+                "swarm_id": "swarm2",
+                "ms_id": "ratings_v1",
+                "provider_id": "sztaki",
+                "res_type": "cloud",
+                "res_id": "m2.large-sztaki"
+            },
+            "characteristics": {
+                "pricing.cost": 0,
+                "energy.consumption": 0.1,
+                "host.bandwidth": "1000"
+            }
+        }
+    },
+    "reviews_v1": {
+        "ra-sztaki-cloud-hu_swarm2_reviews_v1_m2.large-sztaki": {
+            "ids": {
+                "offer_id": "ra-sztaki-cloud-hu_swarm2_reviews_v1_m2.large-sztaki",
+                "ra_id": "ra-sztaki-cloud-hu",
+                "swarm_id": "swarm2",
+                "ms_id": "reviews_v1",
+                "provider_id": "sztaki",
+                "res_type": "cloud",
+                "res_id": "m2.large-sztaki"
+            },
+            "characteristics": {
+                "pricing.cost": 0,
+                "energy.consumption": 0.1,
+                "host.bandwidth": "1000"
+            }
+        }
+    },
+    "reviews_v3": {
+        "colocated": "reviews_v1"
+    },
+    "reviews_v2": {
+        "colocated": "reviews_v1"
+    }
+}
