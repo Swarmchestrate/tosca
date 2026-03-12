@@ -336,6 +336,12 @@ node_types:
         required: false
         description: SSH authentication method (e.g. key, password)
     capabilities:
+      capacity:
+        properties:
+          instances:
+            description: >
+              Each edge device can only provide a single 'instance', so this default is set.
+            default: 1
       resource:
         properties:
           type:
