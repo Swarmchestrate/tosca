@@ -13,6 +13,27 @@ metadata:
 
 description: MiCADO Profile capacity type definitions
 
+
+data_types:
+  PortRules:
+    properties:
+      to:
+        type: integer
+        required: true
+        description: Start of port range
+      from:
+        type: integer
+        required: true
+        description: End of port range
+      protocol:
+        type: string
+        required: true
+        description: Protocol (e.g., TCP, UDP)
+      source:
+        type: string
+        required: false
+        description: Source IP or CIDR for the port rule
+
 capability_types:
   HostCap:
     properties:
