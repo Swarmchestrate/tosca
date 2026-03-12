@@ -15,6 +15,14 @@ OPERATOR_MAP = {
 
 COLOCATION_POLICY = "Scheduling.Colocation"
 
+def get_properties(relationship):
+    """ Convert properties in relationship to node properties """
+    properties = relationship.get("properties", {})
+    if not isinstance(properties, dict):
+        return {}
+    
+    return properties
+
 
 def build_expression(node_filter):
     """Convert TOSCA node_filter to a lambda expression string."""
@@ -95,9 +103,11 @@ def tosca_to_ask_dict(tosca_dict):
             continue
 
         node_filter = req_data["node_filter"]
+        relationship = req_data.get("relationship", {})
         result[node_name] = {
             "expression": build_expression(node_filter),
             "colocated": representative_colocated.get(node_name, []),
+        "properties": get_properties(relationship),
         }
 
     return result
