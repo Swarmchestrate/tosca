@@ -54,24 +54,41 @@ class DotDict:
 
 
 class Sardou(DotDict):
-    def __init__(self, path):
-        path = Path(path)
-        if not path.exists():
-            raise FileNotFoundError(f"File does not exist: {path}")
+    def __init__(self, path=None, content=None):
+        if path is None and content is None:
+            raise ValueError("Either 'path' or 'content' must be provided")
+        
+        if path is not None and content is not None:
+            raise ValueError("Cannot provide both 'path' and 'content'")
+        
+        if path is not None:
+            # File-based initialization
+            path = Path(path)
+            if not path.exists():
+                raise FileNotFoundError(f"File does not exist: {path}")
+            self.path = path
+            source = path  
+        else:  
+            self.path = None  
+            source = content  
 
-        self.path = path
+        template = validate_template(source)  
+        if not template:  
+            label = str(path) if path else "provided content"  
+            raise ValueError(f"Validation failed for: {label}")  
 
-        template = validate_template(path)
-        if not template:
-            raise ValueError(f"Validation failed for: {path}")
+        resolved = yaml.load(template.stdout)  
+        super().__init__(**resolved)  
 
-        resolved = yaml.load(template.stdout)
-        super().__init__(**resolved)
-
+        if path is not None:  
+            with path.open("r") as f:  
+                raw = yaml.load(f)  
+        elif isinstance(content, dict):  
+                raw = content
+        else:
+                raw = yaml.load(content)
+        
         self.kind = classify_template(self)
-
-        with path.open("r") as f:
-            raw = yaml.load(f)
         self.raw = DotDict(**raw)
 
     def get_requirements(self):
