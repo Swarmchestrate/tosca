@@ -681,13 +681,12 @@ class TestSardouRDTAPI:
         return Sardou(out)
 
     def test_rdt_has_one_node_per_offer_entry(self, rdt, offer):
-        offer = offer[0]
         nodes = rdt.nodeTemplates._to_dict()
-        assert set(nodes.keys()) == set(offer.keys())
+        assert set(nodes.keys()) == set(_get_offer_keys(offer))
 
-    def test_rdt_nodes_keyed_by_offer_key(self, rdt):
+    def test_rdt_nodes_keyed_by_offer_key(self, rdt, offer):
         nodes = rdt.nodeTemplates._to_dict()
-        for key in ("resource-1", "resource-2", "resource-3", "resource-4"):
+        for key in _get_offer_keys(offer):
             assert key in nodes
 
     def test_rdt_node_has_count(self, rdt):
@@ -695,27 +694,35 @@ class TestSardouRDTAPI:
         for node in nodes.values():
             assert "count" in node
 
-    def test_duplicate_res_id_produces_separate_nodes(self, rdt):
-        """resource-1 and resource-4 both map to m2-medium but are separate nodes."""
+    def test_duplicate_res_id_produces_separate_nodes(self, rdt, offer):
+        """Nodes with same res_id but different keys should be separate."""
         nodes = rdt.nodeTemplates._to_dict()
-        assert "resource-1" in nodes
-        assert "resource-4" in nodes
+        keys = _get_offer_keys(offer)
+        for key in keys:
+            assert key in nodes
 
     def test_rdt_node_inherits_cdt_type(self, cdt, rdt, offer):
-        offer = offer[0]
         cdt_nodes = cdt.nodeTemplates._to_dict()
         rdt_nodes = rdt.nodeTemplates._to_dict()
-        for offer_key, offer_data in offer.items():
-            res_id = offer_data["res_id"]
+        for key in _get_offer_keys(offer):
+            res_id = _get_offer_res_id(offer, key)
             cdt_types = set(cdt_nodes[res_id]["types"])
-            rdt_types = set(rdt_nodes[offer_key]["types"])
+            rdt_types = set(rdt_nodes[key]["types"])
             assert cdt_types.issubset(rdt_types)
 
     def test_rdt_metadata_has_kind(self, rdt):
         assert rdt.metadata._to_dict().get("kind") == "RDT"
 
     def test_invalid_res_id_raises(self, cdt):
-        bad_offer = {"x": {"res_id": "nonexistent", "count": 1}}
+        # Simulate new-offer.json structure with invalid res_id
+        bad_offer = {
+            "details_v1": {
+                "bad-resource": {
+                    "ids": {"res_id": "nonexistent"},
+                    "count": 1
+                }
+            }
+        }
         with pytest.raises(KeyError):
             cdt.generate_rdt(bad_offer, "/dev/null")
 
@@ -723,3 +730,28 @@ class TestSardouRDTAPI:
         cluster_json = rdt.get_cluster()
         parsed = json.loads(cluster_json)
         assert isinstance(parsed, dict)
+
+# Helper functions for offer key extraction
+def _get_offer_keys(offer):
+    if isinstance(offer, list):
+        offer = offer[0]
+    if all(isinstance(v, dict) and "res_id" in v for v in offer.values()):
+        return list(offer.keys())
+    keys = []
+    for ms_data in offer.values():
+        if isinstance(ms_data, dict):
+            for offer_key, offer_data in ms_data.items():
+                if isinstance(offer_data, dict) and "ids" in offer_data:
+                    keys.append(offer_key)
+    return keys
+
+def _get_offer_res_id(offer, key):
+    if isinstance(offer, list):
+        offer = offer[0]
+    if key in offer and "res_id" in offer[key]:
+        return offer[key]["res_id"]
+    for ms_data in offer.values():
+        if isinstance(ms_data, dict):
+            if key in ms_data and "ids" in ms_data[key]:
+                return ms_data[key]["ids"].get("res_id")
+    return None
