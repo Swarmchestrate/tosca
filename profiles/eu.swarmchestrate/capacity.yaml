@@ -118,6 +118,18 @@ capability_types:
         type: string
         required: false
         description: Subnet CIDR
+      explicit-tcp-allow:
+        type: list
+        required: true
+        description: TCP ports explicitly allowed. Defaults to ALL.
+        entry_schema: string
+        default: [ ALL ]
+      explicit-udp-allow:
+        type: list
+        required: true
+        description: UDP ports explicitly allowed. Defaults to ALL.
+        entry_schema: string
+        default: [ ALL ]
 
   ResourceCap:
     properties:

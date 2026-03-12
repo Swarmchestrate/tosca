@@ -85,7 +85,9 @@ service_template:
               - $greater_or_equal:
                   - $get_property: [ SELF, TARGET, CAPABILITY, host, mem-size ]
                   - 2
-        
+              - $has_any_entry:
+                  - $get_property: [ SELF, TARGET, CAPABILITY, network, explicit-tcp-allow ]
+                  - [ ALL, 80 ]
 
 
     ###########################################################################
