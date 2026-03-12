@@ -245,7 +245,7 @@ node_types:
     properties:
       ip:
         type: string
-        required: true
+        required: false
         description: IP of edge node
         
       credentials:
