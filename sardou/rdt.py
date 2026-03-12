@@ -5,9 +5,7 @@ from ruamel.yaml import YAML
 rdt_yaml = YAML()
 rdt_yaml.default_flow_style = False
 
-def generate_rdt(template, selected_offer: list, output_path: str = "rdt.yaml") -> dict:
-    if isinstance(selected_offer, list):
-        selected_offer = selected_offer[0]
+def generate_rdt(template, selected_offer: dict, output_path: str = "rdt.yaml") -> dict:
 
     rdt = copy.deepcopy(template.raw._to_dict())
 
@@ -27,13 +25,21 @@ def generate_rdt(template, selected_offer: list, output_path: str = "rdt.yaml") 
         raise ValueError("Invalid RDT: 'node_templates' not found")
 
     new_node_templates = {}
-    for offer_key, offer_data in selected_offer.items():
-        res_id = offer_data["res_id"]
-        if res_id not in cdt_nodes:
-            raise KeyError(f"res_id '{res_id}' not found in CDT node_templates")
-        node = copy.deepcopy(cdt_nodes[res_id])
-        node["count"] = offer_data.get("count", 1)
-        new_node_templates[offer_key] = node
+
+    for ms_name, ms_data in selected_offer.items():
+        if isinstance(ms_data, dict):
+            for offer_key, offer_data in ms_data.items():
+                if not isinstance(offer_data, dict):
+                    continue  # skip strings like 'colocated'
+                ids = offer_data.get("ids", {})
+                res_id = ids.get("res_id")
+                if not res_id:
+                    continue
+                if res_id not in cdt_nodes:
+                    raise KeyError(f"res_id '{res_id}' not found in CDT node_templates")
+                node = copy.deepcopy(cdt_nodes[res_id])
+                node["count"] = offer_data.get("count", 1)
+                new_node_templates[offer_key] = node
 
     rdt["service_template"]["node_templates"] = new_node_templates
 

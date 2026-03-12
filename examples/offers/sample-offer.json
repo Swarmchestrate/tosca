@@ -1,40 +1,97 @@
-[
-  {
-    "resource-1": {
-      "ra_id": "cap-os-sztaki",
-      "provider": "edge",
-      "cost_per_hour": 0.0499,
-      "count": 1,
-      "res_id": "m2-medium",
-      "energy-consumption": 14.1,
-      "bandwidth": 200
+{
+    "details_v1": {
+        "ra-sztaki-cloud-hu_swarm2_details_v1_m2-medium-sztaki": {
+            "ids": {
+                "offer_id": "ra-sztaki-cloud-hu_swarm2_details_v1_m2-medium-sztaki",
+                "ra_id": "ra-sztaki-cloud-hu",
+                "swarm_id": "swarm2",
+                "ms_id": "details_v1",
+                "provider_id": "sztaki",
+                "res_type": "cloud",
+                "res_id": "m2-medium-sztaki"
+            },
+            "characteristics": {
+                "pricing.cost": 0,
+                "energy.consumption": 0.1,
+                "host.bandwidth": "1000"
+            }
+        },
+        "ra-sztaki-cloud-hu_swarm2_details_v1_m2.large-sztaki": {
+            "ids": {
+                "offer_id": "ra-sztaki-cloud-hu_swarm2_details_v1_m2.large-sztaki",
+                "ra_id": "ra-sztaki-cloud-hu",
+                "swarm_id": "swarm2",
+                "ms_id": "details_v1",
+                "provider_id": "sztaki",
+                "res_type": "cloud",
+                "res_id": "m2.large-sztaki"
+            },
+            "characteristics": {
+                "pricing.cost": 0,
+                "energy.consumption": 0.1,
+                "host.bandwidth": "1000"
+            }
+        }
     },
-    "resource-2": {
-      "ra_id": "cap-os-sztaki",
-      "provider": "openstack",
-      "cost_per_hour": 0.0699,
-      "count": 1,
-      "res_id": "m2-small",
-      "energy-consumption": 14,
-      "bandwidth": 100
+    "productpage_v1": {
+        "colocated": "details_v1"
     },
-    "resource-3": {
-      "ra_id": "cap-os-sztaki",
-      "provider": "edge",
-      "cost_per_hour": 0.0499,
-      "count": 1,
-      "res_id": "specific-small-sztaki",
-      "energy-consumption": 14.1,
-      "bandwidth": 200
+    "ratings_v1": {
+        "ra-sztaki-cloud-hu_swarm2_ratings_v1_m2-medium-sztaki": {
+            "ids": {
+                "offer_id": "ra-sztaki-cloud-hu_swarm2_ratings_v1_m2-medium-sztaki",
+                "ra_id": "ra-sztaki-cloud-hu",
+                "swarm_id": "swarm2",
+                "ms_id": "ratings_v1",
+                "provider_id": "sztaki",
+                "res_type": "cloud",
+                "res_id": "m2-medium-sztaki"
+            },
+            "characteristics": {
+                "pricing.cost": 0,
+                "energy.consumption": 0.1,
+                "host.bandwidth": "1000"
+            }
+        },
+        "ra-sztaki-cloud-hu_swarm2_ratings_v1_m2.large-sztaki": {
+            "ids": {
+                "offer_id": "ra-sztaki-cloud-hu_swarm2_ratings_v1_m2.large-sztaki",
+                "ra_id": "ra-sztaki-cloud-hu",
+                "swarm_id": "swarm2",
+                "ms_id": "ratings_v1",
+                "provider_id": "sztaki",
+                "res_type": "cloud",
+                "res_id": "m2.large-sztaki"
+            },
+            "characteristics": {
+                "pricing.cost": 0,
+                "energy.consumption": 0.1,
+                "host.bandwidth": "1000"
+            }
+        }
     },
-    "resource-4": {
-      "ra_id": "cap-os-sztaki",
-      "provider": "edge",
-      "cost_per_hour": 0.0499,
-      "count": 1,
-      "res_id": "m2-medium",
-      "energy-consumption": 14.1,
-      "bandwidth": 200
+    "reviews_v1": {
+        "ra-sztaki-cloud-hu_swarm2_reviews_v1_m2.large-sztaki": {
+            "ids": {
+                "offer_id": "ra-sztaki-cloud-hu_swarm2_reviews_v1_m2.large-sztaki",
+                "ra_id": "ra-sztaki-cloud-hu",
+                "swarm_id": "swarm2",
+                "ms_id": "reviews_v1",
+                "provider_id": "sztaki",
+                "res_type": "cloud",
+                "res_id": "m2.large-sztaki"
+            },
+            "characteristics": {
+                "pricing.cost": 0,
+                "energy.consumption": 0.1,
+                "host.bandwidth": "1000"
+            }
+        }
+    },
+    "reviews_v3": {
+        "colocated": "reviews_v1"
+    },
+    "reviews_v2": {
+        "colocated": "reviews_v1"
     }
-  }
-]
+}
