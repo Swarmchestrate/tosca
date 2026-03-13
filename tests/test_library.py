@@ -144,7 +144,10 @@ class TestBuildExpression:
             ]
         }
         result = build(node_filter)
-        assert result == "lambda vals: ((vals['host.num-cpus'] >= 2) and (vals['host.mem-size'] >= 4))"
+        assert (
+            result
+            == "lambda vals: ((vals['host.num-cpus'] >= 2) and (vals['host.mem-size'] >= 4))"
+        )
 
     def test_short_property_path_skipped(self, build):
         node_filter = {
@@ -179,7 +182,12 @@ class TestExtractColocationGroups:
         tosca = {
             "service_template": {
                 "policies": [
-                    {"p1": {"type": "swch:Scheduling.AntiColocation", "targets": ["a", "b"]}}
+                    {
+                        "p1": {
+                            "type": "swch:Scheduling.AntiColocation",
+                            "targets": ["a", "b"],
+                        }
+                    }
                 ]
             }
         }
@@ -189,7 +197,12 @@ class TestExtractColocationGroups:
         tosca = {
             "service_template": {
                 "policies": [
-                    {"p1": {"type": "swch:Scheduling.Colocation", "targets": ["a", "b", "c"]}}
+                    {
+                        "p1": {
+                            "type": "swch:Scheduling.Colocation",
+                            "targets": ["a", "b", "c"],
+                        }
+                    }
                 ]
             }
         }
@@ -200,8 +213,18 @@ class TestExtractColocationGroups:
         tosca = {
             "service_template": {
                 "policies": [
-                    {"p1": {"type": "swch:Scheduling.Colocation", "targets": ["a", "b"]}},
-                    {"p2": {"type": "swch:Scheduling.Colocation", "targets": ["c", "d"]}},
+                    {
+                        "p1": {
+                            "type": "swch:Scheduling.Colocation",
+                            "targets": ["a", "b"],
+                        }
+                    },
+                    {
+                        "p2": {
+                            "type": "swch:Scheduling.Colocation",
+                            "targets": ["c", "d"],
+                        }
+                    },
                 ]
             }
         }
@@ -322,7 +345,12 @@ class TestToscaToAskDict:
                     "b": {"requirements": [{"host": {"node_filter": {"$and": []}}}]},
                 },
                 "policies": [
-                    {"col": {"type": "swch:Scheduling.Colocation", "targets": ["a", "b"]}}
+                    {
+                        "col": {
+                            "type": "swch:Scheduling.Colocation",
+                            "targets": ["a", "b"],
+                        }
+                    }
                 ],
             }
         }
@@ -717,10 +745,7 @@ class TestSardouRDTAPI:
         # Simulate new-offer.json structure with invalid res_id
         bad_offer = {
             "details_v1": {
-                "bad-resource": {
-                    "ids": {"res_id": "nonexistent"},
-                    "count": 1
-                }
+                "bad-resource": {"ids": {"res_id": "nonexistent"}, "count": 1}
             }
         }
         with pytest.raises(KeyError):
@@ -733,7 +758,9 @@ class TestSardouRDTAPI:
                 "offer-key": {
                     "ids": {"res_id": "m2-small"},
                     "count": 1,
-                    "properties": {"ingress-rules": [{"from": 80, "to": 80, "protocol": "TCP"}]},
+                    "properties": {
+                        "ingress-rules": [{"from": 80, "to": 80, "protocol": "TCP"}]
+                    },
                 }
             }
         }
@@ -765,6 +792,7 @@ class TestSardouRDTAPI:
         parsed = json.loads(cluster_json)
         assert isinstance(parsed, dict)
 
+
 # Helper functions for offer key extraction
 def _get_offer_keys(offer):
     if isinstance(offer, list):
@@ -778,6 +806,7 @@ def _get_offer_keys(offer):
                 if isinstance(offer_data, dict) and "ids" in offer_data:
                     keys.append(offer_key)
     return keys
+
 
 def _get_offer_res_id(offer, key):
     if isinstance(offer, list):

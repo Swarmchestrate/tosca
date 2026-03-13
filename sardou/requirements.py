@@ -15,12 +15,13 @@ OPERATOR_MAP = {
 
 COLOCATION_POLICY = "Scheduling.Colocation"
 
+
 def get_properties(relationship):
-    """ Convert properties in relationship to node properties """
+    """Convert properties in relationship to node properties"""
     properties = relationship.get("properties", {})
     if not isinstance(properties, dict):
         return {}
-    
+
     return properties
 
 
@@ -99,7 +100,10 @@ def tosca_to_ask_dict(tosca_dict):
     result = {}
     for node_name, req_data in reqs_with_filter.items():
         # Skip non-representative nodes in a colocation group
-        if node_name in node_to_representative and node_to_representative[node_name] != node_name:
+        if (
+            node_name in node_to_representative
+            and node_to_representative[node_name] != node_name
+        ):
             continue
 
         node_filter = req_data["node_filter"]
@@ -107,7 +111,7 @@ def tosca_to_ask_dict(tosca_dict):
         result[node_name] = {
             "expression": build_expression(node_filter),
             "colocated": representative_colocated.get(node_name, []),
-        "properties": get_properties(relationship),
+            "properties": get_properties(relationship),
         }
 
     return result

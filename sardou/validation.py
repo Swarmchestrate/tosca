@@ -31,11 +31,11 @@ def prevalidate(input_data):
         except Exception as e:
             print(f"Error parsing YAML content: {e}", file=sys.stderr)
             return False
-    
+
     if not data:
         print("No YAML content found", file=sys.stderr)
         return False
-    
+
     imports = data.get("imports", [])
     template = data.get("service_template", {})
 
@@ -84,7 +84,7 @@ def classify_template(template) -> str:
 def validate_template(input_data) -> bool:
     # will run the puccini-tosca parse <with flag>
     yaml_data = prevalidate(input_data)
-    
+
     if isinstance(input_data, Path):
         file_label = str(input_data)
     elif isinstance(input_data, dict):

@@ -112,7 +112,9 @@ def extract_capacity_fields(node_types_dict, capability_types_dict):
             ]
             if cap_fields:
                 cap_desc = cap_value.get("description", "")
-                capabilities.append({"name": cap_name, "description": cap_desc, "fields": cap_fields})
+                capabilities.append(
+                    {"name": cap_name, "description": cap_desc, "fields": cap_fields}
+                )
 
         fields[node_name] = {
             "description": node_value.get("description", "No description available"),
