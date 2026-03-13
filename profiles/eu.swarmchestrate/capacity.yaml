@@ -215,6 +215,21 @@ node_types:
   Capacity:
     description: >
       The base type for capacity nodes, representing a provider's offering.
+    properties:
+      ingress-rules:
+        metadata:
+          alias: custom_ingress_ports
+        type: list
+        entry_schema: PortRules
+        required: false
+        description: Ingress port rules
+      egress-rules:
+        metadata:
+          alias: custom_egress_ports
+        type: list
+        entry_schema: PortRules
+        required: false
+        description: Egress port rules
     capabilities:
       host:
         description: >
