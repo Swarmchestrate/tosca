@@ -76,6 +76,12 @@ service_template:
 
       requirements:
       - host:
+          relationship:
+            properties:
+              ingress-rules:
+                - from: 80
+                  to: 80
+                  protocol: TCP
           count: 1
           node_filter:
             $and:
