@@ -10,9 +10,18 @@ OPERATOR_MAP = {
     "$less_than": "<",
     "$equal": "==",
     "$not_equal": "!=",
+    "$has_any_entry": "has_any_entry",
 }
 
 COLOCATION_POLICY = "Scheduling.Colocation"
+
+def get_properties(relationship):
+    """ Convert properties in relationship to node properties """
+    properties = relationship.get("properties", {})
+    if not isinstance(properties, dict):
+        return {}
+    
+    return properties
 
 
 def build_expression(node_filter):
@@ -34,7 +43,9 @@ def build_expression(node_filter):
             op = OPERATOR_MAP.get(constraint_func, "==")
 
             key = f"{capability_type}.{property_name}"
-            if isinstance(value, str):
+            if op == "has_any_entry":
+                parts.append(f"(any(entry in vals['{key}'] for entry in {value}))")
+            elif isinstance(value, str):
                 parts.append(f"(vals['{key}'] {op} '{value}')")
             else:
                 parts.append(f"(vals['{key}'] {op} {value})")
@@ -92,9 +103,11 @@ def tosca_to_ask_dict(tosca_dict):
             continue
 
         node_filter = req_data["node_filter"]
+        relationship = req_data.get("relationship", {})
         result[node_name] = {
             "expression": build_expression(node_filter),
             "colocated": representative_colocated.get(node_name, []),
+        "properties": get_properties(relationship),
         }
 
     return result
