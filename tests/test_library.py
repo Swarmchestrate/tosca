@@ -726,6 +726,40 @@ class TestSardouRDTAPI:
         with pytest.raises(KeyError):
             cdt.generate_rdt(bad_offer, "/dev/null")
 
+    def test_offer_properties_merged_into_node(self, cdt, tmp_path):
+        """Properties from offer are added to the RDT node."""
+        offer = {
+            "ms1": {
+                "offer-key": {
+                    "ids": {"res_id": "m2-small"},
+                    "count": 1,
+                    "properties": {"ingress-rules": [{"from": 80, "to": 80, "protocol": "TCP"}]},
+                }
+            }
+        }
+        out = str(tmp_path / "rdt.yaml")
+        cdt.generate_rdt(offer, out)
+        rdt = Sardou(out)
+        props = rdt.nodeTemplates._to_dict()["offer-key"]["properties"]
+        assert "ingress-rules" in props
+
+    def test_offer_properties_do_not_overwrite_cdt_properties(self, cdt, tmp_path):
+        """Existing CDT node properties are not overwritten by offer properties."""
+        offer = {
+            "ms1": {
+                "offer-key": {
+                    "ids": {"res_id": "m2-small"},
+                    "count": 1,
+                    "properties": {"flavor_name": "OVERWRITTEN"},
+                }
+            }
+        }
+        out = str(tmp_path / "rdt.yaml")
+        cdt.generate_rdt(offer, out)
+        rdt = Sardou(out)
+        props = rdt.nodeTemplates._to_dict()["offer-key"]["properties"]
+        assert props["flavor_name"] != "OVERWRITTEN"
+
     def test_get_cluster_returns_valid_json(self, rdt):
         cluster_json = rdt.get_cluster()
         parsed = json.loads(cluster_json)
