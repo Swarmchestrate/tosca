@@ -1,0 +1,1218 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../sat/">
+      
+      
+        <link rel="next" href="../sardou/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Capacities - TOSCA Toolkit</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="light-blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#authoring-capacities" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="TOSCA Toolkit" class="md-header__button md-logo" aria-label="TOSCA Toolkit" data-md-component="logo">
+      
+  <img src="../img/word-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            TOSCA Toolkit
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Capacities
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Swarmchestrate/tosca" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../sat/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Authors
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../sardou/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  TOSCA Library
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../microservice/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Microservice Spec
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../policy/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Policy Spec
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../capacity/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Capacity Spec
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../monitoring/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Monitoring
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="TOSCA Toolkit" class="md-nav__button md-logo" aria-label="TOSCA Toolkit" data-md-component="logo">
+      
+  <img src="../img/word-logo.png" alt="logo">
+
+    </a>
+    TOSCA Toolkit
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Swarmchestrate/tosca" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authors
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Authors
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Applications
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capacities
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capacities
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#top-matter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Top Matter
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#define-a-base-resource-type-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Define a Base Resource Type (recommended)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Define a Base Resource Type (recommended)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#define-common-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Define Common Properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#define-common-capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Define Common Capabilities
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#derive-specific-instance-flavours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Derive Specific Instance Flavours
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#edge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Edge
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sardou/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TOSCA Library
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../microservice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Microservice Spec
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../policy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Policy Spec
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../capacity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capacity Spec
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#top-matter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Top Matter
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#define-a-base-resource-type-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Define a Base Resource Type (recommended)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Define a Base Resource Type (recommended)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#define-common-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Define Common Properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#define-common-capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Define Common Capabilities
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#derive-specific-instance-flavours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Derive Specific Instance Flavours
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#edge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Edge
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="authoring-capacities">Authoring Capacities</h1>
+<p>The Capacity Description Template (CDT) defines the resources available for a
+specific capacity. Like the SAT, it follows TOSCA v2.0 and uses the same custom
+Swarmchestrate profile.</p>
+<div class="admonition warning">
+<p>The specification is not entirely finalised or fixed. Field names and types
+may change over the course of the project.</p>
+</div>
+<h2 id="top-matter">Top Matter</h2>
+<p>Start every CDT with the same structure used in a SAT: <code>tosca_definitions_version</code>, a
+human-friendly <code>description</code>, and optional <code>metadata</code> that records authorship and tagging
+Follow with your profile identifier and imports.
+<div class="highlight"><pre><span></span><code><span class="nt">tosca_definitions_version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tosca_2_0</span><span class="w"> </span><span class="c1"># (1)!</span>
+
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS EC2 capacity in US East</span><span class="w"> </span><span class="c1"># (2)!</span>
+
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span><span class="c1"># (3)!</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cap-aws-uow-us</span>
+<span class="w">  </span><span class="nt">author</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">University of Westminster</span>
+<span class="w">  </span><span class="nt">date</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2026-01-12</span>
+<span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span>
+<span class="w">  </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">provider</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aws</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
+<span class="w">  </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CDT</span><span class="w"> </span><span class="c1"># (4)!</span>
+
+<span class="nt">imports</span><span class="p">:</span><span class="w"> </span><span class="c1"># (5)!</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">swch</span>
+<span class="w">  </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://raw.githubusercontent.com/Swarmchestrate/tosca/refs/heads/main/profiles/eu.swarmchestrate/profile.yaml</span>
+</code></pre></div></p>
+<ol>
+<li>This line indicates the TOSCA version and is <strong>mandatory</strong>.</li>
+<li>A <code>description</code> of the capacity is <em>recommended</em>.</li>
+<li>Providing <code>metadata</code> is <em>optional</em> - you may add additional custom fields.</li>
+<li><code>kind</code> is entirely <em>optional</em>, but please do not create a custom field with this name.</li>
+<li>Importing the Swarmchestrate profile from this <code>url</code> is required. We recommend a namespace called <code>swch</code>.</li>
+</ol>
+<h2 id="define-a-base-resource-type-recommended">Define a Base Resource Type (recommended)</h2>
+<p>Create a base node type or blueprint for the capacity provider. This type should
+derive from one of the supported capacity types:</p>
+<ul>
+<li><a href="../capacity/#ec2capacity"><code>EC2Capacity</code></a>for capacities providing AWS EC2 instances</li>
+<li><a href="../capacity/#openstackcapacity"><code>OpenStackCapacity</code></a> for capacities providing OpenStack instances</li>
+<li><a href="../capacity/#edgecapacity"><code>EdgeCapacity</code></a> for capacities providing edge devices</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Each capacity type will require different properties to ensure successful deployment.
+Click on the capacity type in the list above to see what properties are required.</p>
+</div>
+<p>In the below example <code>UoW-EC2</code> will extend the generic <code>EC2Capacity</code> with capabilities and
+properties that are specific to instance types from the University of Westminster AWS
+provision. We will use this type to simplify our definition of concrete instances later.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># (1)!</span>
+<span class="nt">node_types</span><span class="p">:</span>
+
+<span class="w">  </span><span class="nt">UoW-EC2</span><span class="p">:</span><span class="w"> </span><span class="c1"># (2)!</span>
+<span class="w">    </span><span class="nt">derived_from</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">swch:EC2Capacity</span><span class="w"> </span><span class="c1"># (3)!</span>
+
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span><span class="w"> </span><span class="c1"># (4)!</span>
+<span class="w">      </span><span class="no">Blueprint for an EC2 compute node from the UoW provision</span>
+</code></pre></div>
+<ol>
+<li>This is a top-level key. If you are familiar with the SAT, note we are not yet in a <code>service_template</code>.</li>
+<li>A name for this base node type, which you will reference later.</li>
+<li>The type tells the orchestrator that this represents a resource capacity.</li>
+<li>A <code>description</code> is <em>optional</em>. The <code>&gt;</code> is YAML syntax for multi-line strings.</li>
+</ol>
+<h3 id="define-common-properties">Define Common Properties</h3>
+<p>Properties provide the configuration required for deploying or configuring
+resources. Where these are common across instances in your capacity, it is
+recommended to bake them into the base resource type. In the example below, we
+set defaults for <code>region_name</code> and <code>image_id</code>, since all instances from our
+provision are deployed in the same region and use the same Amazon Machine Image.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Recall that each capacity type will <em>require</em> certain properties. Not all
+required properties need to be defined here - some will be defined later
+when authoring concrete instances.</p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="nt">node_types</span><span class="p">:</span><span class="w"> </span><span class="c1"># (1)!</span>
+<span class="w">  </span><span class="nt">UoW-EC2</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">derived_from</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">swch:EC2Capacity</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
+<span class="w">      </span><span class="no">Blueprint for an EC2 compute node from the UoW provision</span>
+
+<span class="w">    </span><span class="nt">properties</span><span class="p">:</span>
+
+<span class="w">      </span><span class="nt">region_name</span><span class="p">:</span><span class="w"> </span><span class="c1"># (2)!</span>
+<span class="w">        </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
+
+<span class="w">      </span><span class="nt">image_id</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ami-0c02fb55956c7d316</span>
+</code></pre></div>
+<ol>
+<li>As above.</li>
+<li>We can set defaults for multiple properties like so.</li>
+</ol>
+<h3 id="define-common-capabilities">Define Common Capabilities</h3>
+<p>Capabilities describe the attributes of a cloud instance or edge device.
+These are used during matchmaking to assign the appropriate resource to
+host the microservices of an application.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">node_types</span><span class="p">:</span><span class="w"> </span><span class="c1"># (1)!</span>
+<span class="w">  </span><span class="nt">UoW-EC2</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">derived_from</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">swch:EC2Capacity</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
+<span class="w">      </span><span class="no">Blueprint for an EC2 compute node from the UoW provision</span>
+<span class="w">    </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">region_name</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
+<span class="w">      </span><span class="nt">image_id</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ami-0c02fb55956c7d316</span>
+
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+
+<span class="w">      </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="c1"># (2)!</span>
+<span class="w">        </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">type</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">linux</span>
+<span class="w">          </span><span class="nt">version</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;22.04&quot;</span>
+<span class="w">          </span><span class="nt">distribution</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu</span>
+
+<span class="w">      </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="c1"># (3)!</span>
+<span class="w">        </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">capacity-provider</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uow</span>
+
+<span class="w">      </span><span class="nt">locality</span><span class="p">:</span><span class="w"> </span><span class="c1"># (4)!</span>
+<span class="w">        </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">continent</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">N.America</span>
+<span class="w">          </span><span class="nt">country</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">USA</span>
+<span class="w">          </span><span class="nt">city</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">N.Virginia</span>
+</code></pre></div>
+<ol>
+<li>As above.</li>
+<li>Here we describe the operating system set by our default <code>image_id</code>.</li>
+<li>We set ourselves as the <code>capacity-provider</code>.</li>
+<li>Describing the location of the default region we have set in this blueprint.</li>
+</ol>
+<h2 id="derive-specific-instance-flavours">Derive Specific Instance Flavours</h2>
+<p>Derive specific instance types from the base to encode size-specific defaults. Override only what differs. Typically, with cloud instances, this will always be the <em>instance type</em> as well as the capabilities that are specific to that type, such as host hardware, price, and energy. However,
+it may be necessary to set other properties or capabilities depending on your specific case.</p>
+<div class="admonition important">
+<p class="admonition-title">Capacity by Flavour</p>
+<p>At this time, you may specify the number of available instances of this specific
+flavour, by specifying the <code>instances</code> property on the <code>capacity</code> capability. See
+the note on <strong>Overall Capacity</strong> below if you are limited not by number of instances,
+but by hardware.</p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="nt">service_template</span><span class="p">:</span>
+
+<span class="w">  </span><span class="nt">node_templates</span><span class="p">:</span><span class="w"> </span><span class="c1"># (1)!</span>
+
+<span class="w">    </span><span class="nt">t3-micro</span><span class="p">:</span><span class="w"> </span><span class="c1"># (2)!</span>
+
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">UoW-EC2</span><span class="w"> </span><span class="c1"># (3)!</span>
+
+<span class="w">      </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">instance_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">t3.micro</span><span class="w"> </span><span class="c1"># (4)!</span>
+
+<span class="w">      </span><span class="nt">capabilities</span><span class="p">:</span><span class="w"> </span>
+
+<span class="w">        </span><span class="nt">capacity</span><span class="p">:</span><span class="w"> </span><span class="c1"># (5)!</span>
+<span class="w">          </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">instances</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+
+<span class="w">        </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="c1"># (6)!</span>
+<span class="w">          </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">num-cpus</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">            </span><span class="nt">mem-size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">            </span><span class="nt">disk-size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span>
+<span class="w">            </span><span class="nt">bandwidth</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+<span class="w">        </span><span class="nt">pricing</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">cost</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0139</span>
+<span class="w">        </span><span class="nt">energy</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">consumption</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">13.0</span>
+</code></pre></div>
+<ol>
+<li>These will already exist if you specified OverallCapacity in the step above.</li>
+<li>A name for the resource your are offering.</li>
+<li>Using the base resource type we defined above.</li>
+<li>Configuration options for this specific resource - here only the EC2 <code>instance_type</code>.</li>
+<li>Specifying the number of available instances of this flavour.</li>
+<li>The rest of the capabilities according to the chosen <code>instance_type</code>.</li>
+</ol>
+<p id="cdt-overall-capacity">Repeat for other flavours changing type, CPU, memory, disk, bandwidth, cost, and
+energy to match the resource you provide.</p>
+<details class="important">
+<summary>Overall Capacity</summary>
+<p>If the amount of resource you can provide from this capacity is limited by
+hardware, you should specify an <a href="../capacity/#overallcapacity"><code>OverallCapacity</code></a>,
+indicating the total CPU, memory, disk and/or bandwidth available. This sits
+under <code>node_templates</code> and is by convention the first node in your <code>CDT</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">service_template</span><span class="p">:</span>
+
+<span class="w">  </span><span class="nt">node_templates</span><span class="p">:</span>
+
+<span class="w">    </span><span class="nt">MyOverall</span><span class="p">:</span><span class="w"> </span><span class="c1"># (1)!</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">swch:OverallCapacity</span>
+
+<span class="w">      </span><span class="nt">capabilities</span><span class="p">:</span><span class="w"> </span><span class="c1"># (2)!</span>
+<span class="w">        </span><span class="nt">capacity</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">num-cpus</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">40</span>
+<span class="w">            </span><span class="nt">mem-size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">            </span><span class="nt">disk</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span>
+</code></pre></div>
+<ol>
+<li>The name of this node can be anything you choose, but you must refer to the <code>OverallCapacity</code> node from the profile.</li>
+<li>Specify the total amounts of resource available under the <code>capacity</code> key.</li>
+</ol>
+</details>
+<h2 id="edge">Edge</h2>
+<p>Edge nodes are defined in the same way, just use the <code>EdgeCapacity</code> type from the
+profile to create these. Here is a small example:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">node_types</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">UoW-rPi</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">derived_from</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">swch:EdgeCapacity</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
+<span class="w">      </span><span class="no">A Raspberry Pi edge node from the University of Westminster</span>
+<span class="w">    </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">ssh_user</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">host</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">num-cpus</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+<span class="w">          </span><span class="nt">mem-size</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">16</span>
+<span class="w">          </span><span class="nt">disk-size</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span>
+<span class="w">          </span><span class="nt">bandwidth</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">      </span><span class="nt">pricing</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">cost</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.00</span>
+<span class="w">      </span><span class="nt">energy</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">consumption</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.01</span>
+
+<span class="nt">service_template</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">node_templates</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">device-1</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">UoW-rPi</span>
+<span class="w">      </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">ip</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">172.12.1.1</span>
+
+<span class="w">    </span><span class="nt">device-2</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">UoW-rPi</span>
+<span class="w">      </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">ip</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">172.12.1.2</span>
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "content.code.annotate", "navigation.expand", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.top"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
