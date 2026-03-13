@@ -292,6 +292,8 @@ node_types:
     derived_from: Capacity
     properties:
       ip:
+        metadata:
+          alias: edge_device_ip
         type: string
         required: false
         description: IP of edge node
@@ -320,6 +322,8 @@ node_types:
       A Nova compute node from OpenStack
     properties:
       image_id:
+        metadata:
+          alias: openstack_image_id
         type: string
         required: true
         description: >
@@ -330,6 +334,8 @@ node_types:
         description: >
           The ID of the network connected by this instance
       flavor_name:
+        metadata:
+          alias: openstack_flavor_name
         type: string
         required: true
         description: >
