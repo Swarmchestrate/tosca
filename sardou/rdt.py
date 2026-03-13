@@ -5,6 +5,7 @@ from ruamel.yaml import YAML
 rdt_yaml = YAML()
 rdt_yaml.default_flow_style = False
 
+
 def generate_rdt(template, selected_offer: dict, output_path: str = "rdt.yaml") -> dict:
 
     rdt = copy.deepcopy(template.raw._to_dict())
@@ -26,7 +27,7 @@ def generate_rdt(template, selected_offer: dict, output_path: str = "rdt.yaml") 
 
     new_node_templates = {}
 
-    for ms_name, ms_data in selected_offer.items():
+    for _, ms_data in selected_offer.items():
         if isinstance(ms_data, dict):
             for offer_key, offer_data in ms_data.items():
                 if not isinstance(offer_data, dict):
@@ -39,6 +40,11 @@ def generate_rdt(template, selected_offer: dict, output_path: str = "rdt.yaml") 
                     raise KeyError(f"res_id '{res_id}' not found in CDT node_templates")
                 node = copy.deepcopy(cdt_nodes[res_id])
                 node["count"] = offer_data.get("count", 1)
+                if "properties" in offer_data:
+                    node["properties"] = {
+                        **offer_data["properties"],
+                        **node.get("properties", {}),
+                    }
                 new_node_templates[offer_key] = node
 
     rdt["service_template"]["node_templates"] = new_node_templates
