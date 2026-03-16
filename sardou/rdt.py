@@ -39,7 +39,7 @@ def generate_rdt(template, selected_offer: dict, output_path: str = "rdt.yaml") 
             if provider_suffix and res_id.endswith(f"-{provider_suffix}"):
                 flavor_raw = res_id[: -(len(provider_suffix) + 1)]
             else:
-                flavor_raw = res_id.rsplit("-", 1)[0]
+                flavor_raw = res_id
 
             instance_type = flavor_raw.replace("-", ".")
 
