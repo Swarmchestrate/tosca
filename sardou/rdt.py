@@ -19,7 +19,9 @@ def generate_rdt(template, selected_offer: dict, output_path: str = "rdt.yaml") 
     except KeyError:
         raise ValueError("Invalid CDT: 'node_templates' not found")
 
+    cdt_node_types = source.get("node_types", {})
     new_node_templates = {}
+    used_local_types = set()
 
     for ms_name, ms_data in selected_offer.items():
         if not isinstance(ms_data, dict):
@@ -34,7 +36,6 @@ def generate_rdt(template, selected_offer: dict, output_path: str = "rdt.yaml") 
             if not res_id:
                 continue
 
-            # Normalize res_id
             provider_suffix = ids.get("provider_id", "")
             if provider_suffix and res_id.endswith(f"-{provider_suffix}"):
                 flavor_raw = res_id[: -(len(provider_suffix) + 1)]
@@ -58,9 +59,18 @@ def generate_rdt(template, selected_offer: dict, output_path: str = "rdt.yaml") 
             if not node_key:
                 raise KeyError(f"No CDT node matches instance type derived from res_id '{res_id}'")
 
-            node = {"type": cdt_nodes[node_key]["type"]}
-
+            node_type = cdt_nodes[node_key]["type"]
+            node = {"type": node_type}
             new_node_templates[offer_key] = node
+
+            if node_type in cdt_node_types:
+                used_local_types.add(node_type)
+
+    if used_local_types:
+        rdt["node_types"] = {
+            type_name: {"derived_from": cdt_node_types[type_name]["derived_from"]}
+            for type_name in used_local_types
+        }
 
     rdt["service_template"] = {"node_templates": new_node_templates}
 
