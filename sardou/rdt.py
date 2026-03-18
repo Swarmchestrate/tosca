@@ -18,21 +18,7 @@ def _validate_offer_against_cdt(selected_offer: dict, cdt_nodes: dict) -> None:
             if not res_id:
                 continue
 
-            provider_suffix = ids.get("provider_id", "")
-            if provider_suffix and res_id.endswith(f"-{provider_suffix}"):
-                flavor_raw = res_id[: -(len(provider_suffix) + 1)]
-            else:
-                flavor_raw = res_id
-
-            instance_type = flavor_raw.replace("-", ".")
-
-            flavor_match = any(
-                (node.get("properties", {}).get("flavor_name") or node.get("properties", {}).get("instance_type")) == instance_type
-                for node in cdt_nodes.values()
-            )
-            key_match = res_id in cdt_nodes
-
-            if not flavor_match and not key_match:
+            if res_id not in cdt_nodes:
                 raise KeyError(
                     f"CDT validation failed: res_id '{res_id}' from offer '{offer_key}' "
                     f"does not match any node in the CDT. "
@@ -74,31 +60,7 @@ def generate_rdt(template, selected_offer: dict, output_path: str = "rdt.yaml") 
             if not res_id:
                 continue
 
-            provider_suffix = ids.get("provider_id", "")
-            if provider_suffix and res_id.endswith(f"-{provider_suffix}"):
-                flavor_raw = res_id[: -(len(provider_suffix) + 1)]
-            else:
-                flavor_raw = res_id
-
-            instance_type = flavor_raw.replace("-", ".")
-
-            # 1. Match by flavor_name or instance_type property
-            node_key = None
-            for k, node in cdt_nodes.items():
-                props = node.get("properties", {})
-                flavor = props.get("flavor_name") or props.get("instance_type")
-                if not flavor:
-                    continue
-                if flavor == instance_type:
-                    node_key = k
-                    break
-
-            # 2. Match by node key directly against res_id (e.g. edge devices)
-            if not node_key and res_id in cdt_nodes:
-                node_key = res_id
-
-            if not node_key:
-                raise KeyError(f"No CDT node matches instance type derived from res_id '{res_id}'")
+            node_key = res_id
 
             node_type = cdt_nodes[node_key]["type"]
             node = copy.deepcopy(cdt_nodes[node_key])
@@ -120,7 +82,6 @@ def generate_rdt(template, selected_offer: dict, output_path: str = "rdt.yaml") 
 
     rdt["service_template"] = {"node_templates": new_node_templates}
 
-    # To preserve the structure of TOSCA template
     with open(output_path, "w") as f:
         rdt_yaml.width = 4096
         for key, value in rdt.items():
