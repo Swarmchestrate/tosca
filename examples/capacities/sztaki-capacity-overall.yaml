@@ -91,7 +91,7 @@ service_template:
             num-cpus: 40
             mem-size: 1000
 
-    m2-medium-sztaki:
+    m2-medium:
       type: SZTAKIBase
       properties:
         flavor_name: m2.medium
@@ -108,7 +108,7 @@ service_template:
           properties:
             consumption: 0.10
 
-    m2-small-sztaki:
+    m2-small:
       type: SZTAKIBase
       properties:
         flavor_name: m2.small
@@ -122,15 +122,15 @@ service_template:
           properties:
             consumption: 0.10
 
-    specific-small-sztaki:
+    m2-large:
       type: SZTAKIBase
       properties:
-        flavor_name: m2.small
+        flavor_name: m2.large
         key_name: fuelics
       capabilities:
         host:
           properties:
-            num-cpus: 2
+            num-cpus: 4
             mem-size: 4
         resource:
           properties:
