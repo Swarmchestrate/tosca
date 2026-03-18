@@ -44,23 +44,26 @@ def generate_rdt(template, selected_offer: dict, output_path: str = "rdt.yaml") 
 
             instance_type = flavor_raw.replace("-", ".")
 
+            # Strategy 1: match by flavor_name or instance_type property
             node_key = None
             for k, node in cdt_nodes.items():
                 props = node.get("properties", {})
                 flavor = props.get("flavor_name") or props.get("instance_type")
-
                 if not flavor:
                     continue
-
                 if flavor == instance_type:
                     node_key = k
                     break
+
+            # Strategy 2: match by node key directly against res_id (e.g. edge devices)
+            if not node_key and res_id in cdt_nodes:
+                node_key = res_id
 
             if not node_key:
                 raise KeyError(f"No CDT node matches instance type derived from res_id '{res_id}'")
 
             node_type = cdt_nodes[node_key]["type"]
-            node = {"type": node_type}
+            node = copy.deepcopy(cdt_nodes[node_key])
             new_node_templates[offer_key] = node
 
             if node_type in cdt_node_types:
@@ -68,7 +71,7 @@ def generate_rdt(template, selected_offer: dict, output_path: str = "rdt.yaml") 
 
     if used_local_types:
         rdt["node_types"] = {
-            type_name: {"derived_from": cdt_node_types[type_name]["derived_from"]}
+            type_name: copy.deepcopy(cdt_node_types[type_name])
             for type_name in used_local_types
         }
 
