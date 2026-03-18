@@ -32,7 +32,7 @@ def _validate_offer_against_cdt(selected_offer: dict, cdt_nodes: dict) -> None:
             key_match = res_id in cdt_nodes
 
             if not flavor_match and not key_match:
-                raise ValueError(
+                raise KeyError(
                     f"CDT validation failed: res_id '{res_id}' from offer '{offer_key}' "
                     f"does not match any node in the CDT. "
                     f"The CDT may have been modified since this offer was generated."
