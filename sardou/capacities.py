@@ -20,6 +20,14 @@ def _is_overall(node: dict) -> bool:
     return any("OverallCapacity" in type_name for type_name in types.keys())
 
 
+def _get_res_key(node: dict) -> str:
+    res_type = _unwrap(
+        node.get("capabilities", {}).get("resource", {}).get("properties", {}).get("type", {})
+    ) or ""
+
+    return "edge" if "edge" in res_type.lower() else "flavour"
+
+
 def extract_capacities(processed_nodes: dict):
     flavour_definition = {}
     capacity_by = {}
