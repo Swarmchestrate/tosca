@@ -1,8 +1,42 @@
-import copy
 from ruamel.yaml import YAML
+import copy
 
 rdt_yaml = YAML()
 rdt_yaml.default_flow_style = False
+
+
+def _validate_offer_against_cdt(selected_offer: dict, cdt_nodes: dict) -> None:
+    for ms_name, ms_data in selected_offer.items():
+        if not isinstance(ms_data, dict):
+            continue
+        for offer_key, offer_data in ms_data.items():
+            if not isinstance(offer_data, dict):
+                continue
+            ids = offer_data.get("ids", {})
+            res_id = ids.get("res_id")
+            if not res_id:
+                continue
+
+            provider_suffix = ids.get("provider_id", "")
+            if provider_suffix and res_id.endswith(f"-{provider_suffix}"):
+                flavor_raw = res_id[: -(len(provider_suffix) + 1)]
+            else:
+                flavor_raw = res_id
+
+            instance_type = flavor_raw.replace("-", ".")
+
+            flavor_match = any(
+                (node.get("properties", {}).get("flavor_name") or node.get("properties", {}).get("instance_type")) == instance_type
+                for node in cdt_nodes.values()
+            )
+            key_match = res_id in cdt_nodes
+
+            if not flavor_match and not key_match:
+                raise ValueError(
+                    f"CDT validation failed: res_id '{res_id}' from offer '{offer_key}' "
+                    f"does not match any node in the CDT. "
+                    f"The CDT may have been modified since this offer was generated."
+                )
 
 
 def generate_rdt(template, selected_offer: dict, output_path: str = "rdt.yaml") -> dict:
@@ -19,6 +53,8 @@ def generate_rdt(template, selected_offer: dict, output_path: str = "rdt.yaml") 
         cdt_nodes = source.get("service_template", {})["node_templates"]
     except KeyError:
         raise ValueError("Invalid CDT: 'node_templates' not found")
+
+    _validate_offer_against_cdt(selected_offer, cdt_nodes)
 
     cdt_node_types = source.get("node_types", {})
     new_node_templates = {}
