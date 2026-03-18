@@ -1,17 +1,18 @@
-def _unwrap(v):
-    if isinstance(v, dict):
-        if "$primitive" in v:
-            return v["$primitive"]
-        if "$list" in v:
-            return [_unwrap(x) for x in v["$list"]]
-        if "$map" in v:
-            return {
-                _unwrap(entry["$key"]): _unwrap(
-                    {k: x for k, x in entry.items() if k != "$key"}
-                )
-                for entry in v["$map"]
-            }
-    return v
+def _unwrap(value):
+    if isinstance(value, dict):
+        if "$primitive" in value:
+            return value["$primitive"]
+        if "$list" in value:
+            return [_unwrap(item) for item in value["$list"]]
+        if "$map" in value:
+            return dict(_unwrap_map_entry(entry) for entry in value["$map"])
+    return value
+
+
+def _unwrap_map_entry(entry):
+    key = _unwrap(entry["$key"])
+    value = _unwrap({k: v for k, v in entry.items() if k != "$key"})
+    return key, value
 
 
 def _is_overall(node: dict) -> bool:
