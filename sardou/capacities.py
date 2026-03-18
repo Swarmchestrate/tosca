@@ -29,41 +29,36 @@ def _get_res_key(node: dict) -> str:
 
 
 def extract_capacities(processed_nodes: dict):
-    flavour_definition = {}
     capacity_by = {}
     capacities = {}
     overall = None
 
-    for _, node in processed_nodes.items():
-        if _is_overall(node):
-            cap_props = (
-                node.get("capabilities", {}).get("capacity", {}).get("properties", {})
-                or {}
-            )
-            overall = {k: _unwrap(v) for k, v in cap_props.items()}
-            break
-
     for name, node in processed_nodes.items():
+        caps = node.get("capabilities", {}) or {}
         if _is_overall(node):
+            cap_props = caps.get("capacity", {}).get("properties", {})
+            overall = {k: _unwrap(v) for k, v in cap_props.items()}
             continue
 
-        caps = node.get("capabilities", {}) or {}
-        flavour_definition[name] = {}
+        res_key = _get_res_key(node)
+        capacities.setdefault(res_key, {})[name] = {}
         for cap_name, cap in caps.items():
             props = cap.get("properties", {}) or {}
             if props and cap_name != "capacity":
-                flavour_definition[name][cap_name] = {
+                capacities[res_key][name][cap_name] = {
                     k: _unwrap(v) for k, v in props.items()
                 }
 
-    if overall is not None:
-        capacities = {"flavour": flavour_definition, "capacity_raw": overall}
-    else:
-        for name, node in processed_nodes.items():
-            caps = node.get("capabilities", {}) or {}
-            inst = caps.get("capacity", {}).get("properties", {}).get("instances")
+        if overall is not None:
+            continue
+        inst = caps.get("capacity", {}).get("properties", {}).get("instances")
+        if res_key == "flavour":
             capacity_by[name] = _unwrap(inst) if inst is not None else 1
 
-        capacities = {"flavour": flavour_definition, "capacity_flavour": capacity_by}
+    if capacity_by:
+        capacities["capacity_flavour"] = capacity_by
+
+    if overall is not None:
+        capacities["capacity_raw"] = overall
 
     return capacities
