@@ -479,8 +479,8 @@ class TestExtractCapacities:
             )
         }
         result = extract(nodes)
-        assert "capacity_flavour" in result
-        assert result["capacity_flavour"]["small"] == 3
+        assert "cloud_capacity_flavour" in result
+        assert result["cloud_capacity_flavour"]["small"] == 3
 
     def test_overall_based_returns_capacity_raw(self, extract):
         nodes = {
@@ -490,8 +490,8 @@ class TestExtractCapacities:
             )
         }
         result = extract(nodes)
-        assert "capacity_raw" in result
-        assert result["capacity_raw"]["total"] == 100
+        assert "cloud_capacity_raw" in result
+        assert result["cloud_capacity_raw"]["total"] == 100
 
     def test_flavour_dict_populated(self, extract):
         nodes = {
@@ -501,12 +501,12 @@ class TestExtractCapacities:
             )
         }
         result = extract(nodes)
-        assert "medium" in result["flavour"]
-        assert result["flavour"]["medium"]["host"]["mem-size"] == "4"
+        assert "medium" in result["cloud_flavours"]
+        assert result["cloud_flavours"]["medium"]["host"]["mem-size"] == "4"
 
     def test_empty_nodes_returns_empty_flavour(self, extract):
         result = extract({})
-        assert result["flavour"] == {}
+        assert "cloud_flavours" not in result
 
     def test_overall_node_excluded_from_flavour(self, extract):
         nodes = {
@@ -516,7 +516,7 @@ class TestExtractCapacities:
             )
         }
         result = extract(nodes)
-        assert "overall" not in result["flavour"]
+        assert ("cloud_flavours" not in result) or ("overall" not in result["cloud_flavours"])
 
 
 # ---------------------------------------------------------------------------
@@ -555,7 +555,7 @@ class TestSardouCDTAPI:
     def test_get_capacities_returns_dict(self, cloud_overall, mode):
         caps = cloud_overall.get_capacities()
         assert isinstance(caps, dict)
-        assert "flavour" in caps
+        assert "cloud_flavours" in caps
 
     def test_get_capacities_raises_on_sat(self, mode):
         """get_capacities() must raise TypeError when called on a SAT."""
@@ -666,25 +666,51 @@ class TestSATTemplateOutput:
 class TestCDTTemplateOutput:
     """Verify that CDT templates produce meaningful, non-empty capacities."""
 
-    @pytest.fixture(params=["cloud-overall.yaml", "cloud-instances.yaml", "edge.yaml"])
+    @pytest.fixture(params=["cloud-overall.yaml", "cloud-instances.yaml"])
     def cdt(self, request, mode):
         return _load_sardou(CDT_DIR / request.param, mode)
+
+    @pytest.fixture()
+    def edge_cdt(self, mode):
+        return _load_sardou(CDT_DIR / "edge.yaml", mode)
 
     def test_capacities_non_empty(self, cdt, mode):
         caps = cdt.get_capacities()
         assert caps, "CDT should produce non-empty capacities"
 
-    def test_capacities_have_flavour(self, cdt, mode):
+    def test_capacities_have_cloud_flavours(self, cdt, mode):
         caps = cdt.get_capacities()
-        assert "flavour" in caps
-        assert caps["flavour"], "CDT flavour dict should be non-empty"
+        assert "cloud_flavours" in caps
+        assert caps["cloud_flavours"], "CDT cloud_flavours dict should be non-empty"
+
+    def test_edge_capacities_have_edge_instances(self, edge_cdt, mode):
+        caps = edge_cdt.get_capacities()
+        assert "edge_instances" in caps
+        assert caps["edge_instances"], "CDT edge_instances dict should be non-empty"
 
     def test_flavour_entries_have_properties(self, cdt, mode):
         caps = cdt.get_capacities()
-        for flavour_name, flavour in caps["flavour"].items():
+        for flavour_name, flavour in caps["cloud_flavours"].items():
             assert flavour, (
                 f"Flavour '{flavour_name}' should have at least one capability"
             )
+
+    def test_edge_flavour_entries_have_properties(self, edge_cdt, mode):
+        caps = edge_cdt.get_capacities()
+        for flavour_name, edge in caps["edge_instances"].items():
+            assert edge, f"Edge '{flavour_name}' should have at least one capability"
+
+    def test_cloud_flavour_capacity(self, cdt, mode):
+        caps = cdt.get_capacities()
+        assert caps.get("cloud_capacity_flavour") or caps.get("cloud_capacity_raw"), (
+            "Cloud CDT should have a cloud_capacity_"
+        )
+
+    def test_edge_flavour_capacity_is_empty(self, edge_cdt, mode):
+        caps = edge_cdt.get_capacities()
+        assert not caps.get("cloud_capacity_flavour"), (
+            "Edge CDT should not have cloud_capacity_flavour"
+        )
 
 
 OFFER_DIR = Path(__file__).parent / "templates" / "offer"

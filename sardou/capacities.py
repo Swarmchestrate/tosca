@@ -1,60 +1,69 @@
-def _unwrap(v):
-    if isinstance(v, dict):
-        if "$primitive" in v:
-            return v["$primitive"]
-        if "$list" in v:
-            return [_unwrap(x) for x in v["$list"]]
-        if "$map" in v:
-            return {
-                _unwrap(entry["$key"]): _unwrap(
-                    {k: x for k, x in entry.items() if k != "$key"}
-                )
-                for entry in v["$map"]
-            }
-    return v
+_CAPACITY_KEY = "capacity"
+
+
+def _unwrap(value):
+    if isinstance(value, dict):
+        if "$primitive" in value:
+            return value["$primitive"]
+        if "$list" in value:
+            return [_unwrap(item) for item in value["$list"]]
+        if "$map" in value:
+            return dict(_unwrap_map_entry(entry) for entry in value["$map"])
+    return value
+
+
+def _unwrap_map_entry(entry):
+    key = _unwrap(entry["$key"])
+    value = _unwrap({k: v for k, v in entry.items() if k != "$key"})
+    return key, value
 
 
 def _is_overall(node: dict) -> bool:
     types = node.get("types") or {}
-    return any("OverallCapacity" in type_name for type_name in types.keys())
+    return any("OverallCapacity" in type_name for type_name in types)
 
 
-def extract_capacities(processed_nodes: dict):
-    flavour_definition = {}
+def _get_res_key(node: dict) -> str:
+    res_type = _unwrap(
+        node.get("capabilities", {}).get("resource", {}).get("properties", {}).get("type", {})
+    ) or ""
+
+    return "edge_instances" if "edge" in res_type.lower() else "cloud_flavours"
+
+
+def _process_node(name, node, capabilities, capacities, capacity_by):
+    res_key = _get_res_key(node)
+    capacities.setdefault(res_key, {})[name] = {}
+
+    for cap_name, capability in capabilities.items():
+        props = capability.get("properties", {}) or {}
+        if props and cap_name != _CAPACITY_KEY:
+            capacities[res_key][name][cap_name] = {
+                k: _unwrap(v) for k, v in props.items()
+            }
+
+    instances = capabilities.get(_CAPACITY_KEY, {}).get("properties", {}).get("instances")
+    if res_key == "cloud_flavours":
+        capacity_by[name] = _unwrap(instances) if instances is not None else 1
+
+
+def extract_capacities(processed_nodes: dict) -> dict:
     capacity_by = {}
     capacities = {}
     overall = None
 
-    for _, node in processed_nodes.items():
-        if _is_overall(node):
-            cap_props = (
-                node.get("capabilities", {}).get("capacity", {}).get("properties", {})
-                or {}
-            )
-            overall = {k: _unwrap(v) for k, v in cap_props.items()}
-            break
-
     for name, node in processed_nodes.items():
+        capabilities = node.get("capabilities", {}) or {}
         if _is_overall(node):
+            cap_props = capabilities.get(_CAPACITY_KEY, {}).get("properties", {})
+            overall = {k: _unwrap(v) for k, v in cap_props.items()}
             continue
 
-        caps = node.get("capabilities", {}) or {}
-        flavour_definition[name] = {}
-        for cap_name, cap in caps.items():
-            props = cap.get("properties", {}) or {}
-            if props and cap_name != "capacity":
-                flavour_definition[name][cap_name] = {
-                    k: _unwrap(v) for k, v in props.items()
-                }
+        _process_node(name, node, capabilities, capacities, capacity_by)
 
     if overall is not None:
-        capacities = {"flavour": flavour_definition, "capacity_raw": overall}
-    else:
-        for name, node in processed_nodes.items():
-            caps = node.get("capabilities", {}) or {}
-            inst = caps.get("capacity", {}).get("properties", {}).get("instances")
-            capacity_by[name] = _unwrap(inst) if inst is not None else 1
-
-        capacities = {"flavour": flavour_definition, "capacity_flavour": capacity_by}
+        capacities["cloud_capacity_raw"] = overall
+    elif capacity_by:
+        capacities["cloud_capacity_flavour"] = capacity_by
 
     return capacities
