@@ -1,4 +1,5 @@
 import copy
+
 from ruamel.yaml import YAML
 
 rdt_yaml = YAML()
