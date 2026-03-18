@@ -687,20 +687,32 @@ class TestCDTTemplateOutput:
             )
 
 
+OFFER_DIR = Path(__file__).parent / "templates" / "offer"
+
+_rdt_scenarios = [
+    ("cloud-instances", "cloud-instances.yaml", "offer-cloud.yaml"),
+    ("cloud-overall", "cloud-overall.yaml", "offer-cloud.yaml"),
+    ("edge", "edge.yaml", "offer-edge.yaml"),
+]
+
+
 @requires_puccini
+@pytest.mark.parametrize(
+    "cdt_file, offer_file",
+    [(c, o) for _, c, o in _rdt_scenarios],
+    ids=[name for name, _, _ in _rdt_scenarios],
+)
 class TestSardouRDTAPI:
     """Tests for RDT generation from a CDT and a selected offer."""
 
-    OFFER_PATH = Path(__file__).parent / "templates" / "offer" / "sample-offer.json"
-    CDT_PATH = Path(__file__).parent / "templates" / "cdt" / "cloud-overall.yaml"
+    @pytest.fixture
+    def cdt(self, cdt_file):
+        return Sardou(str(CDT_DIR / cdt_file))
 
     @pytest.fixture
-    def cdt(self):
-        return Sardou(str(self.CDT_PATH))
-
-    @pytest.fixture
-    def offer(self):
-        return json.loads(self.OFFER_PATH.read_text())
+    def offer(self, offer_file):
+        with open(OFFER_DIR / offer_file) as f:
+            return _yaml.load(f)
 
     @pytest.fixture
     def rdt(self, cdt, offer, tmp_path):
@@ -741,7 +753,7 @@ class TestSardouRDTAPI:
     def test_rdt_metadata_has_kind(self, rdt):
         assert rdt.metadata._to_dict().get("kind") == "RDT"
 
-    def test_invalid_res_id_raises(self, cdt):
+    def test_invalid_res_id_raises(self, cdt, offer_file):  # noqa: ARG002
         # Simulate new-offer.json structure with invalid res_id
         bad_offer = {
             "details_v1": {
@@ -751,12 +763,13 @@ class TestSardouRDTAPI:
         with pytest.raises(KeyError):
             cdt.generate_rdt(bad_offer, "/dev/null")
 
-    def test_offer_properties_merged_into_node(self, cdt, tmp_path):
+    def test_offer_properties_merged_into_node(self, cdt, offer_file, tmp_path):  # noqa: ARG002
         """Properties from offer are added to the RDT node."""
+        res_id = next(iter(cdt.nodeTemplates._to_dict()))
         offer = {
             "ms1": {
                 "offer-key": {
-                    "ids": {"res_id": "m2-small"},
+                    "ids": {"res_id": res_id},
                     "count": 1,
                     "properties": {
                         "ingress-rules": [{"from": 80, "to": 80, "protocol": "TCP"}]
@@ -770,14 +783,19 @@ class TestSardouRDTAPI:
         props = rdt.nodeTemplates._to_dict()["offer-key"]["properties"]
         assert "ingress-rules" in props
 
-    def test_offer_properties_do_not_overwrite_cdt_properties(self, cdt, tmp_path):
+    def test_offer_properties_do_not_overwrite_cdt_properties(self, cdt, offer_file, tmp_path):  # noqa: ARG002
         """Existing CDT node properties are not overwritten by offer properties."""
+        cdt_nodes = cdt.nodeTemplates._to_dict()
+        res_id = next(
+            k for k, v in cdt_nodes.items() if v.get("properties")
+        )
+        existing_prop = next(iter(cdt_nodes[res_id]["properties"]))
         offer = {
             "ms1": {
                 "offer-key": {
-                    "ids": {"res_id": "m2-small"},
+                    "ids": {"res_id": res_id},
                     "count": 1,
-                    "properties": {"flavor_name": "OVERWRITTEN"},
+                    "properties": {existing_prop: "OVERWRITTEN"},
                 }
             }
         }
@@ -785,7 +803,7 @@ class TestSardouRDTAPI:
         cdt.generate_rdt(offer, out)
         rdt = Sardou(out)
         props = rdt.nodeTemplates._to_dict()["offer-key"]["properties"]
-        assert props["flavor_name"] != "OVERWRITTEN"
+        assert props[existing_prop] != "OVERWRITTEN"
 
     def test_get_cluster_returns_valid_json(self, rdt):
         cluster_json = rdt.get_cluster()
