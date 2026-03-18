@@ -1,5 +1,5 @@
-from ruamel.yaml import YAML
 import copy
+from ruamel.yaml import YAML
 
 rdt_yaml = YAML()
 rdt_yaml.default_flow_style = False
@@ -119,6 +119,7 @@ def generate_rdt(template, selected_offer: dict, output_path: str = "rdt.yaml") 
 
     rdt["service_template"] = {"node_templates": new_node_templates}
 
+    # To preserve the structure of TOSCA template
     with open(output_path, "w") as f:
         rdt_yaml.width = 4096
         for key, value in rdt.items():
