@@ -117,18 +117,18 @@ service_template:
           properties:
             consumption: 0.10
 
-    specific-small-sztaki:
+    m2-large:
       type: SZTAKIBase
       properties:
-        flavor_name: m2.small
+        flavor_name: m2.large
         key_name: fuelics
       capabilities:
         capacity:
           properties:
-            instances: 1
+            instances: 8
         host:
           properties:
-            num-cpus: 2
+            num-cpus: 4
             mem-size: 4
         resource:
           properties:
