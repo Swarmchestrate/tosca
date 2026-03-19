@@ -1,7 +1,6 @@
 import json
 import os
 
-
 AWS_ALIASES = {
     "provider": "cloud",
     "instance_type": "instance_type",
