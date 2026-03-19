@@ -367,6 +367,10 @@ node_types:
         required: false
         description: >
           OpenStack project ID
+      use_block_device:
+        type: boolean
+        required: false
+        description: Whether to use a block device for the instance.
       ssh_user:
         type: string
         required: false

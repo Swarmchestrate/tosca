@@ -17,7 +17,7 @@ OPENSTACK_ALIASES = {
     "provider": "cloud",
     "image_id": "openstack_image_id",
     "instance_type": "openstack_flavor_id",
-    "flavor_name": "openstack_flavor_id",
+    "openstack_flavor_name": "openstack_flavor_id",
     "ssh_user": "ssh_user",
     "key_name": "ssh_key",
     "use_block_device": "use_block_device",
