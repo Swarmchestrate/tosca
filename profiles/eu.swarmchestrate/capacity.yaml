@@ -304,6 +304,23 @@ node_types:
         description: Map of credentials (e.g. token, basic auth)
         entry_schema: string
 
+      ssh_user:
+        type: string
+        required: false
+        description: >
+          SSH user for accessing the instance.
+
+      key_name:
+        type: string
+        required: false
+        description: >
+          The name of the SSH key pair used to access the instance.
+      
+      ssh_auth_method:
+        type: string
+        required: false
+        description: SSH authentication method (e.g. key, password)
+
     capabilities:
       resource:
         properties:
@@ -350,6 +367,11 @@ node_types:
         required: false
         description: >
           OpenStack project ID
+      ssh_user:
+        type: string
+        required: false
+        description: >
+          SSH user for accessing the instance.
       key_name:
         type: string
         required: false
@@ -385,6 +407,11 @@ node_types:
         required: true
         description: >
           The AWS instance type (e.g., t2.micro) specifying compute resources.
+      ssh_user:
+        type: string
+        required: false
+        description: >
+          SSH user for accessing the instance.
       key_name:
         type: string
         required: false

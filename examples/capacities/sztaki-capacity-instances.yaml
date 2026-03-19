@@ -88,6 +88,7 @@ service_template:
       type: SZTAKIBase
       properties:
         flavor_name: m2.medium
+        ssh_user: ubuntu
         key_name: fuelics
       capabilities:
         capacity:
@@ -105,6 +106,7 @@ service_template:
       type: SZTAKIBase
       properties:
         flavor_name: m2.small
+        ssh_user: ubuntu
         key_name: fuelics
       capabilities:
         host:
@@ -119,6 +121,7 @@ service_template:
       type: SZTAKIBase
       properties:
         flavor_name: m2.large
+        ssh_user: ubuntu
         key_name: fuelics
       capabilities:
         capacity:
