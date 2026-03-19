@@ -73,6 +73,7 @@ service_template:
       properties:
         ami: ami-ubuntu
         instance_type: t2.medium
+        ssh_user: ubuntu
         key_name: g-key
       capabilities:
         capacity:
@@ -98,6 +99,7 @@ service_template:
       properties:
         ami: ami-amalinux
         instance_type: t2.medium
+        ssh_user: ec2-user
         key_name: g-key
       capabilities:
         capacity:
@@ -124,6 +126,7 @@ service_template:
       properties:
         ami: ami-defaultubuntu
         instance_type: t2.large
+        ssh_user: ubuntu
         key_name: g-key
       capabilities:
         capacity:
@@ -150,6 +153,7 @@ service_template:
       properties:
         ami: ami-customuow
         instance_type: t2.large
+        ssh_user: ubuntu
         key_name: g-key
       capabilities:
         capacity:
