@@ -1,14 +1,13 @@
 import json
-import os
 from pathlib import Path
 
 from ruamel.yaml import YAML
 
 from .capacities import extract_capacities
+from .cluster import get_cluster as _get_cluster
 from .rdt import generate_rdt as _generate_rdt
 from .requirements import tosca_to_ask_dict
 from .validation import classify_template, validate_template
-from .cluster import get_cluster as _get_cluster
 
 yaml = YAML(typ="safe")
 
