@@ -1,10 +1,6 @@
 import json
 import os
 
-APP_ALIASES = {
-    "ports": "ports",
-}
-
 
 def get_cluster(rdt, resource_suffix=None):
     def flatten(val):
@@ -32,22 +28,12 @@ def get_cluster(rdt, resource_suffix=None):
     for name, node in rdt.nodeTemplates._to_dict().items():
         types = node.get("types", {})
 
-        if "swch:AbstractResource" in types:
-            print(
-                f"WARNING: Abstract resource '{name}' detected. "
-                f"Please provide concrete resource."
-            )
-
         is_resource = any(
-            t.get("parent", "").endswith(resource_suffix)
-            or k.endswith(resource_suffix)
-            for k, t in types.items()
+            t.get("parent", "").endswith(resource_suffix) or k.endswith(resource_suffix)
+            for k, t in node.get("types", {}).items()
         )
 
-        is_application = any("Application" in k for k in types.keys())
-        is_edge = any("EdgeCapacity" in k for k in types.keys())
-
-        if not (is_resource or is_application):
+        if not is_resource:
             continue
 
         extracted = {}
@@ -96,47 +82,5 @@ def get_cluster(rdt, resource_suffix=None):
                 extract_type_cap_defaults(type_cap.get("capabilities", {}))
 
         resources[name] = extracted
-    # Collect all application ports
-    app_ports = []
-    for props in resources.values():
-        if "ports" in props:
-            app_ports.extend(props["ports"])
-
-    # Inject app ports into custom_ingress_ports
-    for props in resources.values():
-        if "custom_ingress_ports" not in props:
-            continue
-
-        merged = []
-        orig = props["custom_ingress_ports"]
-        if isinstance(orig, dict):
-            merged.append(orig)
-        elif isinstance(orig, list):
-            merged.extend(orig)
-
-        for p in app_ports:
-            if "port" in p:
-                merged.append({
-                    "from": str(p["port"]),
-                    "to": str(p["port"]),
-                    "protocol": "tcp",
-                    "source": "0.0.0.0/0",
-                })
-            if "nodePort" in p:
-                merged.append({
-                    "from": str(p["nodePort"]),
-                    "to": str(p["nodePort"]),
-                    "protocol": "tcp",
-                    "source": "0.0.0.0/0",
-                })
-
-        props["custom_ingress_ports"] = merged
-
-    # Remove application nodes
-    for app in [n for n, p in resources.items() if p.get("_is_application")]:
-        resources.pop(app)
-
-    for props in resources.values():
-        props.pop("_is_application", None)
 
     return json.dumps(resources, indent=2)
