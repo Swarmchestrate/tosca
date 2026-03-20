@@ -90,17 +90,49 @@ from sardou import Sardou # note the uppercase S
 
 ### Validation
 
-To validate a TOSCA template, create a new `Sardou` object, passing it an SAT or CDT.
+To validate a TOSCA template, create a new `Sardou` object, passing it an SAT or CDT
+file path, or the template content directly as a Python dict.
 This will validate the template and complete the representation, inheriting from parent
 types.
 
-```python
->>> sat = Sardou("my_app.yaml")
-Processed successfully: my_app.yaml
+=== "Pass a file path"
 
->>> sat
-{'description': 'stressng on Swarmchestrate', 'nodeTemplates': {'resource-1': {'metadata': {}, 'description': '', 'types': {'eu.swarmchestrate:0.1::EC2.micro.t3': {'description': 'An EC2 compute node from the University of Westminster provision\n', 'parent': 'eu.swarmchestrate:0.1::Resource'} ...
-```
+	```python
+	>>> sat = Sardou("my_app.yaml")
+	Processed successfully: my_app.yaml
+
+	>>> sat
+	{'description': 'stressng on Swarmchestrate', 'nodeTemplates': {'resource-1': {'metadata': {}, 'description': '', 'types': {'eu.swarmchestrate:0.1::EC2.micro.t3': {'description': 'An EC2 compute node from the University of Westminster provision\n', 'parent': 'eu.swarmchestrate:0.1::Resource'} ...
+	```
+
+=== "Pass content directly"
+
+	```python
+
+	# As a Python dict
+	>>> sat_dict = {
+	...     "tosca_definitions_version": "tosca_2_0",
+	...     "imports": [
+	...         {
+	...             "namespace": "swch",
+	...             "url": "https://raw.githubusercontent.com/Swarmchestrate/tosca/refs/heads/main/profiles/eu.swarmchestrate/profile.yaml",
+	...         }
+	...     ],
+	...     "service_template": {
+	...         "node_templates": {
+	...             "myservice": {
+	...                 "type": "swch:Microservice",
+	...                 "properties": {
+	...                     "image": "docker.io/istio/examples-bookinfo-details-v1:1.20.3",
+	...                     "replicas": 1,
+	...                 },
+	...             }
+	...         }
+	...     },
+	... }
+	>>> sat = Sardou(content=sat_dict)
+	Processed successfully
+	```
 
 The template is not resolved at this point (i.e. statisfied requirements and created
 relationships) - that functionality is to come. If there are errors or warnings, they
@@ -232,4 +264,3 @@ You could dump this to JSON or YAML.
 >>> rdt.get_cluster()
 {'resource-1': {'image_id': 'ami-0c02fb291006c7d929', 'instance_type': 't3.micro', 'key_name': 'mykey', 'region_name': 'us-east-1' ...
 ```
-
