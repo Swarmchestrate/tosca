@@ -216,6 +216,11 @@ node_types:
     description: >
       The base type for capacity nodes, representing a provider's offering.
     properties:
+      ssh_user:
+        type: string
+        required: false
+        description: >
+          SSH user for accessing the instance.
       ingress-rules:
         metadata:
           alias: custom_ingress_ports
@@ -304,12 +309,6 @@ node_types:
         description: Map of credentials (e.g. token, basic auth)
         entry_schema: string
 
-      ssh_user:
-        type: string
-        required: false
-        description: >
-          SSH user for accessing the instance.
-
       key_name:
         type: string
         required: false
@@ -371,11 +370,6 @@ node_types:
         type: boolean
         required: false
         description: Whether to use a block device for the instance.
-      ssh_user:
-        type: string
-        required: false
-        description: >
-          SSH user for accessing the instance.
       key_name:
         type: string
         required: false
@@ -411,11 +405,6 @@ node_types:
         required: true
         description: >
           The AWS instance type (e.g., t2.micro) specifying compute resources.
-      ssh_user:
-        type: string
-        required: false
-        description: >
-          SSH user for accessing the instance.
       key_name:
         type: string
         required: false
