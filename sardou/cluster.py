@@ -26,8 +26,6 @@ def get_cluster(rdt, resource_suffix=None):
     resources = {}
 
     for name, node in rdt.nodeTemplates._to_dict().items():
-        types = node.get("types", {})
-
         is_resource = any(
             t.get("parent", "").endswith(resource_suffix) or k.endswith(resource_suffix)
             for k, t in node.get("types", {}).items()
@@ -46,40 +44,6 @@ def get_cluster(rdt, resource_suffix=None):
                 extracted[extracted_key] = flatten(v)
 
         extract_properties(node.get("properties", {}))
-
-        def extract_cap_props(cap_dict):
-            for cap in cap_dict.values():
-                extract_properties(cap.get("properties", {}))
-                if "capabilities" in cap:
-                    extract_cap_props(cap["capabilities"])
-
-        extract_cap_props(node.get("capabilities", {}))
-
-        for type_def in types.values():
-            for k, prop_def in type_def.get("properties", {}).items():
-                if (
-                    k not in extracted
-                    and isinstance(prop_def, dict)
-                    and "default" in prop_def
-                ):
-                    extracted[k] = flatten({"$primitive": prop_def["default"]})
-
-            def extract_type_cap_defaults(cap_dict):
-                for cap in cap_dict.values():
-                    for k, prop_def in cap.get("properties", {}).items():
-                        if (
-                            k not in extracted
-                            and isinstance(prop_def, dict)
-                            and "default" in prop_def
-                        ):
-                            extracted[k] = flatten(
-                                {"$primitive": prop_def["default"]}
-                            )
-                    if "capabilities" in cap:
-                        extract_type_cap_defaults(cap["capabilities"])
-
-            for type_cap in type_def.get("capabilities", {}).values():
-                extract_type_cap_defaults(type_cap.get("capabilities", {}))
 
         resources[name] = extracted
 
