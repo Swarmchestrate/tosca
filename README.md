@@ -100,13 +100,17 @@ from sardou import Sardou # note the uppercase S
 
 ### Validation
 
-To validate a TOSCA template, create a new `Sardou` object, passing it an SAT or CDT.
-This will validate the template and complete the representation, inheriting from parent
-types.
+To validate a TOSCA template, create a new `Sardou` object, passing it an SAT or CDT file path,
+or the template content directly as a [Python dict](https://swarmchestrate.github.io/tosca/sardou/#validation). This will validate the template and complete the representation, inheriting from parent types.
 
 ```python
+# Pass a file path
 >>> sat = Sardou("my_app.yaml")
 Processed successfully: my_app.yaml
+
+# Pass content directly as a Python dict
+>>> sat = Sardou(content="tosca_definitions_version: tosca_2_0\n...")
+Processed successfully
 
 >>> sat
 {'description': 'stressng on Swarmchestrate', 'nodeTemplates': {'resource-1': {'metadata': {}, 'description': '', 'types': {'eu.swarmchestrate:0.1::EC2.micro.t3': {'description': 'An EC2 compute node from the University of Westminster provision\n', 'parent': 'eu.swarmchestrate:0.1::Resource'} ...
