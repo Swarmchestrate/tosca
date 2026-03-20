@@ -1,44 +1,6 @@
 import json
 import os
 
-AWS_ALIASES = {
-    "provider": "cloud",
-    "instance_type": "instance_type",
-    "ssh_user": "ssh_user",
-    "key_name": "ssh_key",
-    "image_id": "ami",
-    "security_group_id": "security_group_id",
-    "security_groups": "security_group_id",
-    "custom_ingress_ports": "custom_ingress_ports",
-    "custom_egress_ports": "custom_egress_ports",
-}
-
-OPENSTACK_ALIASES = {
-    "provider": "cloud",
-    "image_id": "openstack_image_id",
-    "instance_type": "openstack_flavor_id",
-    "openstack_flavor_name": "openstack_flavor_id",
-    "ssh_user": "ssh_user",
-    "key_name": "ssh_key",
-    "use_block_device": "use_block_device",
-    "volume_size": "volume_size",
-    "network_id": "network_id",
-    "floating_ip_pool": "floating_ip_pool",
-    "security_group_id": "security_group_id",
-    "security_groups": "security_group_id",
-    "custom_ingress_ports": "custom_ingress_ports",
-    "custom_egress_ports": "custom_egress_ports",
-}
-
-EDGE_ALIASES = {
-    "provider": "cloud",
-    "ssh_user": "ssh_user",
-    "key_name": "ssh_key",
-    "ssh_auth_method": "ssh_auth_method",
-    "edge_device_ip": "edge_device_ip",
-    "ip": "edge_device_ip",
-}
-
 APP_ALIASES = {
     "ports": "ports",
 }
@@ -133,33 +95,7 @@ def get_cluster(rdt, resource_suffix=None):
             for type_cap in type_def.get("capabilities", {}).values():
                 extract_type_cap_defaults(type_cap.get("capabilities", {}))
 
-        provider = str(extracted.get("provider", "")).lower()
-        compute = str(extracted.get("compute", "")).lower()
-
-        if provider in ["aws", "amazon"] or compute == "ec2":
-            ALIASES = AWS_ALIASES
-        elif provider == "openstack" or compute == "nova":
-            ALIASES = OPENSTACK_ALIASES
-        elif is_edge:
-            ALIASES = EDGE_ALIASES
-        elif is_application:
-            ALIASES = APP_ALIASES
-        else:
-            ALIASES = {}
-
-        DIRECT = set(ALIASES.values())
-
-        final_extracted = {}
-        for k, v in extracted.items():
-            final_key = ALIASES.get(k, k)
-            if final_key in DIRECT or k in ALIASES:
-                final_extracted[final_key] = v
-
-        if is_application:
-            final_extracted["_is_application"] = True
-
-        resources[name] = final_extracted
-
+        resources[name] = extracted
     # Collect all application ports
     app_ports = []
     for props in resources.values():
