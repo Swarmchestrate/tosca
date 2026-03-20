@@ -282,7 +282,12 @@ node_types:
     description: >
       The Swarmchestrate Cloud Capacity Node
     derived_from: Capacity
-
+    properties:
+      cloud:
+        type: string
+        required: true
+        description: >
+          Cloud provider identifier.
     capabilities:
       resource:
         properties:
@@ -301,25 +306,23 @@ node_types:
           alias: edge_device_ip
         type: string
         required: false
-        description: IP of edge node
-        
+        description: IP of edge node        
       credentials:
         type: map
         required: false
         description: Map of credentials (e.g. token, basic auth)
         entry_schema: string
-
       key_name:
+        metadata:
+          alias: ssh_key
         type: string
         required: false
         description: >
           The name of the SSH key pair used to access the instance.
-      
       ssh_auth_method:
         type: string
         required: false
         description: SSH authentication method (e.g. key, password)
-
     capabilities:
       resource:
         properties:
@@ -337,6 +340,10 @@ node_types:
     description: >
       A Nova compute node from OpenStack
     properties:
+      cloud:
+        default: openstack
+        description: >
+          Setting the cloud property default to openstack.
       image_id:
         metadata:
           alias: openstack_image_id
@@ -351,7 +358,7 @@ node_types:
           The ID of the network connected by this instance
       flavor_name:
         metadata:
-          alias: openstack_flavor_name
+          alias: openstack_flavor_id
         type: string
         required: true
         description: >
@@ -371,17 +378,27 @@ node_types:
         required: false
         description: Whether to use a block device for the instance.
       key_name:
+        metadata:
+          alias: ssh_key
         type: string
         required: false
         description: >
           The name of the SSH key pair used to access the instance.
+      security_group:
+        metadata:
+          alias: security_group_id
+        type: string
+        required: false
+        description: >
+          A security group ID that controls inbound and outbound traffic for the instance.
       security_groups:
+        metadata:
+          alias: security_group_ids
         type: list
         required: false
         entry_schema: string
         description: >
           A list of security group IDs that control inbound and outbound traffic for the instance.
-
     capabilities:
       resource:
         properties:
@@ -395,6 +412,10 @@ node_types:
     description: >
       An base EC2 compute node from AWS
     properties:
+      cloud:
+        default: aws
+        description: >
+          Setting the cloud property default to aws.
       ami:
         type: string
         required: true
@@ -406,11 +427,22 @@ node_types:
         description: >
           The AWS instance type (e.g., t2.micro) specifying compute resources.
       key_name:
+        metadata:
+          alias: ssh_key
         type: string
         required: false
         description: >
           The name of the SSH key pair used to access the instance.
+      security_group:
+        metadata:
+          alias: security_group_id
+        type: string
+        required: false
+        description: >
+          A security group ID that controls inbound and outbound traffic for the instance.
       security_groups:
+        metadata:
+          alias: security_group_ids
         type: list
         required: false
         entry_schema: string
