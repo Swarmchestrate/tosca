@@ -1,4 +1,3 @@
-import json
 import os
 
 
@@ -50,4 +49,4 @@ def get_cluster(rdt, resource_suffix=None):
         }
         resources[name] = extracted
 
-    return json.dumps(resources, indent=2)
+    return resources
