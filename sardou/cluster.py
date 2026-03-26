@@ -45,6 +45,9 @@ def get_cluster(rdt, resource_suffix=None):
 
         extract_properties(node.get("properties", {}))
 
+        extracted["node_labels"] = {
+            "labels.swarmchestrate.io/ms_id": node.get("metadata", {}).get("ms_id")
+        }
         resources[name] = extracted
 
     return json.dumps(resources, indent=2)
