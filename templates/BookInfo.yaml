@@ -275,3 +275,27 @@ service_template:
   - reviews_colocation:
       type: swch:Scheduling.Colocation
       targets: [ reviews_v1, reviews_v2, reviews_v3 ]
+
+  - frontend_reconfiguration:
+      type: swch:Reconfiguration
+      properties:
+        constants:
+          cpu_util_threshold: 80.0
+        rule: |
+          if cpu_util_prct > cpu_util_threshold:
+            scale_out(details_v1, productpage_v1)
+          else:
+            pass
+      targets: [ details_v1, productpage_v1 ]
+  
+  - reviews_reconfiguration:
+      type: swch:Reconfiguration
+      properties:
+        constants:
+          cpu_util_threshold: 75.0
+        rule: |
+          if cpu_util_prct > cpu_util_threshold:
+            migrate()
+          else:
+            pass
+      targets: [ reviews_v1, reviews_v2, reviews_v3 ]
