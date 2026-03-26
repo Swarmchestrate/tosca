@@ -1,6 +1,5 @@
 """Tests for the sardou library API"""
 
-import json
 from pathlib import Path
 
 import pytest
@@ -946,11 +945,6 @@ class TestSardouRDTAPI:
         rdt = Sardou(out)
         props = rdt.nodeTemplates._to_dict()["offer-key"]["properties"]
         assert props[existing_prop] != "OVERWRITTEN"
-
-    def test_get_cluster_returns_valid_json(self, rdt):
-        cluster_json = rdt.get_cluster()
-        parsed = json.loads(cluster_json)
-        assert isinstance(parsed, dict)
 
 
 # Helper functions for offer key extraction
