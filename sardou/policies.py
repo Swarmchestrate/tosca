@@ -1,7 +1,9 @@
 from .utils import extract_properties
 
+_PREFIX = "eu.swarmchestrate"
 
-def get_qos(sat):
+
+def _get_policies(sat, suffix):
     if not hasattr(sat, "policies"):
         return {}
 
@@ -10,13 +12,25 @@ def get_qos(sat):
 
     for name, policy in policies.items():
         types = policy.get("types", {})
-        is_qos = any(
-            k.startswith("eu.swarmchestrate") and k.endswith("QoS")
+        match = any(
+            k.startswith(_PREFIX) and k.endswith(suffix)
             for k in types
         )
-        if not is_qos:
+        if not match:
             continue
 
         result[name] = extract_properties(policy.get("properties", {}))
 
     return result
+
+
+def get_qos(sat):
+    return _get_policies(sat, "QoS")
+
+
+def get_reconfiguration(sat):
+    return _get_policies(sat, "Reconfiguration")
+
+
+def get_scheduling(sat):
+    return _get_policies(sat, "Scheduling")

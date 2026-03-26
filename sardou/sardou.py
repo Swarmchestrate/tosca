@@ -7,6 +7,8 @@ from .capacities import extract_capacities
 from .cluster import get_cluster as _get_cluster
 from .monitoring import extract_monitoring as _extract_monitoring
 from .policies import get_qos as _get_qos
+from .policies import get_reconfiguration as _get_reconfiguration
+from .policies import get_scheduling as _get_scheduling
 from .rdt import generate_rdt as _generate_rdt
 from .requirements import tosca_to_ask_dict
 from .validation import (
@@ -104,6 +106,14 @@ class Sardou(DotDict):
     @requires_kind(TemplateKind.SAT)
     def get_qos(self):
         return _get_qos(self)
+
+    @requires_kind(TemplateKind.SAT)
+    def get_reconfiguration(self):
+        return _get_reconfiguration(self)
+
+    @requires_kind(TemplateKind.SAT)
+    def get_scheduling(self):
+        return _get_scheduling(self)
 
     @requires_kind(TemplateKind.CDT)
     def get_capacities(self):
