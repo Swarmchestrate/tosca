@@ -6,6 +6,7 @@ from ruamel.yaml import YAML
 from .capacities import extract_capacities
 from .cluster import get_cluster as _get_cluster
 from .monitoring import extract_monitoring as _extract_monitoring
+from .policies import get_qos as _get_qos
 from .rdt import generate_rdt as _generate_rdt
 from .requirements import tosca_to_ask_dict
 from .validation import (
@@ -101,11 +102,8 @@ class Sardou(DotDict):
         return tosca_to_ask_dict(self.raw._to_dict())
 
     @requires_kind(TemplateKind.SAT)
-    def get_qos(self, indent=None, **kwargs):
-        if not hasattr(self.raw.service_template, "policies"):
-            return []
-        policies = self.raw.service_template.policies
-        return [p._to_dict() if isinstance(p, DotDict) else p for p in policies]
+    def get_qos(self):
+        return _get_qos(self)
 
     @requires_kind(TemplateKind.CDT)
     def get_capacities(self):
@@ -123,3 +121,4 @@ class Sardou(DotDict):
     def get_monitoring(self):
         nodes = self.raw.service_template.node_templates
         return _extract_monitoring(nodes._to_dict())
+
