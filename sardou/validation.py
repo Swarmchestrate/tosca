@@ -1,10 +1,17 @@
 import subprocess
 import sys
+from enum import Enum
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 from ruamel.yaml import YAML
 
+
+class TemplateKind(Enum):
+    SAT = "sat"
+    CDT = "cdt"
+    RDT = "rdt"
+    TDT = "tdt"
 PUCCINI_CMD = "/usr/bin/puccini-tosca"
 PUCCINI_FLAGS = ["-x", "data_types.string.permissive"]
 
@@ -49,17 +56,18 @@ def prevalidate(input_data):
     return data
 
 
-def classify_template(template) -> str:
-    """Classify a parsed template as 'sat', 'cdt', 'rdt', 'tdt'."""
+def classify_template(template) -> TemplateKind:
+    """Classify a parsed template as SAT, CDT, RDT, or TDT."""
 
-    valid_kinds = ["sat", "cdt", "rdt", "tdt"]
-    kind = template._to_dict()["metadata"].get("kind", "").lower()
-    if kind in valid_kinds:
-        return kind
+    kind_str = template._to_dict()["metadata"].get("kind", "").lower()
+    try:
+        return TemplateKind(kind_str)
+    except ValueError:
+        pass
 
     nodes = template.nodeTemplates._to_dict()
     if not nodes:
-        return "tdt"
+        return TemplateKind.TDT
 
     has_capacity = any(
         any(k.endswith("::Capacity") for k in node.get("types", {}))
@@ -76,9 +84,9 @@ def classify_template(template) -> str:
         )
 
     if has_capacity:
-        return "cdt"
+        return TemplateKind.CDT
 
-    return "sat"
+    return TemplateKind.SAT
 
 
 def validate_template(input_data) -> bool:
