@@ -516,7 +516,13 @@ node_types:
           
 policy_types:
 
+  MicroservicePolicy:
+    description: >
+      Base policy type for microservices.
+    targets: [ Microservice ]
+
   Scheduling:
+    derived_from: MicroservicePolicy
     description: >
       Policy type for scheduling.
 
@@ -527,6 +533,7 @@ policy_types:
       Policy type for colocating multiple microservices on a specific host.
 
   Reconfiguration:
+    derived_from: MicroservicePolicy
     description: >
       Policy type for reconfiguring an application at runtime.
     properties:
