@@ -242,5 +242,5 @@ You could dump this to JSON or YAML.
 
 ```python
 >>> rdt.get_cluster()
-{'resource-1': {'image_id': 'ami-0c02fb291006c7d929', 'instance_type': 't3.micro', 'key_name': 'mykey', 'region_name': 'us-east-1' ...
+{'ra-sztaki-cloud-hu_swarm2_details_v1_t2-large-ubuntu-uow': {'ami': 'ami-customuow', 'cloud': 'aws', 'custom_ingress_ports': [{'from': 80, 'protocol': 'TCP', 'to': 80}], 'instance_type': 't2.large', 'ssh_key': 'g-key', 'security_groups': ['0eb63f2b-b656-47a1-a0e7-3da0a993379e'], 'ssh_user': 'ubuntu', 'node_labels': {'labels.swarmchestrate.io/ms_id': 'details_v1'}}, ...
 ```
