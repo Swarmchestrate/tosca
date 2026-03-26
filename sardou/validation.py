@@ -1,6 +1,7 @@
 import subprocess
 import sys
 from enum import Enum
+from functools import wraps
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 
@@ -12,6 +13,21 @@ class TemplateKind(Enum):
     CDT = "cdt"
     RDT = "rdt"
     TDT = "tdt"
+
+
+def requires_kind(kind):
+    def decorator(fn):
+        @wraps(fn)
+        def wrapper(self, *args, **kwargs):
+            if self.kind != kind:
+                raise TypeError(f"{fn.__name__}() requires a {kind.value.upper()}")
+            return fn(self, *args, **kwargs)
+
+        return wrapper
+
+    return decorator
+
+
 PUCCINI_CMD = "/usr/bin/puccini-tosca"
 PUCCINI_FLAGS = ["-x", "data_types.string.permissive"]
 
