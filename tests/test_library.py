@@ -516,7 +516,120 @@ class TestExtractCapacities:
             )
         }
         result = extract(nodes)
-        assert ("cloud_flavours" not in result) or ("overall" not in result["cloud_flavours"])
+        assert ("cloud_flavours" not in result) or (
+            "overall" not in result["cloud_flavours"]
+        )
+
+
+# ---------------------------------------------------------------------------
+# monitoring.py — extract_monitoring
+# ---------------------------------------------------------------------------
+
+
+class TestExtractMonitoring:
+    @pytest.fixture
+    def extract(self):
+        from sardou.monitoring import extract_monitoring
+
+        return extract_monitoring
+
+    def test_node_with_metrics_and_slo(self, extract):
+        nodes = {
+            "app": {
+                "capabilities": {
+                    "metrics": {
+                        "properties": {
+                            "raw": [{"name": "cpu_util", "sensor": "Netdata"}],
+                            "composite": [
+                                {"name": "cpu_avg", "formula": "mean(cpu_util)"}
+                            ],
+                        }
+                    },
+                    "slo-constraints": {
+                        "properties": {
+                            "name": "cpu_slo",
+                            "metric": "cpu_avg",
+                            "operator": ">",
+                            "threshold": 80.0,
+                        }
+                    },
+                }
+            }
+        }
+        result = extract(nodes)
+        assert "app" in result
+        assert "metrics" in result["app"]
+        assert "slo-constraints" in result["app"]
+        assert result["app"]["metrics"]["raw"][0]["name"] == "cpu_util"
+        assert result["app"]["slo-constraints"]["threshold"] == 80.0
+
+    def test_node_with_metrics_only(self, extract):
+        nodes = {
+            "svc": {
+                "capabilities": {
+                    "metrics": {
+                        "properties": {"raw": [{"name": "mem_usage"}]}
+                    }
+                }
+            }
+        }
+        result = extract(nodes)
+        assert "svc" in result
+        assert result["svc"]["metrics"]["raw"][0]["name"] == "mem_usage"
+        assert result["svc"]["slo-constraints"] == {}
+
+    def test_node_with_slo_only(self, extract):
+        nodes = {
+            "svc": {
+                "capabilities": {
+                    "slo-constraints": {
+                        "properties": {
+                            "name": "latency",
+                            "operator": "<",
+                            "threshold": 100,
+                        }
+                    }
+                }
+            }
+        }
+        result = extract(nodes)
+        assert "svc" in result
+        assert result["svc"]["slo-constraints"]["threshold"] == 100
+        assert result["svc"]["metrics"] == {}
+
+    def test_node_without_capabilities_excluded(self, extract):
+        nodes = {"worker": {"properties": {"image": "nginx"}}}
+        assert extract(nodes) == {}
+
+    def test_node_with_unrelated_capabilities_excluded(self, extract):
+        nodes = {
+            "worker": {
+                "capabilities": {"host": {"properties": {"num-cpus": 4}}}
+            }
+        }
+        assert extract(nodes) == {}
+
+    def test_multiple_nodes_mixed(self, extract):
+        nodes = {
+            "monitored": {
+                "capabilities": {
+                    "metrics": {"properties": {"raw": [{"name": "cpu"}]}}
+                }
+            },
+            "plain": {"properties": {"image": "nginx"}},
+        }
+        result = extract(nodes)
+        assert "monitored" in result
+        assert "plain" not in result
+
+    def test_empty_nodes_returns_empty(self, extract):
+        assert extract({}) == {}
+
+    def test_get_monitoring_raises_on_non_sat(self):
+        fake = object.__new__(SardouInternal)
+        fake.kind = "cdt"
+        with pytest.raises(TypeError):
+            fake.get_monitoring()
 
 
 # ---------------------------------------------------------------------------
@@ -564,6 +677,13 @@ class TestSardouCDTAPI:
         with pytest.raises(TypeError):
             fake.get_capacities()
 
+    def test_get_monitoring_raises_on_cdt(self, mode):
+        """get_monitoring() must raise TypeError when called on a CDT."""
+        fake = object.__new__(SardouInternal)
+        fake.kind = "cdt"
+        with pytest.raises(TypeError):
+            fake.get_monitoring()
+
     def test_get_requirements_returns_dict(self, cloud_overall, mode):
         reqs = cloud_overall.get_requirements()
         assert isinstance(reqs, dict)
@@ -598,6 +718,10 @@ class TestSardouSATAPI:
 
     def test_get_qos_returns_list(self, bookinfo, mode):
         assert isinstance(bookinfo.get_qos(), list)
+
+    def test_get_monitoring_returns_dict(self, bookinfo, mode):
+        monitoring = bookinfo.get_monitoring()
+        assert isinstance(monitoring, dict)
 
     def test_get_capacities_raises_type_error(self, bookinfo, mode):
         with pytest.raises(TypeError):

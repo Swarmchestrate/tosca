@@ -5,6 +5,7 @@ from ruamel.yaml import YAML
 
 from .capacities import extract_capacities
 from .cluster import get_cluster as _get_cluster
+from .monitoring import extract_monitoring as _extract_monitoring
 from .rdt import generate_rdt as _generate_rdt
 from .requirements import tosca_to_ask_dict
 from .validation import classify_template, validate_template
@@ -113,3 +114,9 @@ class Sardou(DotDict):
 
     def get_cluster(self, resource_suffix=None):
         return _get_cluster(self, resource_suffix=resource_suffix)
+
+    def get_monitoring(self):
+        if self.kind != "sat":
+            raise TypeError("Can only get monitoring info from a SAT")
+        nodes = self.raw.service_template.node_templates
+        return _extract_monitoring(nodes._to_dict())
