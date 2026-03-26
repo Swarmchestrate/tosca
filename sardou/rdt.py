@@ -30,7 +30,9 @@ def generate_rdt(template, selected_offer: dict, output_path: str = "rdt.yaml") 
     source = template.raw._to_dict()
 
     rdt = {}
-    rdt["tosca_definitions_version"] = source.get("tosca_definitions_version", "tosca_2_0")
+    rdt["tosca_definitions_version"] = source.get(
+        "tosca_definitions_version", "tosca_2_0"
+    )
     rdt["description"] = source.get("description", "Resource Definition Template")
     rdt["metadata"] = copy.deepcopy(source.get("metadata", {}))
     rdt["metadata"]["kind"] = "RDT"
@@ -68,6 +70,8 @@ def generate_rdt(template, selected_offer: dict, output_path: str = "rdt.yaml") 
             offer_props = offer_data.get("properties", {})
             if offer_props:
                 node.setdefault("properties", {}).update(offer_props)
+
+            node["count"] = offer_data.get("count", 1)
 
             new_node_templates[offer_key] = node
 

@@ -7,8 +7,7 @@ def _extract_monitoring(capabilities: dict) -> dict:
     If either key is present, the other is included as an empty dict.
     """
     monitoring = {
-        key: capabilities.get(key, {}).get("properties", {})
-        for key in _MONITORING_KEYS
+        key: capabilities.get(key, {}).get("properties", {}) for key in _MONITORING_KEYS
     }
     if not any(monitoring.values()):
         return {}

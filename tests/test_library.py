@@ -567,9 +567,7 @@ class TestExtractMonitoring:
         nodes = {
             "svc": {
                 "capabilities": {
-                    "metrics": {
-                        "properties": {"raw": [{"name": "mem_usage"}]}
-                    }
+                    "metrics": {"properties": {"raw": [{"name": "mem_usage"}]}}
                 }
             }
         }
@@ -602,19 +600,13 @@ class TestExtractMonitoring:
         assert extract(nodes) == {}
 
     def test_node_with_unrelated_capabilities_excluded(self, extract):
-        nodes = {
-            "worker": {
-                "capabilities": {"host": {"properties": {"num-cpus": 4}}}
-            }
-        }
+        nodes = {"worker": {"capabilities": {"host": {"properties": {"num-cpus": 4}}}}}
         assert extract(nodes) == {}
 
     def test_multiple_nodes_mixed(self, extract):
         nodes = {
             "monitored": {
-                "capabilities": {
-                    "metrics": {"properties": {"raw": [{"name": "cpu"}]}}
-                }
+                "capabilities": {"metrics": {"properties": {"raw": [{"name": "cpu"}]}}}
             },
             "plain": {"properties": {"image": "nginx"}},
         }
@@ -933,12 +925,12 @@ class TestSardouRDTAPI:
         props = rdt.nodeTemplates._to_dict()["offer-key"]["properties"]
         assert "ingress-rules" in props
 
-    def test_offer_properties_do_not_overwrite_cdt_properties(self, cdt, offer_file, tmp_path):  # noqa: ARG002
+    def test_offer_properties_do_not_overwrite_cdt_properties(
+        self, cdt, offer_file, tmp_path
+    ):  # noqa: ARG002
         """Existing CDT node properties are not overwritten by offer properties."""
         cdt_nodes = cdt.nodeTemplates._to_dict()
-        res_id = next(
-            k for k, v in cdt_nodes.items() if v.get("properties")
-        )
+        res_id = next(k for k, v in cdt_nodes.items() if v.get("properties"))
         existing_prop = next(iter(cdt_nodes[res_id]["properties"]))
         offer = {
             "ms1": {

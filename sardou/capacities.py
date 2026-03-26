@@ -24,9 +24,15 @@ def _is_overall(node: dict) -> bool:
 
 
 def _get_res_key(node: dict) -> str:
-    res_type = _unwrap(
-        node.get("capabilities", {}).get("resource", {}).get("properties", {}).get("type", {})
-    ) or ""
+    res_type = (
+        _unwrap(
+            node.get("capabilities", {})
+            .get("resource", {})
+            .get("properties", {})
+            .get("type", {})
+        )
+        or ""
+    )
 
     return "edge_instances" if "edge" in res_type.lower() else "cloud_flavours"
 
@@ -42,7 +48,9 @@ def _process_node(name, node, capabilities, capacities, capacity_by):
                 k: _unwrap(v) for k, v in props.items()
             }
 
-    instances = capabilities.get(_CAPACITY_KEY, {}).get("properties", {}).get("instances")
+    instances = (
+        capabilities.get(_CAPACITY_KEY, {}).get("properties", {}).get("instances")
+    )
     if res_key == "cloud_flavours":
         capacity_by[name] = _unwrap(instances) if instances is not None else 1
 
