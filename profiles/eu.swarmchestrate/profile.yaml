@@ -526,7 +526,21 @@ policy_types:
     description: >
       Policy type for colocating multiple microservices on a specific host.
 
-      
+  Reconfiguration:
+    description: >
+      Policy type for reconfiguring an application at runtime.
+    properties:
+      constants:
+        type: map
+        required: false
+        entry_schema: string
+        description: >
+          Constant values that can be used in the reconfiguration policy.
+      rule:
+        type: string
+        required: true
+        description: >
+          The reconfiguration rule, expressed as a multi-line string.
 
   RegistryLogin:
     description: >
