@@ -67,6 +67,9 @@ def generate_rdt(template, selected_offer: dict, output_path: str = "rdt.yaml") 
             node_type = cdt_nodes[node_key]["type"]
             node = copy.deepcopy(cdt_nodes[node_key])
 
+            ms_id = ids.get("ms_id", "")
+            node.setdefault("metadata", {})["ms_id"] = ms_id
+
             offer_props = offer_data.get("properties", {})
             if offer_props:
                 node.setdefault("properties", {}).update(offer_props)
