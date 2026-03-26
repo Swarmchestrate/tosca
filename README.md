@@ -52,11 +52,12 @@ Prefer the latest (currently unreleased) version. Build from source from
 [Go-Puccini](https://github.com/tliron/go-puccini) or use the prebuilts attached to
 [this Sardou release](https://github.com/Swarmchestrate/tosca/releases/tag/v0.2.4).
 
-??? note "Rust Puccini"
+> [!NOTE]
+> **Rust Puccini**
+>
+> Puccini is being [re-written in Rust](https://github.com/tliron/puccini).
+> Until its release, we are using the Go version of Puccini, 0.22.x
 
-	Puccini is being [re-written in Rust](https://github.com/tliron/puccini). Until its release, we are using the
-	Go version of Puccini, 0.22.x
-  
 You can install the recommended Puccini on Linux with:
 ```sh
 wget https://github.com/Swarmchestrate/tosca/releases/download/v0.2.4/go-puccini_0.22.7-SNAPSHOT-3e85b40_linux_amd64.deb
@@ -66,20 +67,12 @@ sudo dpkg -i go-puccini_0.22.7-SNAPSHOT-3e85b40_linux_amd64.deb || sudo apt --fi
 
 ### Sardou
 
-You may then install Sardou from PyPi using `uv` or `pip`.
+You may then install Sardou from PyPi using `uv` (or `pip`).
 
-=== "uv"
-
-	```bash
-	uv add Sardou
-	```
-
-
-=== "pip"
-
-	```bash
-	pip install Sardou
-	```
+```bash
+# using uv
+uv add Sardou
+```
 
 ## Command-line Usage
 
@@ -100,20 +93,20 @@ from sardou import Sardou # note the uppercase S
 
 ### Validation
 
-To validate a TOSCA template, create a new `Sardou` object, passing it an SAT or CDT file path,
+To validate a TOSCA template, create a new `Sardou` object, passing it a file path,
 or the template content directly as a [Python dict](https://swarmchestrate.github.io/tosca/sardou/#validation). This will validate the template and complete the representation, inheriting from parent types.
 
 ```python
 # Pass a file path
->>> sat = Sardou("my_app.yaml")
-Processed successfully: my_app.yaml
+>>> sat = Sardou("BookInfo.yaml")
+Processed successfully: BookInfo.yaml
 
 # Pass content directly as a Python dict
 >>> sat = Sardou(content="tosca_definitions_version: tosca_2_0\n...")
 Processed successfully
 
 >>> sat
-{'description': 'stressng on Swarmchestrate', 'nodeTemplates': {'resource-1': {'metadata': {}, 'description': '', 'types': {'eu.swarmchestrate:0.1::EC2.micro.t3': {'description': 'An EC2 compute node from the University of Westminster provision\n', 'parent': 'eu.swarmchestrate:0.1::Resource'} ...
+{'path': PosixPath('templates/BookInfo.yaml'), 'description': 'Istio Bookinfo as a Swarmchestrate SAT', 'nodeTemplates': {'details_v1': {'metadata': {}, 'description': '', 'types': {'eu.swarmchestrate:0.1::Kubernetes.APIObject': {'description': ...
 ```
 
 The template is not resolved at this point (i.e. statisfied requirements and created
@@ -126,7 +119,7 @@ Get the raw, uncompleted (original YAML) with the `raw` attribute.
 
 ```python
 >>> sat.raw
-{'tosca_definitions_version': 'tosca_2_0', 'description': 'stressng on Swarmchestrate', 'imports': [{'namespace': 'swch' ...
+{'tosca_definitions_version': 'tosca_2_0', 'description': 'Istio Bookinfo as a Swarmchestrate SAT', 'metadata': {'name': 'bookinfo', 'author': 'you', ...
 ```
 
 You can traverse YAML maps using dot notation if needed (which leads to some unexpected behaviour,
@@ -134,7 +127,7 @@ so this may not be a long-term feature):
 
 ```python
 >>> sat.nodeTemplates
-{'resource-1': {'metadata': {}, 'description': '', 'types': {'eu.swarmchestrate:0.1::EC2.micro.t3' ...
+{'details_v1': {'metadata': {}, 'description': '', 'types': {'eu.swarmchestrate:0.1::Kubernetes.APIObject': {'description': 'Base type for Kubernetes API objects (persisted resources that can be created/applied on their own, e.g. Service, Deployment, ServiceAccount)...
 ```
 
 ## Going Further
