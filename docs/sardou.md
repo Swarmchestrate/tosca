@@ -162,6 +162,17 @@ so this may not be a long-term feature):
 	The functionality described here only works on Swarm Application Templates.
 
 
+#### Reconfiguration Policies
+
+Grab the reconfiuration policies as a Python object with `get_reconfiguration()`
+You could dump this to JSON or YAML.
+
+```python
+>>> sat.get_reconfiguration()
+{'frontend_reconfiguration': {'constants': {'cpu_util_threshold': '80'}, 'rule': 'if cpu_util_prct > cpu_util_threshold:\n  scale_out(details_v1, productpage_v1)\nelse:\n  pass\n', 'targets': ['details_v1', 'productpage_v1']}, ...
+```
+
+
 #### Quality of Service Policies
 
 Grab the QoS requirements as a Python object with `get_qos()`
@@ -170,6 +181,16 @@ You could dump this to JSON or YAML.
 ```python
 >>> sat.get_qos()
 [{'energy': {'type': 'swch:QoS.Energy.Budget', 'properties': {'priority': 0.3, 'target': 10}}}...
+```
+
+#### Scheduling Policies
+
+Grab the scheduling policies as a Python object with `get_scheduling()`
+You could dump this to JSON or YAML.
+
+```python
+>>> sat.get_scheduling()
+{'frontend_colocation': {'targets': ['details_v1', 'productpage_v1']}, 'reviews_colocation': {'targets': ['reviews_v1', 'reviews_v2', 'reviews_v3']}}
 ```
 
 #### Resource Requirements
