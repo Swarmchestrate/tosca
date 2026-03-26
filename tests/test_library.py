@@ -8,6 +8,7 @@ from ruamel.yaml import YAML
 
 from sardou import Sardou
 from sardou.sardou import Sardou as SardouInternal
+from sardou.validation import TemplateKind
 from tests.marks import requires_puccini
 
 CDT_DIR = Path(__file__).parent / "templates" / "cdt"
@@ -619,7 +620,7 @@ class TestExtractMonitoring:
 
     def test_get_monitoring_raises_on_non_sat(self):
         fake = object.__new__(SardouInternal)
-        fake.kind = "cdt"
+        fake.kind = TemplateKind.CDT
         with pytest.raises(TypeError):
             fake.get_monitoring()
 
@@ -655,7 +656,7 @@ class TestSardouCDTAPI:
             assert cloud_overall.path is None
 
     def test_kind_cdt_for_capacity_template(self, cloud_overall, mode):
-        assert cloud_overall.kind == "cdt"
+        assert cloud_overall.kind == TemplateKind.CDT
 
     def test_get_capacities_returns_dict(self, cloud_overall, mode):
         caps = cloud_overall.get_capacities()
@@ -665,14 +666,14 @@ class TestSardouCDTAPI:
     def test_get_capacities_raises_on_sat(self, mode):
         """get_capacities() must raise TypeError when called on a SAT."""
         fake = object.__new__(SardouInternal)
-        fake.kind = "sat"
+        fake.kind = TemplateKind.SAT
         with pytest.raises(TypeError):
             fake.get_capacities()
 
     def test_get_monitoring_raises_on_cdt(self, mode):
         """get_monitoring() must raise TypeError when called on a CDT."""
         fake = object.__new__(SardouInternal)
-        fake.kind = "cdt"
+        fake.kind = TemplateKind.CDT
         with pytest.raises(TypeError):
             fake.get_monitoring()
 
@@ -680,16 +681,15 @@ class TestSardouCDTAPI:
         reqs = cloud_overall.get_requirements()
         assert isinstance(reqs, dict)
 
-    def test_get_cluster_returns_valid_json(self, cloud_overall, mode):
-        cluster_json = cloud_overall.get_cluster()
-        parsed = json.loads(cluster_json)
-        assert isinstance(parsed, dict)
+    def test_get_cluster_raises_type_error(self, cloud_overall, mode):
+        with pytest.raises(TypeError):
+            cloud_overall.get_cluster()
 
     def test_raw_attribute_is_accessible(self, cloud_overall, mode):
         assert hasattr(cloud_overall, "raw")
 
     def test_cloud_instances_parses(self, cloud_instances, mode):
-        assert cloud_instances.kind == "cdt"
+        assert cloud_instances.kind == TemplateKind.CDT
 
 
 @requires_puccini
@@ -702,7 +702,7 @@ class TestSardouSATAPI:
         return _load_sardou(SAT_DIR / "BookInfo.yaml", mode)
 
     def test_is_sat_true(self, bookinfo, mode):
-        assert bookinfo.kind == "sat"
+        assert bookinfo.kind == TemplateKind.SAT
 
     def test_get_requirements_returns_dict(self, bookinfo, mode):
         reqs = bookinfo.get_requirements()
@@ -719,9 +719,9 @@ class TestSardouSATAPI:
         with pytest.raises(TypeError):
             bookinfo.get_capacities()
 
-    def test_get_cluster_returns_valid_json(self, bookinfo, mode):
-        parsed = json.loads(bookinfo.get_cluster())
-        assert isinstance(parsed, dict)
+    def test_get_cluster_raises_type_error(self, bookinfo, mode):
+        with pytest.raises(TypeError):
+            bookinfo.get_cluster()
 
     def test_raw_attribute_accessible(self, bookinfo, mode):
         assert hasattr(bookinfo, "raw")
