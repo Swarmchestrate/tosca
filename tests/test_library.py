@@ -707,8 +707,8 @@ class TestSardouSATAPI:
         reqs = bookinfo.get_requirements()
         assert isinstance(reqs, dict)
 
-    def test_get_qos_returns_list(self, bookinfo, mode):
-        assert isinstance(bookinfo.get_qos(), list)
+    def test_get_qos_returns_dict(self, bookinfo, mode):
+        assert isinstance(bookinfo.get_qos(), dict)
 
     def test_get_monitoring_returns_dict(self, bookinfo, mode):
         monitoring = bookinfo.get_monitoring()
