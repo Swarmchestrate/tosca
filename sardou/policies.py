@@ -20,12 +20,12 @@ def _get_policies(sat, suffix):
             continue
 
         policy_data = extract_properties(policy.get("properties", {}))
-        policies = sat.raw._to_dict()["service_template"]["policies"]
-        for policy in policies:
-            if name not in policy:
+        raw_policies = sat.raw._to_dict()["service_template"]["policies"]
+        for raw_policy in raw_policies:
+            if name not in raw_policy:
                 continue
 
-            targets = policy[name].get("targets")
+            targets = raw_policy[name].get("targets")
             if targets:
                 policy_data["targets"] = targets
 
