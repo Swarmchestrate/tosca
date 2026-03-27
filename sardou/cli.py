@@ -1,5 +1,6 @@
 import argparse
 import glob
+import logging
 import sys
 import traceback
 from pathlib import Path
@@ -8,6 +9,8 @@ from sardou import Sardou
 
 
 def main():
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
+
     parser = argparse.ArgumentParser(
         description="Sardou - TOSCA template parser and processor"
     )

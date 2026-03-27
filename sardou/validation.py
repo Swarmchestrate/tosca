@@ -1,11 +1,13 @@
+import logging
 import subprocess
-import sys
 from enum import Enum
 from functools import wraps
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 from ruamel.yaml import YAML
+
+logger = logging.getLogger(__name__)
 
 
 class TemplateKind(Enum):
@@ -38,13 +40,13 @@ yaml = YAML()
 def prevalidate(input_data):
     if isinstance(input_data, Path):
         if not input_data.exists():
-            print(f"File does not exist: {input_data}", file=sys.stderr)
+            logger.error(f"File does not exist: {input_data}")
             return False
         try:
             with input_data.open("r") as f:
                 data = yaml.load(f)
         except Exception as e:
-            print(f"Error reading YAML file {input_data}: {e}", file=sys.stderr)
+            logger.error(f"Error reading YAML file {input_data}: {e}")
             return False
     elif isinstance(input_data, dict):
         data = input_data
@@ -52,11 +54,11 @@ def prevalidate(input_data):
         try:
             data = yaml.load(input_data)
         except Exception as e:
-            print(f"Error parsing YAML content: {e}", file=sys.stderr)
+            logger.error(f"Error parsing YAML content: {e}")
             return False
 
     if not data:
-        print("No YAML content found", file=sys.stderr)
+        logger.error("No YAML content found")
         return False
 
     imports = data.get("imports", [])
@@ -127,18 +129,14 @@ def validate_template(input_data) -> bool:
                 text=True,
             )
             if result.returncode == 0:
-                print(f"Processed successfully: {file_label} \n")
+                logger.info(f"Processed successfully: {file_label}")
                 return result
             else:
-                print(f"Failed to process: {file_label} \n", file=sys.stderr)
-                print("==== Error Output ====", file=sys.stderr)
-                print(result.stderr.strip() or result.stdout.strip(), file=sys.stderr)
-                print("======================", file=sys.stderr)
+                logger.error(f"Failed to process: {file_label}")
+                logger.error(result.stderr.strip() or result.stdout.strip())
                 return None
 
         except FileNotFoundError:
-            print(
-                f"Puccini not found at {PUCCINI_CMD}. Please install it first.",
-                file=sys.stderr,
+            raise FileNotFoundError(
+                f"Puccini not found at {PUCCINI_CMD}. Please install it first."
             )
-            sys.exit(1)
