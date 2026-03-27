@@ -164,6 +164,98 @@ class TestBuildExpression:
 
 
 # ---------------------------------------------------------------------------
+# validation.py — validate_reconfiguration
+# ---------------------------------------------------------------------------
+
+
+class TestPostValidate:
+    @pytest.fixture
+    def validate(self):
+        from sardou.validation import validate_reconfiguration
+
+        return validate_reconfiguration
+
+    def _tosca(self, policies):
+        return {"service_template": {"policies": policies}}
+
+    def test_no_policies_passes(self, validate):
+        assert validate({"service_template": {}}) is True
+
+    def test_colocated_with_same_reconfiguration_passes(self, validate):
+        tosca = self._tosca(
+            [
+                {"col": {"type": "swch:Scheduling.Colocation", "targets": ["a", "b"]}},
+                {"rec": {"type": "swch:Reconfiguration", "targets": ["a", "b"]}},
+            ]
+        )
+        assert validate(tosca) is True
+
+    def test_partial_reconfiguration_passes(self, validate):
+        tosca = self._tosca(
+            [
+                {"col": {"type": "swch:Scheduling.Colocation", "targets": ["a", "b"]}},
+                {"rec1": {"type": "swch:Reconfiguration", "targets": ["a"]}},
+            ]
+        )
+        assert validate(tosca) is True
+
+    def test_colocated_split_across_reconfigurations_raises(self, validate):
+        tosca = self._tosca(
+            [
+                {"col": {"type": "swch:Scheduling.Colocation", "targets": ["a", "b"]}},
+                {"rec1": {"type": "swch:Reconfiguration", "targets": ["a"]}},
+                {"rec2": {"type": "swch:Reconfiguration", "targets": ["b"]}},
+            ]
+        )
+        with pytest.raises(ValueError, match="Colocated microservices"):
+            validate(tosca)
+
+    def test_non_overlapping_groups_pass(self, validate):
+        tosca = self._tosca(
+            [
+                {"col1": {"type": "swch:Scheduling.Colocation", "targets": ["a", "b"]}},
+                {"col2": {"type": "swch:Scheduling.Colocation", "targets": ["c", "d"]}},
+                {"rec1": {"type": "swch:Reconfiguration", "targets": ["a", "b"]}},
+                {"rec2": {"type": "swch:Reconfiguration", "targets": ["c", "d"]}},
+            ]
+        )
+        assert validate(tosca) is True
+
+    def test_partial_overlap_raises(self, validate):
+        tosca = self._tosca(
+            [
+                {
+                    "col": {
+                        "type": "swch:Scheduling.Colocation",
+                        "targets": ["a", "b", "c"],
+                    }
+                },
+                {"rec1": {"type": "swch:Reconfiguration", "targets": ["a", "b"]}},
+                {"rec2": {"type": "swch:Reconfiguration", "targets": ["c"]}},
+            ]
+        )
+        with pytest.raises(ValueError, match="Colocated microservices"):
+            validate(tosca)
+
+    def test_colocation_without_reconfiguration_passes(self, validate):
+        tosca = self._tosca(
+            [
+                {"col": {"type": "swch:Scheduling.Colocation", "targets": ["a", "b"]}},
+            ]
+        )
+        assert validate(tosca) is True
+
+    def test_reconfiguration_without_colocation_passes(self, validate):
+        tosca = self._tosca(
+            [
+                {"rec1": {"type": "swch:Reconfiguration", "targets": ["a"]}},
+                {"rec2": {"type": "swch:Reconfiguration", "targets": ["b"]}},
+            ]
+        )
+        assert validate(tosca) is True
+
+
+# ---------------------------------------------------------------------------
 # requirements.py — extract_colocation_groups
 # ---------------------------------------------------------------------------
 
