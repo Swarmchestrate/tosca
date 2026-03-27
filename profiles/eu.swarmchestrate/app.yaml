@@ -15,6 +15,7 @@ description: MiCADO Profile app type definitions
 
 imports:
 - url: https://raw.githubusercontent.com/Swarmchestrate/tosca/refs/heads/main/profiles/eu.swarmchestrate/monitoring.yaml
+- url: https://raw.githubusercontent.com/Swarmchestrate/tosca/refs/heads/main/profiles/eu.swarmchestrate/capacity.yaml
 
 
 data_types:
