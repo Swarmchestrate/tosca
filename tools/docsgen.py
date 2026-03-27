@@ -15,6 +15,7 @@ SOURCES = {
     "profile": "profiles/eu.swarmchestrate/profile.yaml",
     "capacity": "profiles/eu.swarmchestrate/capacity.yaml",
     "monitoring": "profiles/eu.swarmchestrate/monitoring.yaml",
+    "policy": "profiles/eu.swarmchestrate/policy.yaml",
 }
 
 # --- Load YAML sources ---
@@ -130,10 +131,14 @@ pages = [
     {
         "name": "Policy",
         "fields": {
-            name: {"description": value.get("description", "No description available")}
-            for name, value in data["profile"].get("policy_types", {}).items()
-            if name.startswith("QoS.")
+            "targets": {
+                "required": False,
+                "type": "list",
+                "entry_schema": "string",
+                "description": "**Present on all policies that target specific Microservices**. A list of Microservice names to target with this policy.",
+            }
         },
+        "types": extract_types(data["policy"].get("policy_types", {})),
     },
     {
         "name": "Microservice",
