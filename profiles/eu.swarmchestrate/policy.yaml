@@ -13,8 +13,20 @@ metadata:
 
 description: MiCADO Profile policy type definitions
 
+node_types:
+
+  AppOnly:
+    description: >
+      A node type representing an application as a whole. Not to be
+      used directly in a service template. Used to enforce no-targets
+      on ApplicationPolicy.
 
 policy_types:
+
+  ApplicationPolicy:
+    description: >
+      Base policy type for targeting an entire application.
+    targets: [ AppOnly ]
 
   MicroservicePolicy:
     description: >
@@ -49,6 +61,7 @@ policy_types:
           The reconfiguration rule, expressed as a multi-line string.
 
   RegistryLogin:
+    derived_from: ApplicationPolicy
     description: >
       Policy type for logging into a container registry.
     properties:
@@ -69,8 +82,10 @@ policy_types:
           The URL of the container registry.
 
   QoS:
+    derived_from: ApplicationPolicy
     description: >
-      Quality of Service (QoS) policies for applications.
+      Quality of Service (QoS) policies for applications. Cannot target a
+      specific Microservice.
     properties:
       priority:
         type: float
