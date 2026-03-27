@@ -10,6 +10,10 @@ from ruamel.yaml import YAML
 logger = logging.getLogger(__name__)
 
 
+COLOCATION_SUFFIX = "Scheduling.Colocation"
+RECONFIGURATION_SUFFIX = "Reconfiguration"
+
+
 class TemplateKind(Enum):
     SAT = "sat"
     CDT = "cdt"
@@ -105,6 +109,41 @@ def classify_template(template) -> TemplateKind:
         return TemplateKind.CDT
 
     return TemplateKind.SAT
+
+
+def post_validate(tosca_dict) -> bool:
+    """Perform any post validation steps."""
+    return validate_reconfiguration(tosca_dict)
+
+
+def validate_reconfiguration(tosca_dict) -> bool:
+    """Validate that colocated microservices are not split across
+    different Reconfiguration policies."""
+    policies = tosca_dict.get("service_template", {}).get("policies", [])
+
+    colocation_groups = []
+    reconfig_targets = {}
+
+    for policy in policies:
+        for name, data in policy.items():
+            ptype = data.get("type", "")
+            targets = data.get("targets", [])
+            if ptype.endswith(COLOCATION_SUFFIX):
+                colocation_groups.append(set(targets))
+            elif ptype.endswith(RECONFIGURATION_SUFFIX):
+                reconfig_targets[name] = set(targets)
+
+    for group in colocation_groups:
+        matching_policies = [
+            name for name, targets in reconfig_targets.items() if targets & group
+        ]
+        if len(matching_policies) > 1:
+            raise ValueError(
+                f"Colocated microservices {sorted(group)} are targeted by "
+                f"different Reconfiguration policies: {matching_policies}"
+            )
+
+    return True
 
 
 def validate_template(input_data) -> bool:

@@ -14,6 +14,7 @@ from .requirements import tosca_to_ask_dict
 from .validation import (
     TemplateKind,
     classify_template,
+    post_validate,
     requires_kind,
     validate_template,
 )
@@ -99,6 +100,7 @@ class Sardou(DotDict):
 
         self.kind = classify_template(self)
         self.raw = DotDict(**raw)
+        post_validate(raw)
 
     def get_requirements(self):
         return tosca_to_ask_dict(self.raw._to_dict())
@@ -131,4 +133,3 @@ class Sardou(DotDict):
     def get_monitoring(self):
         nodes = self.raw.service_template.node_templates
         return _extract_monitoring(nodes._to_dict())
-
