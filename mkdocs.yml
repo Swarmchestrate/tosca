@@ -17,17 +17,20 @@ theme:
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.top
+    - toc.integrate
 
 nav:
   - Home: index.md
   - Authors:
     - Applications: sat.md
     - Capacities: cdt.md
-  - TOSCA Library: sardou.md
   - Microservice Spec: microservice.md
   - Policy Spec: policy.md
   - Capacity Spec: capacity.md
   - Monitoring: monitoring.md
+  - Sardou:
+    - Overview: sardou.md
+    - Working with Sardou: sardou_lib.md
 
 markdown_extensions:
   - admonition

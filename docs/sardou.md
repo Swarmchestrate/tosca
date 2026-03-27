@@ -71,217 +71,22 @@ You may then install Sardou from PyPi using `uv` or `pip`.
 	pip install Sardou
 	```
 
-## Command-line Usage
+## Usage
 
-The Sardou CLI currently only performs validation. Run it against
-any SAT or CDT. If *processed succesfully*, the template is valid.
+### Command-line
+
+A basic CLI is available to perform only validation. Run it against
+any template. If *processed succesfully*, the template is valid.
 
 ```bash
 sardou templates/BookInfo.yaml
 ```
 
-## Library Usage
+### Library
 
-Import the Sardou TOSCA Library
-
-```python
-from sardou import Sardou # note the uppercase S
-```
-
-### Validation
-
-To validate a TOSCA template, create a new `Sardou` object, passing it an SAT or CDT
-file path, or the template content directly as a Python dict.
-This will validate the template and complete the representation, inheriting from parent
-types.
-
-=== "Pass a file path"
-
-	```python
-	>>> sat = Sardou("my_app.yaml")
-	Processed successfully: my_app.yaml
-
-	>>> sat
-	{'description': 'stressng on Swarmchestrate', 'nodeTemplates': {'resource-1': {'metadata': {}, 'description': '', 'types': {'eu.swarmchestrate:0.1::EC2.micro.t3': {'description': 'An EC2 compute node from the University of Westminster provision\n', 'parent': 'eu.swarmchestrate:0.1::Resource'} ...
-	```
-
-=== "Pass content directly"
-
-	```python
-
-	# As a Python dict
-	>>> sat_dict = {
-	...     "tosca_definitions_version": "tosca_2_0",
-	...     "imports": [
-	...         {
-	...             "namespace": "swch",
-	...             "url": "https://raw.githubusercontent.com/Swarmchestrate/tosca/refs/heads/main/profiles/eu.swarmchestrate/profile.yaml",
-	...         }
-	...     ],
-	...     "service_template": {
-	...         "node_templates": {
-	...             "myservice": {
-	...                 "type": "swch:Microservice",
-	...                 "properties": {
-	...                     "image": "docker.io/istio/examples-bookinfo-details-v1:1.20.3",
-	...                     "replicas": 1,
-	...                 },
-	...             }
-	...         }
-	...     },
-	... }
-	>>> sat = Sardou(content=sat_dict)
-	Processed successfully
-	```
-
-The template is not resolved at this point (i.e. statisfied requirements and created
-relationships) - that functionality is to come. If there are errors or warnings, they
-will be presented at this time.
-
-#### Exploring the Template
-
-Get the raw, uncompleted (original YAML) with the `raw` attribute.
+For all other uses, import the Sardou TOSCA Library. For further info
+on working with the Library, visit the [next page](sardou_lib.md) in this section.
 
 ```python
->>> sat.raw
-{'tosca_definitions_version': 'tosca_2_0', 'description': 'stressng on Swarmchestrate', 'imports': [{'namespace': 'swch' ...
-```
-
-You can traverse YAML maps using dot notation if needed (which leads to some unexpected behaviour,
-so this may not be a long-term feature):
-
-```python
->>> sat.nodeTemplates
-{'resource-1': {'metadata': {}, 'description': '', 'types': {'eu.swarmchestrate:0.1::EC2.micro.t3' ...
-```
-
-### Applications
-
-!!! warning
-
-	The functionality described here only works on Swarm Application Templates.
-
-
-#### Reconfiguration Policies
-
-Grab the reconfiuration policies as a Python object with `get_reconfiguration()`
-You could dump this to JSON or YAML.
-
-```python
->>> sat.get_reconfiguration()
-{'frontend_reconfiguration': {'constants': {'cpu_util_threshold': '80'}, 'rule': 'if cpu_util_prct > cpu_util_threshold:\n  scale_out(details_v1, productpage_v1)\nelse:\n  pass\n', 'targets': ['details_v1', 'productpage_v1']}, ...
-```
-
-
-#### Quality of Service Policies
-
-Grab the QoS requirements as a Python object with `get_qos()`
-You could dump this to JSON or YAML.
-
-```python
->>> sat.get_qos()
-[{'energy': {'type': 'swch:QoS.Energy.Budget', 'properties': {'priority': 0.3, 'target': 10}}}...
-```
-
-#### Scheduling Policies
-
-Grab the scheduling policies as a Python object with `get_scheduling()`
-You could dump this to JSON or YAML.
-
-```python
->>> sat.get_scheduling()
-{'frontend_colocation': {'targets': ['details_v1', 'productpage_v1']}, 'reviews_colocation': {'targets': ['reviews_v1', 'reviews_v2', 'reviews_v3']}}
-```
-
-#### Resource Requirements
-
-Grab the Resource requirements as a Python object with `get_requirements()`
-You could dump this to JSON or YAML.
-
-```python
->>> sat.get_requirements()
-{'worker-node': {'metadata': {'created_by': 'floria-tosca-lib', 'created_at': '2025-09-16T14:51:24Z', 'description': 'Generated from node worker-node', 'version': '1.0'}, 'capabilities': {'host': {'properties': {'num-cpus': {'$greater_than': 4}, 'mem-size': {'$greater_than': '8 GB'}}}, ...
-```
-
-### Kubernetes Manifests (manifestGenerator.py)
-
-- Provides the function get_kubernetes_manifest(tosca_yaml: str, image_pull_secret: str = "test") -> list.
-- **Purpose**: Converts a TOSCA YAML template into Kubernetes manifests (Deployments + Services).
-- **Supported fields**: image, args, env, ports, volumes, nodeSelector, replicas, imagePullSecrets.
-- Automatically injects an external imagePullSecret if provided.
-
-**Input**:
-- A valid TOSCA YAML template as a string. 
-- Optional: name of an imagePullSecret to include in all generated Deployments.
-
-**Output:**
-- A list of dictionaries representing Kubernetes manifests ready to be serialized to YAML.
-
-#### Manifest Generation Script (run_manifest_generator.py)
-- Takes a single TOSCA YAML file and generates Kubernetes manifests as a multi-document YAML file (output.yaml).
-- Usage: update the TOSCA_FILE and OUTPUT_FILE variables in the script and run:
-
-```python
-python3 run_manifest_generator.py
-```
-
-### Capacities
-
-You can create a Sardou object from a CDT with the same approach as for SATs.
-
-```python
->>> cdt = Sardou("my_cap.yaml")
-Processed successfully: my_cap.yaml
-```
-
-!!! warning
-
-	The below methods only work on Capacity Description Templates.
-
-#### Capacity Details
-
-Given a CDT, Sardou can extract the capability details of each available flavour,
-as well as the [overall capacity](cdt.md#cdt-overall-capacity), if defined.
-
-```python
->>> cdt.get_capacities()
-t.get_capacities()
-({'m2-medium-sztaki': {'capacity': {'instances': 4}, 'energy': {'consumption': 0.1, 'energy-type': 'non-green', 'powered-type': 'mains-powered'}, 'host': {'bandwidth': '1000', 'disk-size': '20', 'mem-size': '8 GB', 'num-cpus': 4},
-```
-
-#### Resource Description Templates
-
-You can generate a Resource Description Template (RDT) with a CDT and an
-accepted offer. An RDT is an internal template used to pass deployment
-configuration for the Swarm to the Cluster Builder component.
-
-```python
->>> offer = json.load("ra-sztaki-offer.json")
->>> cdt.generate_rdt(selected_offer=offer, output_path="sztaki-rdt.yaml")
-```
-
-Which will generate an RDT at the given `output_path`.
-
-### Resources
-
-You can then create a new Sardou object from an RDT.
-
-```python
->>> rdt = Sardou("sztaki-rdt.yaml")
-Processed successfully: sztaki-rdt.yaml
-```
-
-!!! warning
-
-	This method only works on Resource Description Templates.
-
-
-#### Cluster Configuration Details
-
-Get the cluster configuration details for the resources as a Python object with `get_cluster()`
-You could dump this to JSON or YAML.
-
-```python
->>> rdt.get_cluster()
-{'resource-1': {'image_id': 'ami-0c02fb291006c7d929', 'instance_type': 't3.micro', 'key_name': 'mykey', 'region_name': 'us-east-1' ...
+from sardou import Sardou
 ```

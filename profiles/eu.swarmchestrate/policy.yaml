@@ -1,0 +1,119 @@
+##########################################################################
+# This file contains MiCADO Profile Policy type definitions.
+##########################################################################
+
+tosca_definitions_version: tosca_2_0
+
+profile: eu.swarmchestrate:0.1
+
+metadata:
+  template_name: policy.yaml
+  template_author: University of Westminster
+  template_version: 0.1
+
+description: MiCADO Profile policy type definitions
+
+node_types:
+
+  AppOnly:
+    description: >
+      A node type representing an application as a whole. Not to be
+      used directly in a service template. Used to enforce no-targets
+      on ApplicationPolicy.
+
+policy_types:
+
+  ApplicationPolicy:
+    description: >
+      Base policy type for targeting an entire application.
+    targets: [ AppOnly ]
+
+  MicroservicePolicy:
+    description: >
+      Base policy type for targeting specific microservices.
+    targets: [ Microservice ]
+
+  Scheduling:
+    derived_from: MicroservicePolicy
+    description: >
+      Policy type for scheduling.
+
+  Scheduling.Colocation:
+    derived_from: Scheduling
+    description: >
+      Policy type for colocating multiple microservices on a specific host.
+
+  Reconfiguration:
+    derived_from: MicroservicePolicy
+    description: >
+      Policy type for reconfiguring an application at runtime.
+    properties:
+      constants:
+        type: map
+        required: false
+        entry_schema: string
+        description: >
+          Constant values that can be used in the reconfiguration policy.
+      rule:
+        type: string
+        required: true
+        description: >
+          The reconfiguration rule, expressed as a multi-line string.
+
+  RegistryLogin:
+    derived_from: ApplicationPolicy
+    description: >
+      Policy type for logging into a container registry.
+    properties:
+      username:
+        type: string
+        required: true
+        description: >
+          The username for the container registry.
+      password:
+        type: string
+        required: true
+        description: >
+          The password or token for the container registry.
+      registry_url:
+        type: string
+        required: true
+        description: >
+          The URL of the container registry.
+
+  QoS:
+    derived_from: ApplicationPolicy
+    description: >
+      Quality of Service (QoS) policies for applications. Cannot target a
+      specific Microservice.
+    properties:
+      priority:
+        type: float
+        required: false
+        description: >
+          Priority level of the application (higher number means higher priority).
+      target:
+        type: integer
+        required: false
+        description: >
+          Target value for the QoS metric.
+
+  QoS.Energy.Budget:
+    description: >
+      Energy policy type
+    derived_from: QoS
+
+  QoS.Cost.Budget:
+    description: >
+      Cost policy type
+    derived_from: QoS
+
+  QoS.Performance.Bandwidth:
+    description: >
+      Bandwidth policy type
+    derived_from: QoS
+
+  QoS.Performance.Latency:
+    description: >
+      Latency policy type
+    derived_from: QoS
