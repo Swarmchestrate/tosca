@@ -7,6 +7,8 @@ from tempfile import NamedTemporaryFile
 
 from ruamel.yaml import YAML
 
+from .cache import resolve_imports
+
 logger = logging.getLogger(__name__)
 
 
@@ -71,6 +73,8 @@ def prevalidate(input_data):
     for imp in imports:
         if isinstance(imp, dict) and "profile" in imp:
             imp["url"] = imp.pop("profile")
+
+    resolve_imports(data)
 
     for _, node in template.get("node_templates", {}).items():
         node.pop("node_filter", None)
