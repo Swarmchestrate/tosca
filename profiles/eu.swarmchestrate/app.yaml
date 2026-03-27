@@ -391,8 +391,6 @@ node_types:
           capability: Volume
           relationship: AttachesTo
 
-  MonitoredComponent:
-    description: General base type for components that can be monitored in SwCh.
     capabilities:
       metrics:
         type: Metric
@@ -413,7 +411,6 @@ node_types:
 
 
   Kubernetes.Base:
-    derived_from: MonitoredComponent
     description: >
       General base type for Kubernetes-related modelling. This type captures
       commonly useful metadata (name/namespace/labels/annotations) without
