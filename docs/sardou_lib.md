@@ -252,5 +252,11 @@ You could dump this to JSON or YAML.
 
 ```python
 >>> rdt.get_cluster()
-{'ra-sztaki-cloud-hu_swarm2_details_v1_t2-large-ubuntu-uow': {'ami': 'ami-customuow', 'cloud': 'aws', 'custom_ingress_ports': [{'from': 80, 'protocol': 'TCP', 'to': 80}], 'instance_type': 't2.large', 'ssh_key': 'g-key', 'security_groups': ['0eb63f2b-b656-47a1-a0e7-3da0a993379e'], 'ssh_user': 'ubuntu', 'node_labels': {'labels.swarmchestrate.io/ms_id': 'details_v1'}}, ...
+{'ra-sztaki-cloud-hu_swarm2_details_v1_t2-large-ubuntu-uow': {'ami': 'ami-customuow', 'cloud': 'aws', 'custom_ingress_ports': [{'from': 80, 'protocol': 'TCP', 'to': 80}], 'instance_type': 't2.large', 'ssh_key': 'g-key', 'security_groups': ['0eb63f2b-b656-47a1-a0e7-3da0a993379e'], 'ssh_user': 'ubuntu', 'node_labels': {'labels.swarmchestrate.eu/ms_id': 'details_v1'}}, ...
 ```
+
+!!! tip
+
+	In addition to the properties of each [cloud](capacity.md#cloudcapacity) or [edge](capacity.md#edgecapacity) type, a `node_labels` key is present,
+	with suggested Kubernetes labels to create on the node, following the
+	prefix `labels.swarmchestrate.eu`.
