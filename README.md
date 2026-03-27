@@ -88,7 +88,7 @@ sardou templates/BookInfo.yaml
 Import the Sardou TOSCA Library
 
 ```python
-from sardou import Sardou # note the uppercase S
+from sardou import Sardou
 ```
 
 ### Validation
