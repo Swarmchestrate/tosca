@@ -139,6 +139,16 @@ You could dump this to JSON or YAML.
 {'details_v1': {'expression': "lambda vals: ((vals['host.num-cpus'] >= 1) and (vals['host.mem-size'] >= 2) and (any(entry in vals['network.explicit-tcp-allow'] for entry in ['ALL', 80])))", 'colocated': ['productpage_v1'],  ...
 ```
 
+### Monitoring Details
+
+Get the monitoring details, which include `metrics` and `slo-constraints` per
+Microservice, with the `get_monitoring()` function. Dump to YAML or JSON.
+
+```python
+>>> sat.get_monitoring()
+{'details_v1': {'metrics': {'raw': [{'name': 'cpu_util_instance', 'sensor': 'Netdata', 'config': {'scope_contexts': 'k8s.cgroup.cpu', 'results-aggregation': 'SUM'}, 'collection_frequency': '30 sec', 'collection_output': 'all'}], 'composite': [{'name': 'cpu_util_prct', 'formula': 'mean( cpu_util_instance )', 'collection_frequency': '30 sec', 'collection_output': 'all', 'window_type': 'sliding', 'window_size': '5 min', 'grouping': 'per_zone'}]}, 'slo-constraints': {'name': 'cpu_utilization', 'metric': 'cpu_util_prct', 'operator': '>', 'threshold': 80.0}}}
+```
+
 ### Kubernetes Manifests (manifestGenerator.py)
 
 - Provides the function get_kubernetes_manifest(tosca_yaml: str, image_pull_secret: str = "test") -> list.
@@ -242,5 +252,11 @@ You could dump this to JSON or YAML.
 
 ```python
 >>> rdt.get_cluster()
-{'resource-1': {'image_id': 'ami-0c02fb291006c7d929', 'instance_type': 't3.micro', 'key_name': 'mykey', 'region_name': 'us-east-1' ...
+{'ra-sztaki-cloud-hu_swarm2_details_v1_t2-large-ubuntu-uow': {'ami': 'ami-customuow', 'cloud': 'aws', 'custom_ingress_ports': [{'from': 80, 'protocol': 'TCP', 'to': 80}], 'instance_type': 't2.large', 'ssh_key': 'g-key', 'security_groups': ['0eb63f2b-b656-47a1-a0e7-3da0a993379e'], 'ssh_user': 'ubuntu', 'node_labels': {'labels.swarmchestrate.eu/ms_id': 'details_v1'}}, ...
 ```
+
+!!! tip
+
+	In addition to the properties of each [cloud](capacity.md#cloudcapacity) or [edge](capacity.md#edgecapacity) type, a `node_labels` key is present,
+	with suggested Kubernetes labels to create on the node, following the
+	prefix `labels.swarmchestrate.eu`.

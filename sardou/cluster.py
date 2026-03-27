@@ -2,6 +2,7 @@ import os
 
 from .utils import extract_properties
 
+LABELS_PREFIX = "labels.swarmchestrate.eu/"
 
 def get_cluster(rdt, resource_suffix=None):
     resource_suffix = (
@@ -22,7 +23,7 @@ def get_cluster(rdt, resource_suffix=None):
         extracted = extract_properties(node.get("properties", {}))
 
         extracted["node_labels"] = {
-            "labels.swarmchestrate.io/ms_id": node.get("metadata", {}).get("ms_id")
+            f"{LABELS_PREFIX}ms_id": node.get("metadata", {}).get("ms_id")
         }
         resources[name] = extracted
 

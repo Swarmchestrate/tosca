@@ -157,6 +157,9 @@ pages = [
     },
     {
         "name": "Monitoring",
+        "fields": extract_fields(
+            data["profile"]["node_types"]["Microservice"]["capabilities"]
+        ),
         "types": extract_types(data["monitoring"].get("data_types", {})),
     },
 ]
