@@ -12,7 +12,7 @@ template = jinja_env.get_template("docspage.md.j2")
 DOCS_LOC = Path("docs/")
 
 SOURCES = {
-    "profile": "profiles/eu.swarmchestrate/profile.yaml",
+    "app": "profiles/eu.swarmchestrate/app.yaml",
     "capacity": "profiles/eu.swarmchestrate/capacity.yaml",
     "monitoring": "profiles/eu.swarmchestrate/monitoring.yaml",
     "policy": "profiles/eu.swarmchestrate/policy.yaml",
@@ -143,9 +143,9 @@ pages = [
     {
         "name": "Microservice",
         "fields": extract_fields(
-            data["profile"]["node_types"]["Microservice"]["properties"]
+            data["app"]["node_types"]["Microservice"]["properties"]
         ),
-        "types": extract_types(data["profile"].get("data_types", {})),
+        "types": extract_types(data["app"].get("data_types", {})),
         "show_primitives": True,
     },
     {
