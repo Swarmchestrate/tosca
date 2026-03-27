@@ -71,45 +71,43 @@ You may then install Sardou from PyPi using `uv` or `pip`.
 	pip install Sardou
 	```
 
-## Command-line Usage
+## Usage
 
-The Sardou CLI currently only performs validation. Run it against
-any SAT or CDT. If *processed succesfully*, the template is valid.
+### Command-line
+
+A basic CLI is available to perform only validation. Run it against
+any template. If *processed succesfully*, the template is valid.
 
 ```bash
 sardou templates/BookInfo.yaml
 ```
 
-## Library Usage
+### Library
 
-Import the Sardou TOSCA Library
+For all other uses, import the Sardou TOSCA Library. The rest of this page
+assumes that you have imported `Sardou`.
 
 ```python
 from sardou import Sardou # note the uppercase S
 ```
 
-### Validation
+## Validation
 
-To validate a TOSCA template, create a new `Sardou` object, passing it an SAT or CDT
+To validate a TOSCA template, create a new `Sardou` object, passing it a template
 file path, or the template content directly as a Python dict.
 This will validate the template and complete the representation, inheriting from parent
 types.
 
-=== "Pass a file path"
+=== "From path"
 
 	```python
 	>>> sat = Sardou("my_app.yaml")
 	Processed successfully: my_app.yaml
-
-	>>> sat
-	{'description': 'stressng on Swarmchestrate', 'nodeTemplates': {'resource-1': {'metadata': {}, 'description': '', 'types': {'eu.swarmchestrate:0.1::EC2.micro.t3': {'description': 'An EC2 compute node from the University of Westminster provision\n', 'parent': 'eu.swarmchestrate:0.1::Resource'} ...
 	```
 
-=== "Pass content directly"
+=== "From content"
 
 	```python
-
-	# As a Python dict
 	>>> sat_dict = {
 	...     "tosca_definitions_version": "tosca_2_0",
 	...     "imports": [
@@ -138,7 +136,7 @@ The template is not resolved at this point (i.e. statisfied requirements and cre
 relationships) - that functionality is to come. If there are errors or warnings, they
 will be presented at this time.
 
-#### Exploring the Template
+## Exploring the Template
 
 Get the raw, uncompleted (original YAML) with the `raw` attribute.
 
@@ -152,55 +150,75 @@ so this may not be a long-term feature):
 
 ```python
 >>> sat.nodeTemplates
-{'resource-1': {'metadata': {}, 'description': '', 'types': {'eu.swarmchestrate:0.1::EC2.micro.t3' ...
+{'stressng': {'metadata': {}, 'description': '', 'types': {'eu.swarmchestrate:0.1::Kubernetes.APIObject': ...
 ```
 
-### Applications
+Or at any point, you can get a regular Python dictionary:
+
+```python
+>>> sat.nodeTemplates._to_dict()
+{'stressng': {'metadata': {}, 'description': '', 'types': {'eu.swarmchestrate:0.1::Kubernetes.APIObject': ...
+```
+
+## Applications
 
 !!! warning
 
 	The functionality described here only works on Swarm Application Templates.
 
 
-#### Reconfiguration Policies
+### Policies
 
-Grab the reconfiuration policies as a Python object with `get_reconfiguration()`
-You could dump this to JSON or YAML.
+The policy getters below return dictionaries whose top-level keys are
+user-defined names and whose values are sub-dictionaries that vary
+by policy type. You might dump the returned dictionary to JSON or YAML.
+
+All policies that target specific Microservices (as opposed to a policy
+targeting the application as a whole) will contain a
+[`targets` key](policy.md#targets) in their sub-dictionary.
+
+#### Reconfiguration
+
+Grab the reconfiuration policies as a Python object with `get_reconfiguration()`.
+In addition to `targets`, [the following keys](policy.md#types.reconfiguration)
+are present in the sub-dicts.
 
 ```python
 >>> sat.get_reconfiguration()
 {'frontend_reconfiguration': {'constants': {'cpu_util_threshold': '80'}, 'rule': 'if cpu_util_prct > cpu_util_threshold:\n  scale_out(details_v1, productpage_v1)\nelse:\n  pass\n', 'targets': ['details_v1', 'productpage_v1']}, ...
 ```
 
-
 #### Quality of Service Policies
 
-Grab the QoS requirements as a Python object with `get_qos()`
-You could dump this to JSON or YAML.
+Grab the QoS requirements as a Python object with `get_qos()`. In 
+addition to `targets`, specific QoS keys are present in the sub-dicts,
+along with a `type` key indicating the specific sub-type. You can view
+these details [in the reference here](policy.md#types.qos).
 
 ```python
 >>> sat.get_qos()
-[{'energy': {'type': 'swch:QoS.Energy.Budget', 'properties': {'priority': 0.3, 'target': 10}}}...
+{'bandwidth': {'priority': 0.5, 'target': 800, 'type': 'eu.swarmchestrate:0.1::QoS.Performance.Bandwidth'} ...
 ```
 
 #### Scheduling Policies
 
-Grab the scheduling policies as a Python object with `get_scheduling()`
-You could dump this to JSON or YAML.
+Grab the scheduling policies as a Python object with `get_scheduling()`.
+Only `targets` and `type` key (indicating the specific sub-type) are
+present in the sub-dicts. Scheduling policy types [can be seen here](policy.md#types.scheduling).
 
 ```python
 >>> sat.get_scheduling()
-{'frontend_colocation': {'targets': ['details_v1', 'productpage_v1']}, 'reviews_colocation': {'targets': ['reviews_v1', 'reviews_v2', 'reviews_v3']}}
+{'frontend_colocation': {'type': 'eu.swarmchestrate:0.1::Scheduling.Colocation', 'targets': ['details_v1', 'productpage_v1']} ...
 ```
 
-#### Resource Requirements
+### Resource Requirements
 
 Grab the Resource requirements as a Python object with `get_requirements()`
 You could dump this to JSON or YAML.
 
 ```python
 >>> sat.get_requirements()
-{'worker-node': {'metadata': {'created_by': 'floria-tosca-lib', 'created_at': '2025-09-16T14:51:24Z', 'description': 'Generated from node worker-node', 'version': '1.0'}, 'capabilities': {'host': {'properties': {'num-cpus': {'$greater_than': 4}, 'mem-size': {'$greater_than': '8 GB'}}}, ...
+{'details_v1': {'expression': "lambda vals: ((vals['host.num-cpus'] >= 1) and (vals['host.mem-size'] >= 2) and (any(entry in vals['network.explicit-tcp-allow'] for entry in ['ALL', 80])))", 'colocated': ['productpage_v1'],  ...
 ```
 
 ### Kubernetes Manifests (manifestGenerator.py)
@@ -225,7 +243,7 @@ You could dump this to JSON or YAML.
 python3 run_manifest_generator.py
 ```
 
-### Capacities
+## Capacities
 
 You can create a Sardou object from a CDT with the same approach as for SATs.
 
@@ -238,18 +256,41 @@ Processed successfully: my_cap.yaml
 
 	The below methods only work on Capacity Description Templates.
 
-#### Capacity Details
+### Capacity Details
 
 Given a CDT, Sardou can extract the capability details of each available flavour,
 as well as the [overall capacity](cdt.md#cdt-overall-capacity), if defined.
 
 ```python
 >>> cdt.get_capacities()
-t.get_capacities()
-({'m2-medium-sztaki': {'capacity': {'instances': 4}, 'energy': {'consumption': 0.1, 'energy-type': 'non-green', 'powered-type': 'mains-powered'}, 'host': {'bandwidth': '1000', 'disk-size': '20', 'mem-size': '8 GB', 'num-cpus': 4},
+{'cloud_flavours': {'m2-large': {'energy': {'consumption': 0.1, 'energy-type': 'non-green', 'powered-type': 'mains-powered'},
 ```
 
-#### Resource Description Templates
+The following top-level keys are possible, depending on the capacity:
+
+`cloud_flavours`{ #cap.cloud-flavours }
+
+:   Map of flavour definitions, keyed by flavour name with values specifying all
+	[defined **capabilities**](capacity.md#capacity).
+
+`cloud_capacity_raw`{ #cap.cloud-capacity-raw }
+
+:   Map of overall available countable resources, keyed by name according
+	to [capabilities in OverallCapacity](capacity.md#overallcapacity),
+	with integer values.
+
+`cloud_capacity_flavour`{ #cap.cloud-capacity-flavour }
+
+:   Map of overall available countable resources, keyed by names defined
+	in `cloud_flavours` above, with integer values specifying number of instances.
+
+`edge_instances`{ #cap.edge-instances }
+
+:   Map of edge instance definitions keyed by edge name with values specifying all
+	[defined **capabilities**](capacity.md#capacity).
+
+
+### Resource Description Templates
 
 You can generate a Resource Description Template (RDT) with a CDT and an
 accepted offer. An RDT is an internal template used to pass deployment
@@ -262,7 +303,7 @@ configuration for the Swarm to the Cluster Builder component.
 
 Which will generate an RDT at the given `output_path`.
 
-### Resources
+## Resources
 
 You can then create a new Sardou object from an RDT.
 
@@ -276,7 +317,7 @@ Processed successfully: sztaki-rdt.yaml
 	This method only works on Resource Description Templates.
 
 
-#### Cluster Configuration Details
+### Cluster Configuration Details
 
 Get the cluster configuration details for the resources as a Python object with `get_cluster()`
 You could dump this to JSON or YAML.
