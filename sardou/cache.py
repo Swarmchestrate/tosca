@@ -56,7 +56,8 @@ def fetch(url: str, cache_dir: Path = DEFAULT_CACHE_DIR) -> Path:
         elif cached.exists():
             logger.warning("Network error fetching %s — using cached copy", url)
         else:
-            raise
+            logger.warning("Failed to fetch %s — skipping cache", url)
+            return None
 
     return cached
 
@@ -82,12 +83,19 @@ def resolve_imports(
 
         _seen.add(url)
         local = fetch(url, cache_dir)
+        if local is None:
+            continue
+
+        # Verify the cached file is valid YAML before rewriting the URL
+        with local.open("r") as f:
+            nested = yaml.load(f)
+        if not isinstance(nested, dict):
+            continue
+
         imp["url"] = str(local)
 
         # Recursively resolve imports inside the cached file
-        with local.open("r") as f:
-            nested = yaml.load(f)
-        if nested and nested.get("imports"):
+        if nested.get("imports"):
             resolve_imports(nested, cache_dir, _seen)
             with local.open("w") as f:
                 yaml.dump(nested, f)
