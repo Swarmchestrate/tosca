@@ -41,6 +41,12 @@ PUCCINI_FLAGS = ["-x", "data_types.string.permissive"]
 
 # Read and update YAML using ruamel.yaml
 yaml = YAML()
+yaml.width = 4096
+
+
+def _strip_blank_lines(text):
+    """Strip whitespace from otherwise blank lines so ruamel preserves them."""
+    return "\n".join("" if line.isspace() else line for line in text.split("\n"))
 
 
 def prevalidate(input_data):
@@ -49,8 +55,8 @@ def prevalidate(input_data):
             logger.error(f"File does not exist: {input_data}")
             return False
         try:
-            with input_data.open("r") as f:
-                data = yaml.load(f)
+            text = input_data.read_text()
+            data = yaml.load(_strip_blank_lines(text))
         except Exception as e:
             logger.error(f"Error reading YAML file {input_data}: {e}")
             return False
@@ -58,6 +64,8 @@ def prevalidate(input_data):
         data = input_data
     else:
         try:
+            if isinstance(input_data, str):
+                input_data = _strip_blank_lines(input_data)
             data = yaml.load(input_data)
         except Exception as e:
             logger.error(f"Error parsing YAML content: {e}")

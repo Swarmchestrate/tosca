@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 DEFAULT_CACHE_DIR = Path.home() / ".cache" / "sardou"
 
 yaml = YAML()
+yaml.width = 4096
 
 
 def _meta_path(cached: Path) -> Path:
