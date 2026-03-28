@@ -1,6 +1,6 @@
-site_name: TOSCA Toolkit
+site_name: Swarmchestrate Docs
 repo_url: https://github.com/Swarmchestrate/tosca
-
+site_url: https://docs.swarmchestrate.eu
 theme: 
   name: material
   logo: img/word-logo.png
