@@ -87,10 +87,9 @@ class TestFetch:
         path = fetch(url, cache_dir=tmp_path)
         assert path.read_bytes() == BODY
 
-    def test_network_error_no_cache_raises(self, tmp_path):
+    def test_network_error_no_cache_returns_none(self, tmp_path):
         url = "http://127.0.0.1:1/unreachable.yaml"
-        with pytest.raises(Exception):
-            fetch(url, cache_dir=tmp_path)
+        assert fetch(url, cache_dir=tmp_path) is None
 
 
 # ---------------------------------------------------------------------------
