@@ -6,7 +6,7 @@ from ruamel.yaml import YAML
 from .capacities import extract_capacities
 from .cluster import get_cluster as _get_cluster
 from .monitoring import extract_monitoring as _extract_monitoring
-from .nodeLabels import get_labels_from_sat as _get_labels_from_sat
+from .policies import get_affinity as _get_affinity
 from .policies import get_qos as _get_qos
 from .policies import get_reconfiguration as _get_reconfiguration
 from .policies import get_scheduling as _get_scheduling
@@ -117,6 +117,10 @@ class Sardou(DotDict):
     @requires_kind(TemplateKind.SAT)
     def get_scheduling(self):
         return _get_scheduling(self)
+
+    @requires_kind(TemplateKind.SAT)
+    def get_affinity(self):
+        return _get_affinity(self)
 
     @requires_kind(TemplateKind.CDT)
     def get_capacities(self):

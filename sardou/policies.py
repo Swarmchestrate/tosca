@@ -45,3 +45,49 @@ def get_reconfiguration(sat):
 
 def get_scheduling(sat):
     return _get_policies(sat, "Scheduling", incl_type=True)
+
+
+def get_affinity(sat):
+    if not hasattr(sat, "nodeTemplates"):
+        return {}
+
+    nodes = sat.nodeTemplates._to_dict()
+    microservices = [
+        name for name, node in nodes.items()
+        if any(
+            k.startswith(_PREFIX) and k.endswith("Microservice")
+            for k in (node.get("types") or {})
+        )
+    ]
+
+    affinity_label = {ms: ms for ms in microservices}
+
+    colocation_policies = _get_policies(sat, "Scheduling.Colocation")
+    for policy in colocation_policies.values():
+        targets = policy.get("targets", [])
+        if len(targets) < 2:
+            continue
+        anchor = targets[0]
+        for target in targets:
+            affinity_label[target] = anchor
+
+    result = {}
+    for ms in microservices:
+        node_name = affinity_label[ms]
+        result[ms] = {
+            "requiredDuringSchedulingIgnoredDuringExecution": {
+                "nodeSelectorTerms": [
+                    {
+                        "matchExpressions": [
+                            {
+                                "key": "labels.swarmchestrate.eu/ms_id",
+                                "operator": "In",
+                                "values": [node_name],
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+
+    return result
