@@ -94,7 +94,7 @@ from sardou import Sardou
 ### Validation
 
 To validate a TOSCA template, create a new `Sardou` object, passing it a file path,
-or the template content directly as a [Python dict](https://swarmchestrate.github.io/tosca/sardou/#validation). This will validate the template and complete the representation, inheriting from parent types.
+or the template content directly as a [Python dict](https://docs.swarmchestrate.eu/sardou_lib/#__tabbed_1_2). This will validate the template and complete the representation, inheriting from parent types.
 
 ```python
 # Pass a file path
