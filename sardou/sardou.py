@@ -5,8 +5,8 @@ from ruamel.yaml import YAML
 
 from .capacities import extract_capacities
 from .cluster import get_cluster as _get_cluster
-from .nodeLabels import get_labels_from_sat as _get_labels_from_sat
 from .monitoring import extract_monitoring as _extract_monitoring
+from .nodeLabels import get_labels_from_sat as _get_labels_from_sat
 from .policies import get_qos as _get_qos
 from .policies import get_reconfiguration as _get_reconfiguration
 from .policies import get_scheduling as _get_scheduling
