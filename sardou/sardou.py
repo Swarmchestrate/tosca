@@ -6,6 +6,7 @@ from ruamel.yaml import YAML
 from .capacities import extract_capacities
 from .cluster import get_cluster as _get_cluster
 from .monitoring import extract_monitoring as _extract_monitoring
+from .nodeLabels import get_labels_from_sat as _get_labels_from_sat
 from .policies import get_qos as _get_qos
 from .policies import get_reconfiguration as _get_reconfiguration
 from .policies import get_scheduling as _get_scheduling
@@ -133,3 +134,8 @@ class Sardou(DotDict):
     def get_monitoring(self):
         nodes = self.raw.service_template.node_templates
         return _extract_monitoring(nodes._to_dict())
+    
+    @requires_kind(TemplateKind.SAT)
+    def get_labels(self, offer: dict):
+        nodes = self.raw.service_template.node_templates
+        return _get_labels_from_sat(nodes._to_dict(), offer)
