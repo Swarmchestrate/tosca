@@ -491,6 +491,152 @@ class TestToscaToAskDict:
 
 
 # ---------------------------------------------------------------------------
+# policies.py — get_affinity
+# ---------------------------------------------------------------------------
+
+
+class TestGetAffinity:
+    @pytest.fixture
+    def get_affinity(self):
+        from sardou.policies import get_affinity
+
+        return get_affinity
+
+    def _make_sat(self, nodes, policies_typed=None, raw_policies=None):
+        from sardou.sardou import DotDict
+
+        sat = object.__new__(DotDict)
+        sat.__dict__["nodeTemplates"] = DotDict(**nodes)
+        if policies_typed is not None:
+            sat.__dict__["policies"] = DotDict(**policies_typed)
+            sat.__dict__["raw"] = DotDict(
+                **{"service_template": {"policies": raw_policies or []}}
+            )
+        return sat
+
+    def _anchor(self, result, ms):
+        expr = result[ms]["requiredDuringSchedulingIgnoredDuringExecution"][
+            "nodeSelectorTerms"
+        ][0]["matchExpressions"][0]
+        return expr["values"][0]
+
+    def test_no_node_templates_returns_empty(self, get_affinity):
+        from sardou.sardou import DotDict
+
+        sat = object.__new__(DotDict)
+        assert get_affinity(sat) == {}
+
+    def test_non_microservice_nodes_excluded(self, get_affinity):
+        nodes = {"swarm": {"types": {"eu.swarmchestrate::Swarm": {}}}}
+        sat = self._make_sat(nodes, {}, [])
+        assert get_affinity(sat) == {}
+
+    def test_microservice_gets_own_name_label(self, get_affinity):
+        nodes = {"frontend": {"types": {"eu.swarmchestrate::Microservice": {}}}}
+        sat = self._make_sat(nodes, {}, [])
+        result = get_affinity(sat)
+        assert "frontend" in result
+        expr = result["frontend"]["requiredDuringSchedulingIgnoredDuringExecution"][
+            "nodeSelectorTerms"
+        ][0]["matchExpressions"][0]
+        assert expr["key"] == "labels.swarmchestrate.eu/ms_id"
+        assert expr["operator"] == "In"
+        assert expr["values"] == ["frontend"]
+
+    def test_colocation_targets_share_first_target_label(self, get_affinity):
+        nodes = {
+            "svc_a": {"types": {"eu.swarmchestrate::Microservice": {}}},
+            "svc_b": {"types": {"eu.swarmchestrate::Microservice": {}}},
+        }
+        policies_typed = {
+            "col": {
+                "types": {"eu.swarmchestrate::Scheduling.Colocation": {}},
+                "properties": {},
+            }
+        }
+        raw_policies = [{"col": {"targets": ["svc_a", "svc_b"]}}]
+        sat = self._make_sat(nodes, policies_typed, raw_policies)
+        result = get_affinity(sat)
+        assert self._anchor(result, "svc_a") == "svc_a"
+        assert self._anchor(result, "svc_b") == "svc_a"
+
+    def test_single_target_colocation_not_applied(self, get_affinity):
+        nodes = {"solo": {"types": {"eu.swarmchestrate::Microservice": {}}}}
+        policies_typed = {
+            "col": {
+                "types": {"eu.swarmchestrate::Scheduling.Colocation": {}},
+                "properties": {},
+            }
+        }
+        raw_policies = [{"col": {"targets": ["solo"]}}]
+        sat = self._make_sat(nodes, policies_typed, raw_policies)
+        result = get_affinity(sat)
+        assert self._anchor(result, "solo") == "solo"
+
+    def test_multiple_colocation_groups(self, get_affinity):
+        nodes = {
+            "a": {"types": {"eu.swarmchestrate::Microservice": {}}},
+            "b": {"types": {"eu.swarmchestrate::Microservice": {}}},
+            "c": {"types": {"eu.swarmchestrate::Microservice": {}}},
+            "d": {"types": {"eu.swarmchestrate::Microservice": {}}},
+        }
+        policies_typed = {
+            "col1": {
+                "types": {"eu.swarmchestrate::Scheduling.Colocation": {}},
+                "properties": {},
+            },
+            "col2": {
+                "types": {"eu.swarmchestrate::Scheduling.Colocation": {}},
+                "properties": {},
+            },
+        }
+        raw_policies = [
+            {"col1": {"targets": ["a", "b"]}},
+            {"col2": {"targets": ["c", "d"]}},
+        ]
+        sat = self._make_sat(nodes, policies_typed, raw_policies)
+        result = get_affinity(sat)
+        assert self._anchor(result, "a") == "a"
+        assert self._anchor(result, "b") == "a"
+        assert self._anchor(result, "c") == "c"
+        assert self._anchor(result, "d") == "c"
+
+    def test_standalone_unaffected_by_colocation(self, get_affinity):
+        nodes = {
+            "frontend": {"types": {"eu.swarmchestrate::Microservice": {}}},
+            "backend": {"types": {"eu.swarmchestrate::Microservice": {}}},
+            "standalone": {"types": {"eu.swarmchestrate::Microservice": {}}},
+        }
+        policies_typed = {
+            "col": {
+                "types": {"eu.swarmchestrate::Scheduling.Colocation": {}},
+                "properties": {},
+            }
+        }
+        raw_policies = [{"col": {"targets": ["frontend", "backend"]}}]
+        sat = self._make_sat(nodes, policies_typed, raw_policies)
+        result = get_affinity(sat)
+        assert self._anchor(result, "frontend") == "frontend"
+        assert self._anchor(result, "backend") == "frontend"
+        assert self._anchor(result, "standalone") == "standalone"
+
+    def test_non_microservice_nodes_not_in_result(self, get_affinity):
+        nodes = {
+            "svc": {"types": {"eu.swarmchestrate::Microservice": {}}},
+            "swarm": {"types": {"eu.swarmchestrate::Swarm": {}}},
+        }
+        sat = self._make_sat(nodes, {}, [])
+        result = get_affinity(sat)
+        assert set(result.keys()) == {"svc"}
+
+    def test_get_affinity_raises_on_non_sat(self):
+        fake = object.__new__(SardouInternal)
+        fake.kind = TemplateKind.CDT
+        with pytest.raises(TypeError):
+            fake.get_affinity()
+
+
+# ---------------------------------------------------------------------------
 # capacities.py — _unwrap
 # ---------------------------------------------------------------------------
 
@@ -806,6 +952,9 @@ class TestSardouSATAPI:
         monitoring = bookinfo.get_monitoring()
         assert isinstance(monitoring, dict)
 
+    def test_get_affinity_returns_dict(self, bookinfo, mode):
+        assert isinstance(bookinfo.get_affinity(), dict)
+
     def test_get_capacities_raises_type_error(self, bookinfo, mode):
         with pytest.raises(TypeError):
             bookinfo.get_capacities()
@@ -866,6 +1015,46 @@ class TestSATTemplateOutput:
             assert callable(fn), (
                 f"Expression for '{node_name}' should be a callable lambda"
             )
+
+    def test_bookinfo_affinity_covers_all_microservices(self, bookinfo):
+        affinity = bookinfo.get_affinity()
+        expected = {
+            "details_v1", "ratings_v1", "reviews_v1",
+            "reviews_v2", "reviews_v3", "productpage_v1",
+        }
+        assert set(affinity.keys()) == expected
+
+    def test_bookinfo_frontend_colocation_uses_first_target(self, bookinfo):
+        affinity = bookinfo.get_affinity()
+
+        def anchor(ms):
+            return affinity[ms]["requiredDuringSchedulingIgnoredDuringExecution"][
+                "nodeSelectorTerms"
+            ][0]["matchExpressions"][0]["values"][0]
+
+        # details_v1 is the first target of frontend_colocation
+        assert anchor("details_v1") == "details_v1"
+        assert anchor("productpage_v1") == "details_v1"
+
+    def test_bookinfo_reviews_colocation_uses_first_target(self, bookinfo):
+        affinity = bookinfo.get_affinity()
+
+        def anchor(ms):
+            return affinity[ms]["requiredDuringSchedulingIgnoredDuringExecution"][
+                "nodeSelectorTerms"
+            ][0]["matchExpressions"][0]["values"][0]
+
+        # reviews_v1 is the first target of reviews_colocation
+        assert anchor("reviews_v1") == "reviews_v1"
+        assert anchor("reviews_v2") == "reviews_v1"
+        assert anchor("reviews_v3") == "reviews_v1"
+
+    def test_bookinfo_standalone_microservice_uses_own_label(self, bookinfo):
+        affinity = bookinfo.get_affinity()
+        value = affinity["ratings_v1"]["requiredDuringSchedulingIgnoredDuringExecution"][
+            "nodeSelectorTerms"
+        ][0]["matchExpressions"][0]["values"][0]
+        assert value == "ratings_v1"
 
 
 @requires_puccini
