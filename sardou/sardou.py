@@ -138,8 +138,3 @@ class Sardou(DotDict):
     def get_monitoring(self):
         nodes = self.raw.service_template.node_templates
         return _extract_monitoring(nodes._to_dict())
-    
-    @requires_kind(TemplateKind.SAT)
-    def get_labels(self, offer: dict):
-        nodes = self.raw.service_template.node_templates
-        return _get_labels_from_sat(nodes._to_dict(), offer)

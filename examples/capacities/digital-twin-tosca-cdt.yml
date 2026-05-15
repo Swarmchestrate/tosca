@@ -1,0 +1,275 @@
+tosca_definitions_version: tosca_2_0
+
+# Can we change the description?
+description: Digital Twin demonstrator capacities description
+
+# Can we modify the metadada?
+metadata:
+  name: cap-aws-uow-us
+  author: University of Westminster
+  date: 2026-01-12
+  version: 0.1
+  tags:
+  - provider: aws
+  - region: us-east-1
+
+imports:
+- namespace: swch
+  url: https://raw.githubusercontent.com/Swarmchestrate/tosca/refs/heads/main/profiles/eu.swarmchestrate/profile.yaml
+  
+# Node types section for all the descriptor. Can we add here any property we could require?  
+node_types:
+  Edge:
+    description: >
+      A Raspberry Pi edge node from the University of Westminster provision
+    properties:
+      ip:
+        type: string
+        required: true
+        description: Raspberry Pi Edge node IP
+      credentials:
+        token:
+          type: string
+          required: true
+          description: Raspberry Pi Edge node Credentials
+          default: us-east-1        
+         capabilities:
+      capacity:
+        properties:
+          instances:
+            type: integer
+            required: true
+            description: Raspberry Pi Edge node Number of instances   
+      host:
+        properties:
+          num-cpus:
+            type: string
+            required: true
+            description: Number of vCPUs
+          mem-size:
+            type: string
+            required: true
+            description: Memory size in GB
+          disk-size:
+            type: string
+            required: true
+            description: Disk size in GB
+          bandwidth:
+            type: string
+            required: true
+            description: Network bandwidth in Mbps
+          architecture:
+            type: string
+            required: true
+            description: Raspberry PI architecture: arm64 or arm/v7            
+      pricing:
+        properties:
+          cost:
+            type: float
+            required: true
+            description: Cost per hour in USD      
+      energy:
+        properties:
+          consumption:
+            type: float
+            required: true
+            description: Energy consumption in watts per hour
+          powered-type:
+            type: string
+            required: false
+            description: Type of power used (e.g., renewable, non-renewable)
+            default: mains-powered
+          energy-type:
+            type: string
+            required: false
+            description: Specific type of energy (e.g., solar, wind, coal)
+            default: non-green            
+
+
+service_template:
+# We assume here we need to define all our raspberry PI
+# We assume the token will be provided when we will register the raspberries as our capacities in the blockchain
+# Are the node_template names well defined?
+  node_templates:
+    Edge.rPi5.1:
+      type: Edge
+      description: >
+        A Raspberry Pi 5 edge node for the Digital Twin demonstrator
+      properties:
+        ip: 192.168.1.11
+        credentials:
+          token: asb1823n19a9asnd929d9n2
+      capabilities:
+        capacity:
+          properties:
+            instances: 1
+        host:
+          properties:
+            num-cpus: 4
+            mem-size: 8             # Assuming RAM GB
+            disk-size: 60           # Assuming disk GB
+            bandwidth: 1000         # Assuming Mbps
+            architecture: arm64
+        pricing:
+          properties:
+            cost: 0.00
+        energy:
+          properties:
+            consumption: 5.0        # The Raspberry Pi 5 requires a 5V, 5A, 25W 
+            energy-type: solar
+    Edge.rPi5.2:
+      type: Edge
+      description: >
+        A Raspberry Pi 5 edge node for the Digital Twin demonstrator
+      properties:
+        ip: 192.168.1.12
+        credentials:
+          token: asb1823n19a9asnd929d9n2
+      capabilities:
+        capacity:
+          properties:
+            instances: 1
+        host:
+          properties:
+            num-cpus: 4
+            mem-size: 8             # Assuming RAM GB
+            disk-size: 60           # Assuming disk GB
+            bandwidth: 1000         # Assuming Mbps
+            architecture: arm64
+        pricing:
+          properties:
+            cost: 0.00
+        energy:
+          properties:
+            consumption: 5.0        # The Raspberry Pi 5 requires a 5V, 5A, 25W 
+            energy-type: solar
+   Edge.rPi2.1:
+      type: Edge
+      description: >
+        A Raspberry Pi 2 edge node for the Digital Twin demonstrator
+      properties:
+        ip: 192.168.1.21
+        credentials:
+          token: asb1823n19a9asnd929d9n2
+      capabilities:
+        capacity:
+          properties:
+            instances: 1
+        host:
+          properties:
+            num-cpus: 4
+            mem-size: 1             # Assuming RAM GB
+            disk-size: 60           # Assuming disk GB
+            bandwidth: 1000         # Assuming Mbps
+            architecture: arm/v7
+        pricing:
+          properties:
+            cost: 0.00
+        energy:
+          properties:
+            consumption: 5.0        # The Raspberry Pi 5 requires a 5V, 2A, 10W 
+            energy-type: solar  
+   Edge.rPi2.2:
+      type: Edge
+      description: >
+        A Raspberry Pi 2 edge node for the Digital Twin demonstrator
+      properties:
+        ip: 192.168.1.22
+        credentials:
+          token: asb1823n19a9asnd929d9n2
+      capabilities:
+        capacity:
+          properties:
+            instances: 1
+        host:
+          properties:
+            num-cpus: 4
+            mem-size: 1             # Assuming RAM GB
+            disk-size: 60           # Assuming disk GB
+            bandwidth: 1000         # Assuming Mbps
+            architecture: arm/v7
+        pricing:
+          properties:
+            cost: 0.00
+        energy:
+          properties:
+            consumption: 5.0        # The Raspberry Pi 5 requires a 5V, 2A, 10W 
+            energy-type: solar              
+   Edge.rPi2.3:
+      type: Edge
+      description: >
+        A Raspberry Pi 2 edge node for the Digital Twin demonstrator
+      properties:
+        ip: 192.168.1.23
+        credentials:
+          token: asb1823n19a9asnd929d9n2
+      capabilities:
+        capacity:
+          properties:
+            instances: 1
+        host:
+          properties:
+            num-cpus: 4
+            mem-size: 1             # Assuming RAM GB
+            disk-size: 60           # Assuming disk GB
+            bandwidth: 1000         # Assuming Mbps
+            architecture: arm/v7
+        pricing:
+          properties:
+            cost: 0.00
+        energy:
+          properties:
+            consumption: 5.0        # The Raspberry Pi 5 requires a 5V, 2A, 10W 
+            energy-type: solar              
+   Edge.rPi2.4:
+      type: Edge
+      description: >
+        A Raspberry Pi 2 edge node for the Digital Twin demonstrator
+      properties:
+        ip: 192.168.1.24
+        credentials:
+          token: asb1823n19a9asnd929d9n2
+      capabilities:
+        capacity:
+          properties:
+            instances: 1
+        host:
+          properties:
+            num-cpus: 4
+            mem-size: 1             # Assuming RAM GB
+            disk-size: 60           # Assuming disk GB
+            bandwidth: 1000         # Assuming Mbps
+            architecture: arm/v7
+        pricing:
+          properties:
+            cost: 0.00
+        energy:
+          properties:
+            consumption: 5.0        # The Raspberry Pi 5 requires a 5V, 2A, 10W 
+            energy-type: solar              
+   Edge.rPi2.5:
+      type: Edge
+      description: >
+        A Raspberry Pi 2 edge node for the Digital Twin demonstrator
+      properties:
+        ip: 192.168.1.25
+        credentials:
+          token: asb1823n19a9asnd929d9n2
+      capabilities:
+        capacity:
+          properties:
+            instances: 1
+        host:
+          properties:
+            num-cpus: 4
+            mem-size: 1             # Assuming RAM GB
+            disk-size: 60           # Assuming disk GB
+            bandwidth: 1000         # Assuming Mbps
+            architecture: arm/v7
+        pricing:
+          properties:
+            cost: 0.00
+        energy:
+          properties:
+            consumption: 5.0        # The Raspberry Pi 5 requires a 5V, 2A, 10W 
+            energy-type: solar              

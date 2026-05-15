@@ -1,0 +1,78 @@
+tosca_definitions_version: tosca_2_0
+
+# Can we cahnge the description?
+description: stressng on Swarmchestrate
+
+# Can we change the metadada values and the tag?
+metadata:
+  name: stressng
+  author: Jay DesLauriers
+  date: 2025-08-10
+  version: 1.0
+  tags:
+  - demo
+
+# We assume this is a fixed import
+imports:
+- namespace: swch
+  url: https://raw.githubusercontent.com/Swarmchestrate/tosca/refs/heads/main/profiles/eu.swarmchestrate/profile.yaml
+  
+  
+service_template:
+
+# The first node is recommended to be the required swam node
+  node_templates:
+
+    swarm:
+      type: swch:Swarm
+      directives:
+      - substitute  
+  
+
+# The rest of the node templates are for the application microservices
+    # Indented under node_templates (same level as swarm)
+    # Only the image property is required
+    # We assume the related images need to be deployed in the Harbor server 70.156.160.217. Is it true?
+    # How can we pass parameters for the docker run?
+    stressng:
+      type: swch:Microservice
+      properties:
+        image: swarmchestrate/swarmchestrate-processing
+        args: ['--cpu', '0', '--cpu-method', 'pi', '-l', '20']  # we need more explanation about this args
+    # Node host requirement section: we speficy the host requirement is a Raspberry PI 5
+      requirements:
+      - host:
+          node_filter:
+            $and:
+              - $equal:
+                  - $get_property: [ SELF, TARGET, CAPABILITY, host, architecture ]
+                  - arm64         
+    # QOS policies not required now
+    stressng:
+      type: swch:Microservice
+      properties:
+        image: swarmchestrate/swarmchestrate-ui
+        args: ['--cpu', '0', '--cpu-method', 'pi', '-l', '20']  # we need more explanation about this args
+    # Node host requirement section: we speficy the host requirement is a Raspberry PI 5
+      requirements:
+      - host:
+          node_filter:
+            $and:
+              - $equal:
+                  - $get_property: [ SELF, TARGET, CAPABILITY, host, architecture ]
+                  - arm64         
+    # QOS policies not required now    
+    stressng:
+      type: swch:Microservice
+      properties:
+        image: swarmchestrate/swarmchestrate-acquisition-ecowitt
+        args: ['--cpu', '0', '--cpu-method', 'pi', '-l', '20']  # we need more explanation about this args
+    # Node host requirement section: we speficy the host requirement is a Raspberry PI 2
+      requirements:
+      - host:
+          node_filter:
+            $and:
+              - $equal:
+                  - $get_property: [ SELF, TARGET, CAPABILITY, host, architecture ]
+                  - arm/v7         
+    # QOS policies not required now       
