@@ -7,7 +7,7 @@ rdt_yaml.default_flow_style = False
 
 
 def _validate_offer_against_cdt(selected_offer: dict, cdt_nodes: dict) -> None:
-    for ms_name, ms_data in selected_offer.items():
+    for _, ms_data in selected_offer.items():
         if not isinstance(ms_data, dict):
             continue
         for offer_key, offer_data in ms_data.items():
@@ -47,9 +47,8 @@ def generate_rdt(template, selected_offer: dict, output_path: str = "rdt.yaml") 
 
     cdt_node_types = source.get("node_types", {})
     new_node_templates = {}
-    used_local_types = set()
 
-    for ms_name, ms_data in selected_offer.items():
+    for _, ms_data in selected_offer.items():
         if not isinstance(ms_data, dict):
             continue
 
@@ -64,7 +63,6 @@ def generate_rdt(template, selected_offer: dict, output_path: str = "rdt.yaml") 
 
             node_key = res_id
 
-            node_type = cdt_nodes[node_key]["type"]
             node = copy.deepcopy(cdt_nodes[node_key])
 
             ms_id = ids.get("ms_id", "")
@@ -78,14 +76,8 @@ def generate_rdt(template, selected_offer: dict, output_path: str = "rdt.yaml") 
 
             new_node_templates[offer_key] = node
 
-            if node_type in cdt_node_types:
-                used_local_types.add(node_type)
-
-    if used_local_types:
-        rdt["node_types"] = {
-            type_name: copy.deepcopy(cdt_node_types[type_name])
-            for type_name in used_local_types
-        }
+    if cdt_node_types:
+        rdt["node_types"] = copy.deepcopy(cdt_node_types)
 
     rdt["service_template"] = {"node_templates": new_node_templates}
 
