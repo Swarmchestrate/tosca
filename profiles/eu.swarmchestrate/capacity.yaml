@@ -216,6 +216,12 @@ node_types:
     description: >
       The base type for capacity nodes, representing a provider's offering.
     properties:
+      ssh_port:
+        type: integer
+        required: false
+        description: >
+          SSH port for accessing the instance.
+        default: 22
       ssh_user:
         type: string
         required: false
