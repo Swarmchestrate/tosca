@@ -227,6 +227,11 @@ node_types:
         required: false
         description: >
           SSH user for accessing the instance.
+      ssh_password:
+        type: string
+        required: false
+        description: >
+          SSH password for accessing the instance.
       ingress-rules:
         metadata:
           alias: custom_ingress_ports
