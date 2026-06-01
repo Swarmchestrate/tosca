@@ -45,6 +45,21 @@ data_types:
         type: integer
         required: false
 
+  simple_volume:
+    description: >
+      Simple volume mapping supporting optional source and required target.
+    properties:
+      source:
+        type: string
+        required: false
+        description: >
+          Optional source path or volume name.
+      target:
+        type: string
+        required: true
+        description: >
+          Target mount path inside the container.
+
 
 node_types:
 
@@ -270,7 +285,7 @@ node_types:
         type: list
         required: false
         entry_schema:
-          type: map
+          type: simple_volume
         description: >
           Volume declarations used by the Pod template.
 
