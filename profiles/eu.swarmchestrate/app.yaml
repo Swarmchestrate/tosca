@@ -526,6 +526,24 @@ node_types:
         description: >
           Absolute path on the host machine to mount into the workload.
 
+  File:
+    derived_from: Volume
+    description: >
+      Inline file definition that can be attached to a workload and rendered
+      at the configured target path. This is intended for compose-like inline
+      file content.
+    properties:
+      content:
+        type: string
+        required: true
+        description: >
+          Inline content to render into the file.
+      mode:
+        type: string
+        required: false
+        description: >
+          Optional permissions mode for the rendered file (for example "0444").
+
 relationship_types:
 
   HostedOn:
