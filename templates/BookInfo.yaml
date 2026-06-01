@@ -14,7 +14,7 @@ metadata:
 
 imports:
 - namespace: swch
-  url: https://raw.githubusercontent.com/Swarmchestrate/tosca/refs/heads/main/profiles/eu.swarmchestrate/profile.yaml
+  url: /workspaces/tosca/profiles/eu.swarmchestrate/profile.yaml
 
 
 service_template:
@@ -147,11 +147,10 @@ service_template:
         - port: 9080
           targetPort: 9080
           containerPort: 9080
-        volume_mounts:
-        - name: tmp
-          mount_path: /tmp
-        - name: wlp-output
-          mount_path: /opt/ibm/wlp/output
+        volumes:
+        - target: /tmp
+        - source: /opt/ibm/wlp/output
+          target: /opt/ibm/wlp/output
       requirements:
       - host: 
           count: 1
@@ -181,11 +180,10 @@ service_template:
         - port: 9080
           targetPort: 9080
           containerPort: 9080
-        volume_mounts:
-        - name: tmp
-          mount_path: /tmp
-        - name: wlp-output
-          mount_path: /opt/ibm/wlp/output
+        volumes:
+        - target: /tmp
+        - source: /opt/ibm/wlp/output
+          target: /opt/ibm/wlp/output
       requirements:
       - host:
           count: 1
@@ -215,11 +213,10 @@ service_template:
         - port: 9080
           targetPort: 9080
           containerPort: 9080
-        volume_mounts:
-        - name: tmp
-          mount_path: /tmp
-        - name: wlp-output
-          mount_path: /opt/ibm/wlp/output
+        volumes:
+        - target: /tmp
+        - source: /opt/ibm/wlp/output
+          target: /opt/ibm/wlp/output
       requirements:
       - host: 
           node_filter:
@@ -252,9 +249,8 @@ service_template:
         - port: 9080
           targetPort: 9080
           containerPort: 9080
-        volume_mounts:
-        - name: tmp
-          mount_path: /tmp
+        volumes:
+        - target: /tmp
       requirements:
       - host:
           count: 1
@@ -266,6 +262,18 @@ service_template:
               - $greater_or_equal:
                   - $get_property: [ SELF, TARGET, CAPABILITY, host, mem-size ]
                   - 2
+      - volume:
+          node: productpage_banner_file
+          relationship:
+            properties:
+              mount_path: /etc/bookinfo/banner.txt
+
+    productpage_banner_file:
+      type: swch:File
+      properties:
+        content: |
+          Welcome to Bookinfo.
+        mode: "0444"
 
   policies:
   - frontend_colocation:
