@@ -59,6 +59,11 @@ data_types:
         required: true
         description: >
           Target mount path inside the container.
+      read_only:
+        type: boolean
+        required: false
+        description: >
+          Optional flag to set a volume to read-only.
 
 
 node_types:
