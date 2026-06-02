@@ -133,3 +133,19 @@ class TestPrevalidate:
         assert result is not False
         assert result["imports"][0].get("url") == "some.profile"
         assert "profile" not in result["imports"][0]
+
+    def test_dict_input_not_mutated(self, prevalidate):
+        """A reused dict manifest must keep its original imports/keys so they
+        get revalidated on every call instead of being frozen to local paths."""
+        data = {
+            "tosca_definitions_version": "tosca_2_0",
+            "imports": [{"profile": "some.profile"}],
+            "service_template": {"node_templates": {}},
+        }
+        result = prevalidate(data)
+        assert result is not False
+        # Returned (working) copy is rewritten...
+        assert result["imports"][0].get("url") == "some.profile"
+        # ...but the caller's dict is untouched.
+        assert data["imports"][0] == {"profile": "some.profile"}
+        assert result is not data
