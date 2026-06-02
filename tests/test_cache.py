@@ -124,3 +124,71 @@ class TestResolveImports:
 
     def test_default_cache_dir(self):
         assert DEFAULT_CACHE_DIR == Path.home() / ".cache" / "sardou"
+
+
+# ---------------------------------------------------------------------------
+# Nested-import revalidation
+# ---------------------------------------------------------------------------
+
+
+class _NestedHandler(BaseHTTPRequestHandler):
+    """Serves a fixed parent that imports a mutable child."""
+
+    # /parent.yaml — never changes; imports /child.yaml
+    parent_etag = '"parent-1"'
+    child_etag = '"child-1"'
+    child_body = b"tosca_definitions_version: tosca_2_0\nname: child-v1\n"
+
+    def do_GET(self):  # noqa: N802
+        if self.path == "/parent.yaml":
+            etag, body = self.parent_etag, (
+                b"tosca_definitions_version: tosca_2_0\n"
+                b"imports:\n"
+                b"- url: http://%s/child.yaml\n" % self.headers["Host"].encode()
+            )
+        else:
+            etag, body = self.child_etag, self.child_body
+
+        if self.headers.get("If-None-Match") == etag:
+            self.send_response(304)
+            self.end_headers()
+            return
+        self.send_response(200)
+        self.send_header("ETag", etag)
+        self.end_headers()
+        self.wfile.write(body)
+
+    def log_message(self, *_args):
+        pass
+
+
+@pytest.fixture()
+def nested_server():
+    server = HTTPServer(("127.0.0.1", 0), _NestedHandler)
+    t = Thread(target=server.serve_forever, daemon=True)
+    t.start()
+    yield server, f"http://127.0.0.1:{server.server_address[1]}"
+    server.shutdown()
+
+
+def test_changed_nested_import_is_refetched(nested_server, tmp_path):
+    server, base = nested_server
+    parent_url = f"{base}/parent.yaml"
+
+    # First resolution caches parent + child (child-v1).
+    resolve_imports({"imports": [{"url": parent_url}]}, cache_dir=tmp_path)
+    child_cached = _cached_path_for_url(tmp_path, f"{base}/child.yaml")
+    assert b"child-v1" in child_cached.read_bytes()
+
+    # The pristine parent must keep its http import, not a rewritten local one.
+    parent_cached = _cached_path_for_url(tmp_path, parent_url)
+    assert "http://" in parent_cached.read_text()
+
+    # Child changes upstream (new etag + body).
+    _NestedHandler.child_etag = '"child-2"'
+    _NestedHandler.child_body = b"tosca_definitions_version: tosca_2_0\nname: child-v2\n"
+
+    # Second resolution: parent is unchanged (304) but the child must be
+    # revalidated and re-fetched.
+    resolve_imports({"imports": [{"url": parent_url}]}, cache_dir=tmp_path)
+    assert b"child-v2" in child_cached.read_bytes()
