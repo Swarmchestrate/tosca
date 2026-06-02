@@ -19,6 +19,15 @@ def _meta_path(cached: Path) -> Path:
     return cached.with_suffix(cached.suffix + ".meta")
 
 
+def _resolved_path(cached: Path) -> Path:
+    """Sibling path holding the import-rewritten copy Puccini reads.
+
+    Kept separate from the pristine cached file so that ``fetch`` can keep
+    revalidating against the original upstream bytes via ETag.
+    """
+    return cached.with_suffix(".resolved" + cached.suffix)
+
+
 def _cached_path_for_url(cache_dir: Path, url: str) -> Path:
     parsed = urlparse(url)
     return cache_dir / parsed.netloc / parsed.path.lstrip("/")
@@ -79,7 +88,9 @@ def resolve_imports(
             continue
 
         if url in _seen:
-            imp["url"] = str(_cached_path_for_url(cache_dir, url))
+            cached = _cached_path_for_url(cache_dir, url)
+            resolved = _resolved_path(cached)
+            imp["url"] = str(resolved if resolved.exists() else cached)
             continue
 
         _seen.add(url)
@@ -87,18 +98,24 @@ def resolve_imports(
         if local is None:
             continue
 
-        # Verify the cached file is valid YAML before rewriting the URL
+        # Verify the cached file is valid YAML before rewriting the URL.
+        # Always read the *pristine* cached copy so its original http(s)
+        # imports are revalidated on every call.
         with local.open("r") as f:
             nested = yaml.load(f)
         if not isinstance(nested, dict):
             continue
 
-        imp["url"] = str(local)
-
-        # Recursively resolve imports inside the cached file
+        # Recursively resolve imports inside the nested document. The pristine
+        # cached file is never overwritten; the rewritten copy goes to a
+        # sibling ".resolved" file which Puccini reads offline.
         if nested.get("imports"):
             resolve_imports(nested, cache_dir, _seen)
-            with local.open("w") as f:
+            resolved = _resolved_path(local)
+            with resolved.open("w") as f:
                 yaml.dump(nested, f)
+            imp["url"] = str(resolved)
+        else:
+            imp["url"] = str(local)
 
     return data

@@ -1,3 +1,4 @@
+import copy
 import logging
 import subprocess
 from enum import Enum
@@ -61,7 +62,10 @@ def prevalidate(input_data):
             logger.error(f"Error reading YAML file {input_data}: {e}")
             return False
     elif isinstance(input_data, dict):
-        data = input_data
+        # Work on a copy — prevalidate rewrites imports/urls in place, and a
+        # caller reusing the same dict must keep its original http(s) imports
+        # so they get revalidated on each call.
+        data = copy.deepcopy(input_data)
     else:
         try:
             if isinstance(input_data, str):
