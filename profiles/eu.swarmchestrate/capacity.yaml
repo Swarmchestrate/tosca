@@ -313,6 +313,12 @@ node_types:
         type: string
         required: false
         description: IP of edge node        
+      local_ip:
+        metadata:
+          alias: edge_device_local_ip
+        type: string
+        required: false
+        description: Local IP of edge node        
       credentials:
         type: map
         required: false
