@@ -20,6 +20,27 @@ imports:
 
 data_types:
 
+  RouteMapping:
+    description: >
+      For specifying routes in a container.
+    properties:
+      domain:
+        type: string
+        required: true
+        description: >
+          Domain name.
+      port:
+        description: >
+          The port number to expose at the host.
+        type: integer
+        required: true
+      path:
+        description: >
+          The path at the domain (or '/' for the root).
+        type: string
+        required: false
+        default: "/"
+
   PortMapping:
     description: >
       For specifying ports in a container.
@@ -238,6 +259,14 @@ node_types:
           type: PortMapping
         description: >
           Container ports to declare (and optionally expose via a Service).
+
+      routes:
+        type: list
+        required: false
+        entry_schema:
+          type: RouteMapping
+        description: >
+          Container route to declare (and optionally expose via Ingress).
 
       hostname:
         type: string
