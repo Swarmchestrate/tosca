@@ -27,6 +27,10 @@ data_types:
         required: true
         description: Sensor type
         default: Netdata
+      collector_inst:
+        type: string
+        required: false
+        description: Collector instance
       config:
         type: map
         required: true
