@@ -336,7 +336,7 @@ node_types:
     properties:
       cloud:
         type: string
-        required: true
+        required: false
         description: >
           Cloud provider identifier.
     capabilities:
