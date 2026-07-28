@@ -16,6 +16,7 @@ metadata:
   gui_bindings:
     metadata.name: capacity_new.name
     description: capacity_new.description
+    node_template.name: capacity_instance_type.name
 
 description: MiCADO Profile capacity type definitions
 
@@ -24,18 +25,26 @@ data_types:
   PortRules:
     properties:
       to:
+        metadata:
+          gui_name: capacity_port_rule.port_to
         type: integer
         required: true
         description: End of port range
       from:
+        metadata:
+          gui_name: capacity_port_rule.port_from
         type: integer
         required: true
         description: Start of port range
       protocol:
+        metadata:
+          gui_name: capacity_port_rule.protocol
         type: string
         required: true
         description: Protocol (e.g., TCP, UDP)
       source:
+        metadata:
+          gui_name: capacity_port_rule.source
         type: string
         required: false
         description: Source IP or CIDR for the port rule
@@ -62,6 +71,8 @@ capability_types:
         required: true
         description: Disk size (GB)
       bandwidth:
+        metadata:
+          gui_name: capacity_instance_type.bandwidth
         type: integer
         required: true
         description: Network bandwidth (Mbps)
@@ -103,6 +114,8 @@ capability_types:
         required: false
         description: Disk size (GB) offered by the capacity
       bandwidth:
+        metadata:
+          gui_name: capacity_resource_quota.bandwidth
         type: integer
         required: false
         description: Network bandwidth (Mbps) offered by the capacity
@@ -116,10 +129,14 @@ capability_types:
         required: true
         description: Operating system type (e.g. Linux, Windows)
       version:
+        metadata:
+          gui_name: capacity_operating_system.os_version
         type: string
         required: true
         description: Operating system version
       distribution:
+        metadata:
+          gui_name: capacity_operating_system.os_distribution
         type: string
         required: true
         description: Operating system distribution (e.g. Ubuntu, Amazon Linux)
@@ -133,24 +150,34 @@ capability_types:
         required: true
         description: Network type (e.g. 4G, 5G, Ethernet)
       ipv6_enabled:
+        metadata:
+          gui_name: capacity_new.ipv6_enabled
         type: boolean
         required: true
         description: Whether IPv6 is enabled
       ipv4_enabled:
+        metadata:
+          gui_name: capacity_new.ipv4_enabled
         type: boolean
         required: true
         description: Whether IPv4 is enabled
       subnet:
+        metadata:
+          gui_name: capacity_new.subnet
         type: string
         required: false
         description: Subnet CIDR
       explicit-tcp-allow:
+        metadata:
+          gui_name: capacity_new.explicit_tcp_allow
         type: list
         required: true
         description: TCP ports explicitly allowed. Defaults to ALL.
         entry_schema: string
         default: [ ALL ]
       explicit-udp-allow:
+        metadata:
+          gui_name: capacity_new.explicit_udp_allow
         type: list
         required: true
         description: UDP ports explicitly allowed. Defaults to ALL.
@@ -221,9 +248,7 @@ capability_types:
     properties:
       consumption:
         metadata:
-          # NOTE: source column is kWh, this property is documented as watts per
-          # hour. Unit conversion needs resolving before this binding is used.
-          gui_name: capacity_instance_type.energy_consumption_kwh
+          gui_name: capacity_instance_type.energy_consumption
         type: float
         required: true
         description: Energy consumption in watts per hour
@@ -243,9 +268,7 @@ capability_types:
   TrustCap:
     properties:
       level:
-        metadata:
-          # NOTE: source column is text, this property is a float.
-          gui_name: capacity_new.trust
+        # Not provider-supplied; the default below is authoritative.
         type: float
         required: true
         description: Trust level
@@ -268,12 +291,16 @@ node_types:
       The base type for capacity nodes, representing a provider's offering.
     properties:
       ssh_port:
+        metadata:
+          gui_name: capacity_new.ssh_port
         type: integer
         required: false
         description: >
           SSH port for accessing the instance.
         default: 22
       ssh_user:
+        metadata:
+          gui_name: capacity_new.ssh_user
         type: string
         required: false
         description: >
@@ -281,6 +308,9 @@ node_types:
       ingress-rules:
         metadata:
           alias: custom_ingress_ports
+          # Rows of capacity_port_rule filtered on direction; each row maps to
+          # one PortRules entry via that data type's own gui_name bindings.
+          gui_name: capacity_port_rule[direction=ingress]
         type: list
         entry_schema: PortRules
         required: false
@@ -288,6 +318,7 @@ node_types:
       egress-rules:
         metadata:
           alias: custom_egress_ports
+          gui_name: capacity_port_rule[direction=egress]
         type: list
         entry_schema: PortRules
         required: false
@@ -341,6 +372,8 @@ node_types:
     derived_from: Capacity
     properties:
       cloud:
+        metadata:
+          gui_name: capacity_new.cloud
         type: string
         required: false
         description: >
@@ -361,16 +394,20 @@ node_types:
       ip:
         metadata:
           alias: edge_device_ip
+          gui_name: capacity_new.edge_ip
         type: string
         required: false
         description: IP of edge node        
       local_ip:
         metadata:
           alias: edge_device_local_ip
+          gui_name: capacity_new.edge_local_ip
         type: string
         required: false
         description: Local IP of edge node        
       credentials:
+        metadata:
+          gui_name: capacity_new.credentials
         type: map
         required: false
         description: Map of credentials (e.g. token, basic auth)
@@ -378,11 +415,14 @@ node_types:
       key_name:
         metadata:
           alias: ssh_key
+          gui_name: capacity_new.ssh_key_name
         type: string
         required: false
         description: >
           The name of the SSH key pair used to access the instance.
       ssh_auth_method:
+        metadata:
+          gui_name: capacity_new.ssh_auth_method
         type: string
         required: false
         description: SSH authentication method (e.g. key, password)
