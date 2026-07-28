@@ -10,6 +10,12 @@ metadata:
   template_name: capacity.yaml
   template_author: University of Westminster
   template_version: 0.1
+  # Document-level GUI bindings. Unlike the property-level gui_name entries
+  # below, these populate the generated template's own metadata and description
+  # rather than any node type property.
+  gui_bindings:
+    metadata.name: capacity_new.name
+    description: capacity_new.description
 
 description: MiCADO Profile capacity type definitions
 
