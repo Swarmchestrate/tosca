@@ -12,11 +12,13 @@ metadata:
   template_version: 0.1
   # Document-level GUI bindings. Unlike the property-level gui_name entries
   # below, these populate the generated template's own metadata and description
-  # rather than any node type property.
+  # rather than any node type property. They are grouped by the kind of document
+  # they build, so capacity and application can both claim node_template.name.
   gui_bindings:
-    metadata.name: capacity_new.name
-    description: capacity_new.description
-    node_template.name: capacity_instance_type.name
+    capacity:
+      metadata.name: capacity_new.name
+      description: capacity_new.description
+      node_template.name: capacity_instance_type.name
 
 description: MiCADO Profile capacity type definitions
 

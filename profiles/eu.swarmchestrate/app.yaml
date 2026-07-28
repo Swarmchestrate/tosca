@@ -10,6 +10,17 @@ metadata:
   template_name: app.yaml
   template_author: University of Westminster
   template_version: 0.1
+  # Document-level GUI bindings for an application. node_template.properties is
+  # the free-form slot: each row of application_property names the property it
+  # sets, so a user can reach any property on the type without the form having
+  # to offer a field for all of them.
+  gui_bindings:
+    application:
+      metadata.name: application_new.name
+      description: application_new.description
+      node_template.name: application_microservice.name
+      # Quoted: an unquoted "key: value" inside braces reads as YAML mapping.
+      node_template.properties: "application_property{property_name: property_value}"
 
 description: MiCADO Profile app type definitions
 
@@ -41,6 +52,26 @@ data_types:
         required: false
         default: "/"
 
+  EnvVar:
+    description: >
+      One environment variable for a container. Each row of
+      application_environment_var becomes one of these.
+    properties:
+      name:
+        type: string
+        required: true
+        metadata:
+          gui_name: application_environment_var.name
+        description: >
+          The environment variable's name.
+      value:
+        type: string
+        required: false
+        metadata:
+          gui_name: application_environment_var.value
+        description: >
+          The value to set it to.
+
   PortMapping:
     description: >
       For specifying ports in a container.
@@ -55,11 +86,15 @@ data_types:
           The port number to expose targetPort to.
         type: integer
         required: true
+        metadata:
+          gui_name: application_security_rule.port
       targetPort:
         description: >
           The port number inside the container to map to.
         type: integer
         required: false
+        metadata:
+          gui_name: application_security_rule.targetport
       nodePort:
         description: >
           A port in range 30000-32767 available on all nodes.
@@ -113,6 +148,12 @@ node_types:
 
     properties:
 
+      # Identity. Bound here rather than on Kubernetes.Base so that the binding
+      # applies to workloads only, not to every type deriving from that base.
+      name:
+        metadata:
+          gui_name: application_microservice.name
+
       # Workload shape
       replicas:
         type: integer
@@ -160,6 +201,8 @@ node_types:
       image:
         type: string
         required: true
+        metadata:
+          gui_name: application_microservice.container_image
         description: >
           OCI container image reference to run for the primary container.
 
@@ -178,41 +221,16 @@ node_types:
         description: >
           List of Secret names used to authenticate to container registries.
 
-      # Docker-style runtime properties
-      entrypoint:
-        type: list
-        required: false
-        entry_schema:
-          type: string
-        description: >
-          Entrypoint override for the container.
-
-      cmd:
-        type: list
-        required: false
-        entry_schema:
-          type: string
-        description: >
-          Default arguments passed to the entrypoint.
-
-      workdir:
-        type: string
-        required: false
-        description: >
-          Working directory inside the container.
-
-      user:
-        type: string
-        required: false
-        description: >
-          User identity the container process should run as (name or numeric id).
-
-      # Kubernetes-style runtime properties
+      # Runtime. Kubernetes naming throughout: the Docker-style aliases
+      # (entrypoint, cmd, workdir, user) were removed so that one database
+      # column cannot feed two properties of the same type at once.
       command:
         type: list
         required: false
         entry_schema:
           type: string
+        metadata:
+          gui_name: application_microservice.commands
         description: >
           Command to execute in the container. If provided, this is treated as
           the authoritative command for the container.
@@ -222,6 +240,8 @@ node_types:
         required: false
         entry_schema:
           type: string
+        metadata:
+          gui_name: application_microservice.arguments
         description: >
           Arguments to pass to the container command. If provided, this is treated
           as the authoritative argument list for the container.
@@ -237,11 +257,11 @@ node_types:
       env:
         type: list
         required: false
-        entry_schema:
-          type: map
+        entry_schema: EnvVar
+        metadata:
+          gui_name: application_environment_var
         description: >
-          Environment variables for the container. Each item should include at
-          least 'name' and either 'value' or a value source reference.
+          Environment variables for the container.
 
       env_from:
         type: list
@@ -255,8 +275,9 @@ node_types:
       ports:
         type: list
         required: false
-        entry_schema:
-          type: PortMapping
+        entry_schema: PortMapping
+        metadata:
+          gui_name: application_security_rule
         description: >
           Container ports to declare (and optionally expose via a Service).
 
