@@ -38,14 +38,20 @@ capability_types:
   HostCap:
     properties:
       num-cpus:
+        metadata:
+          gui_name: capacity_instance_type.cpu
         type: integer
         required: true
         description: Number of vCPUs
       mem-size:
+        metadata:
+          gui_name: capacity_instance_type.ram_gb
         type: integer
         required: true
         description: Memory size (GB)
       disk-size:
+        metadata:
+          gui_name: capacity_instance_type.storage_gb
         type: integer
         required: true
         description: Disk size (GB)
@@ -54,6 +60,8 @@ capability_types:
         required: true
         description: Network bandwidth (Mbps)
       architecture:
+        metadata:
+          gui_name: capacity_instance_type.architecture
         type: string
         required: false
         description: CPU architecture (e.g., x86_64, arm64)
@@ -61,6 +69,8 @@ capability_types:
   CapacityInstanceCap:
     properties:
       instances:
+        metadata:
+          gui_name: capacity_instance_type.quota
         type: integer
         required: false
         description: >
@@ -69,14 +79,20 @@ capability_types:
   CapacityCap:
     properties:
       num-cpus:
+        metadata:
+          gui_name: capacity_resource_quota.cpu
         type: integer
         required: false
         description: Number of vCPUs offered by the capacity
       mem-size:
+        metadata:
+          gui_name: capacity_resource_quota.ram_gb
         type: integer
         required: false
         description: Memory size (GB) offered by the capacity
       disk-size:
+        metadata:
+          gui_name: capacity_resource_quota.storage_gb
         type: integer
         required: false
         description: Disk size (GB) offered by the capacity
@@ -88,6 +104,8 @@ capability_types:
   OSCap:
     properties:
       type:
+        metadata:
+          gui_name: capacity_operating_system.os_name
         type: string
         required: true
         description: Operating system type (e.g. Linux, Windows)
@@ -103,6 +121,8 @@ capability_types:
   NetworkCap:
     properties:
       type:
+        metadata:
+          gui_name: capacity_new.connectivity_type
         type: string
         required: true
         description: Network type (e.g. 4G, 5G, Ethernet)
@@ -134,14 +154,20 @@ capability_types:
   ResourceCap:
     properties:
       provider:
+        metadata:
+          gui_name: capacity_new.resource_provider
         type: string
         required: true
         description: Resource provider. Typically a cloud provider or, in the case of edge, an organisation (e.g. aws, openstack, uow)
       capacity-provider:
+        metadata:
+          gui_name: capacity_new.capacity_provider
         type: string
         required: true
         description: Capacity provider, always an organisation (e.g. uow, sztaki, fuelics)
       type:
+        metadata:
+          gui_name: capacity_new.resource_type
         type: string
         required: true
         description: Resource type (e.g. cloud, edge)
@@ -158,6 +184,8 @@ capability_types:
   PricingCap:
     properties:
       cost:
+        metadata:
+          gui_name: capacity_instance_type.price_per_hr
         type: float
         required: true
         description: Cost per hour in EUR
@@ -165,14 +193,20 @@ capability_types:
   LocalityCap:
     properties:
       continent:
+        metadata:
+          gui_name: locality.continent
         type: string
         required: true
         description: Continent where the resource is located
       country:
+        metadata:
+          gui_name: locality.country
         type: string
         required: true
         description: Country where the resource is located
       city:
+        metadata:
+          gui_name: locality.city
         type: string
         required: true
         description: City where the resource is located
@@ -180,14 +214,22 @@ capability_types:
   EnergyCap:
     properties:
       consumption:
+        metadata:
+          # NOTE: source column is kWh, this property is documented as watts per
+          # hour. Unit conversion needs resolving before this binding is used.
+          gui_name: capacity_instance_type.energy_consumption_kwh
         type: float
         required: true
         description: Energy consumption in watts per hour
       powered-type:
+        metadata:
+          gui_name: capacity_new.powered_type
         type: string
         required: false
         description: Type of power used (e.g., renewable, non-renewable)
       energy-type:
+        metadata:
+          gui_name: capacity_new.energy_type
         type: string
         required: false
         description: Specific type of energy (e.g., solar, wind, coal)
@@ -195,6 +237,9 @@ capability_types:
   TrustCap:
     properties:
       level:
+        metadata:
+          # NOTE: source column is text, this property is a float.
+          gui_name: capacity_new.trust
         type: float
         required: true
         description: Trust level
