@@ -206,7 +206,7 @@ capability_types:
         description: Resource type (e.g. cloud, edge)
       compute:
         type: string
-        required: true
+        required: false
         description: Compute service type (e.g., nova, ec2)
       labels:
         type: map
