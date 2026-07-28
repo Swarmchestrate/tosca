@@ -26,11 +26,11 @@ data_types:
       to:
         type: integer
         required: true
-        description: Start of port range
+        description: End of port range
       from:
         type: integer
         required: true
-        description: End of port range
+        description: Start of port range
       protocol:
         type: string
         required: true
