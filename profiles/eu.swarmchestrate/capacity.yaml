@@ -414,8 +414,8 @@ node_types:
         entry_schema: string
       key_name:
         metadata:
-          alias: ssh_key
           gui_name: capacity_new.ssh_key_name
+          alias: ssh_key
         type: string
         required: false
         description: >
@@ -455,39 +455,50 @@ node_types:
           Setting the cloud property default to openstack.
       image_id:
         metadata:
+          gui_name: capacity_new.image_id
           alias: openstack_image_id
         type: string
         required: true
         description: >
           The ID of the image used to launch the instance.
       network_id:
+        metadata:
+          gui_name: capacity_new.network_id
         type: string
         required: true
         description: >
           The ID of the network connected by this instance
       flavor_name:
         metadata:
+          gui_name: capacity_instance_type.flavor_name
           alias: openstack_flavor_id
         type: string
         required: true
         description: >
           The type of OpenStack instance (e.g., m2.medium) specifying compute resources.
       volume_size:
+        metadata:
+          gui_name: capacity_instance_type.storage_gb
         type: integer
         required: true
         description: >
           Size of instance disk volume in GB
       project_id:
+        metadata:
+          gui_name: capacity_new.project_id
         type: string
         required: false
         description: >
           OpenStack project ID
       use_block_device:
+        metadata:
+          gui_name: capacity_new.use_block_device
         type: boolean
         required: false
         description: Whether to use a block device for the instance.
       key_name:
         metadata:
+          gui_name: capacity_new.ssh_key_name
           alias: ssh_key
         type: string
         required: false
@@ -495,6 +506,7 @@ node_types:
           The name of the SSH key pair used to access the instance.
       security_group:
         metadata:
+          gui_name: capacity_new.security_group
           alias: security_group_id
         type: string
         required: false
@@ -502,6 +514,7 @@ node_types:
           A security group ID that controls inbound and outbound traffic for the instance.
       security_groups:
         metadata:
+          gui_name: capacity_new.security_groups
           alias: security_group_ids
         type: list
         required: false
@@ -526,17 +539,22 @@ node_types:
         description: >
           Setting the cloud property default to aws.
       ami:
+        metadata:
+          gui_name: capacity_new.ami
         type: string
         required: true
         description: >
           The Amazon Machine ID of the image used to launch the instance.
       instance_type:
+        metadata:
+          gui_name: capacity_instance_type.instance_type
         type: string
         required: true
         description: >
           The AWS instance type (e.g., t2.micro) specifying compute resources.
       key_name:
         metadata:
+          gui_name: capacity_new.ssh_key_name
           alias: ssh_key
         type: string
         required: false
@@ -544,6 +562,7 @@ node_types:
           The name of the SSH key pair used to access the instance.
       security_group:
         metadata:
+          gui_name: capacity_new.security_group
           alias: security_group_id
         type: string
         required: false
@@ -551,6 +570,7 @@ node_types:
           A security group ID that controls inbound and outbound traffic for the instance.
       security_groups:
         metadata:
+          gui_name: capacity_new.security_groups
           alias: security_group_ids
         type: list
         required: false
