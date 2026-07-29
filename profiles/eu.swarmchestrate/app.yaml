@@ -21,6 +21,14 @@ metadata:
       node_template.name: application_microservice.name
       # Quoted: an unquoted "key: value" inside braces reads as YAML mapping.
       node_template.properties: "application_property{property_name: property_value}"
+      # Placement constraints. Each row becomes one clause of the named
+      # requirement's node_filter, targeting a capability property of
+      # target_type - so every capability a capacity declares is filterable,
+      # without any of them having to be listed here.
+      node_filter:
+        gui_name: application_node_filter
+        requirement: host
+        target_type: Capacity
 
 description: MiCADO Profile app type definitions
 
