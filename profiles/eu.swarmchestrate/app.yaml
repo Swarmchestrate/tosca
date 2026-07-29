@@ -20,6 +20,7 @@ metadata:
       metadata.author: application_new.author
       metadata.version: application_new.version
       metadata.date: application_new.creation_date
+      metadata.classification: application_new.classification
       description: application_new.description
       node_template.name: application_microservice.name
       # Quoted: an unquoted "key: value" inside braces reads as YAML mapping.
