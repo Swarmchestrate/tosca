@@ -32,6 +32,9 @@ metadata:
         gui_name: application_node_filter
         requirement: host
         target_type: Capacity
+        # How many hosts to ask for. Belongs to the requirement as a whole
+        # rather than to any single constraint.
+        count: application_microservice.num_instances
       # Application-wide quality of service. Each entry becomes one policy,
       # named by its key, emitted only when the payload gives it a value. These
       # target the application as a whole, which is why they derive from
