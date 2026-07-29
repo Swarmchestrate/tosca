@@ -61,6 +61,15 @@ metadata:
           properties:
             priority: application_new.latency_priority
             target: application_new.latency_target
+      # Policies built by grouping rows rather than from one column each. Each
+      # row links two node templates, and everything that links together
+      # becomes a single policy over the whole group - so naming b from a and c
+      # from b puts all three under one colocation.
+      grouped_policies:
+        colocation:
+          type: Scheduling.Colocation
+          gui_name: application_colocate
+          links: target
 
 description: MiCADO Profile app type definitions
 
