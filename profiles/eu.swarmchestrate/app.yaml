@@ -17,6 +17,9 @@ metadata:
   gui_bindings:
     application:
       metadata.name: application_new.name
+      metadata.author: application_new.author
+      metadata.version: application_new.version
+      metadata.date: application_new.creation_date
       description: application_new.description
       node_template.name: application_microservice.name
       # Quoted: an unquoted "key: value" inside braces reads as YAML mapping.
@@ -29,6 +32,31 @@ metadata:
         gui_name: application_node_filter
         requirement: host
         target_type: Capacity
+      # Application-wide quality of service. Each entry becomes one policy,
+      # named by its key, emitted only when the payload gives it a value. These
+      # target the application as a whole, which is why they derive from
+      # ApplicationPolicy and carry no targets of their own.
+      policies:
+        energy:
+          type: QoS.Energy.Budget
+          properties:
+            priority: application_new.energy_priority
+            target: application_new.energy_target
+        cost:
+          type: QoS.Cost.Budget
+          properties:
+            priority: application_new.cost_priority
+            target: application_new.cost_target
+        bandwidth:
+          type: QoS.Performance.Bandwidth
+          properties:
+            priority: application_new.bandwidth_priority
+            target: application_new.bandwidth_target
+        latency:
+          type: QoS.Performance.Latency
+          properties:
+            priority: application_new.latency_priority
+            target: application_new.latency_target
 
 description: MiCADO Profile app type definitions
 
