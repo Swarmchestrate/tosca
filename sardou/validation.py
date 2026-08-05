@@ -89,7 +89,7 @@ def prevalidate(input_data):
 
     resolve_imports(data)
 
-    for _, node in template.get("node_templates", {}).items():
+    for node in template.get("node_templates", {}).values():
         node.pop("node_filter", None)
 
     return data
@@ -181,6 +181,7 @@ def validate_template(input_data) -> bool:
         try:
             result = subprocess.run(
                 [PUCCINI_CMD, "parse", str(temp_file.name)] + PUCCINI_FLAGS,
+                check=False,
                 capture_output=True,
                 text=True,
             )

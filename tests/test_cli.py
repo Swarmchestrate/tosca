@@ -13,6 +13,7 @@ def run(*args, **kwargs):
     """Run the sardou CLI and return the CompletedProcess."""
     return subprocess.run(
         ["sardou", *args],
+        check=False,
         capture_output=True,
         text=True,
         **kwargs,

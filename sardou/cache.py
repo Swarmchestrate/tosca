@@ -52,7 +52,7 @@ def fetch(url: str, cache_dir: Path = DEFAULT_CACHE_DIR) -> Path:
         req.add_header("If-None-Match", etag)
 
     try:
-        resp = urlopen(req, timeout=10)  # noqa: S310
+        resp = urlopen(req, timeout=10)
         # 200 — new or updated content
         cached.parent.mkdir(parents=True, exist_ok=True)
         cached.write_bytes(resp.read())

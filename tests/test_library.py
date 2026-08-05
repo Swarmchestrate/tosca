@@ -510,7 +510,7 @@ class TestGetAffinity:
         if policies_typed is not None:
             sat.__dict__["policies"] = DotDict(**policies_typed)
             sat.__dict__["raw"] = DotDict(
-                **{"service_template": {"policies": raw_policies or []}}
+                service_template={"policies": raw_policies or []}
             )
         return sat
 
@@ -1175,7 +1175,7 @@ class TestSardouRDTAPI:
     def test_rdt_metadata_has_kind(self, rdt):
         assert rdt.metadata._to_dict().get("kind") == "RDT"
 
-    def test_invalid_res_id_raises(self, cdt, offer_file):  # noqa: ARG002
+    def test_invalid_res_id_raises(self, cdt, offer_file):
         # Simulate new-offer.json structure with invalid res_id
         bad_offer = {
             "details_v1": {
@@ -1185,7 +1185,7 @@ class TestSardouRDTAPI:
         with pytest.raises(KeyError):
             cdt.generate_rdt(bad_offer, "/dev/null")
 
-    def test_offer_properties_merged_into_node(self, cdt, offer_file, tmp_path):  # noqa: ARG002
+    def test_offer_properties_merged_into_node(self, cdt, offer_file, tmp_path):
         """Properties from offer are added to the RDT node."""
         res_id = next(iter(cdt.nodeTemplates._to_dict()))
         offer = {
@@ -1207,7 +1207,7 @@ class TestSardouRDTAPI:
 
     def test_offer_properties_do_not_overwrite_cdt_properties(
         self, cdt, offer_file, tmp_path
-    ):  # noqa: ARG002
+    ):
         """Existing CDT node properties are not overwritten by offer properties."""
         cdt_nodes = cdt.nodeTemplates._to_dict()
         res_id = next(k for k, v in cdt_nodes.items() if v.get("properties"))
@@ -1249,7 +1249,6 @@ def _get_offer_res_id(offer, key):
     if key in offer and "res_id" in offer[key]:
         return offer[key]["res_id"]
     for ms_data in offer.values():
-        if isinstance(ms_data, dict):
-            if key in ms_data and "ids" in ms_data[key]:
+        if isinstance(ms_data, dict) and "ids" in ms_data.get(key, {}):
                 return ms_data[key]["ids"].get("res_id")
     return None

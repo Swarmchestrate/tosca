@@ -29,7 +29,7 @@ class _Handler(BaseHTTPRequestHandler):
     body = BODY
     etag = ETAG
 
-    def do_GET(self):  # noqa: N802
+    def do_GET(self):
         inm = self.headers.get("If-None-Match")
         if inm and inm == self.etag:
             self.send_response(304)
@@ -139,7 +139,7 @@ class _NestedHandler(BaseHTTPRequestHandler):
     child_etag = '"child-1"'
     child_body = b"tosca_definitions_version: tosca_2_0\nname: child-v1\n"
 
-    def do_GET(self):  # noqa: N802
+    def do_GET(self):
         if self.path == "/parent.yaml":
             etag, body = self.parent_etag, (
                 b"tosca_definitions_version: tosca_2_0\n"
@@ -172,7 +172,7 @@ def nested_server():
 
 
 def test_changed_nested_import_is_refetched(nested_server, tmp_path):
-    server, base = nested_server
+    _, base = nested_server
     parent_url = f"{base}/parent.yaml"
 
     # First resolution caches parent + child (child-v1).

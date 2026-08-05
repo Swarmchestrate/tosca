@@ -60,7 +60,7 @@ def extract_colocation_groups(tosca_dict):
     groups = []
     policies = tosca_dict.get("service_template", {}).get("policies", [])
     for policy in policies:
-        for policy_name, policy_data in policy.items():
+        for policy_data in policy.values():
             if policy_data.get("type", "").endswith(COLOCATION_POLICY):
                 targets = policy_data.get("targets", [])
                 if targets:
@@ -73,7 +73,7 @@ def extract_reqs_with_filter(tosca_dict):
     node_templates = tosca_dict.get("service_template", {}).get("node_templates", {})
     for node_name, node_data in node_templates.items():
         for req in node_data.get("requirements", []):
-            for _, req_data in req.items():
+            for req_data in req.values():
                 if "node_filter" in req_data:
                     reqs_with_filter[node_name] = req_data
     return reqs_with_filter

@@ -7,7 +7,7 @@ rdt_yaml.default_flow_style = False
 
 
 def _validate_offer_against_cdt(selected_offer: dict, cdt_nodes: dict) -> None:
-    for _, ms_data in selected_offer.items():
+    for ms_data in selected_offer.values():
         if not isinstance(ms_data, dict):
             continue
         for offer_key, offer_data in ms_data.items():
@@ -48,7 +48,7 @@ def generate_rdt(template, selected_offer: dict, output_path: str = "rdt.yaml") 
     cdt_node_types = source.get("node_types", {})
     new_node_templates = {}
 
-    for _, ms_data in selected_offer.items():
+    for ms_data in selected_offer.values():
         if not isinstance(ms_data, dict):
             continue
 
