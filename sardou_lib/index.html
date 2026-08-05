@@ -1,0 +1,1253 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://docs.swarmchestrate.eu/sardou_lib/">
+      
+      
+        <link rel="prev" href="../sardou/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Working with Sardou - Swarmchestrate Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="light-blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#working-with-sardou" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Swarmchestrate Docs" class="md-header__button md-logo" aria-label="Swarmchestrate Docs" data-md-component="logo">
+      
+  <img src="../img/word-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Swarmchestrate Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Working with Sardou
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Swarmchestrate/tosca" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../sat/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Authors
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../microservice/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Microservice Spec
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../policy/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Policy Spec
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../capacity/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Capacity Spec
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../monitoring/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Monitoring
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../sardou/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Sardou
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Swarmchestrate Docs" class="md-nav__button md-logo" aria-label="Swarmchestrate Docs" data-md-component="logo">
+      
+  <img src="../img/word-logo.png" alt="logo">
+
+    </a>
+    Swarmchestrate Docs
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Swarmchestrate/tosca" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authors
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Authors
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Applications
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cdt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capacities
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../microservice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Microservice Spec
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../policy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Policy Spec
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../capacity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capacity Spec
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sardou
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Sardou
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sardou/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Working with Sardou
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Working with Sardou
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exploring-the-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exploring the Template
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#applications" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Applications
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Applications">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#policies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Policies
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Policies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reconfiguration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reconfiguration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quality-of-service-policies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quality of Service Policies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scheduling-policies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scheduling Policies
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitoring-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring Details
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kubernetes-manifests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kubernetes Manifests
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#capacities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Capacities
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Capacities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#capacity-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Capacity Details
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource-description-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource Description Templates
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resources
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Resources">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cluster-configuration-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cluster Configuration Details
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="working-with-sardou">Working with Sardou</h1>
+<p>This page is for developers building tooling around TOSCA and provides
+further direction for working with the Python Library. For an overview,
+see the <a href="../sardou/">previous page</a> in this section. This page assumes you
+have imported Sardou.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sardou</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sardou</span>
+</code></pre></div>
+<h2 id="validation">Validation</h2>
+<p>To validate a TOSCA template, create a new <code>Sardou</code> object, passing it a template
+file path, or the template content directly as a Python dict.
+This will validate the template and complete the representation, inheriting from parent
+types.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">From path</label><label for="__tabbed_1_2">From content</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">sat</span> <span class="o">=</span> <span class="n">Sardou</span><span class="p">(</span><span class="s2">&quot;my_app.yaml&quot;</span><span class="p">)</span>
+<span class="n">Processed</span> <span class="n">successfully</span><span class="p">:</span> <span class="n">my_app</span><span class="o">.</span><span class="n">yaml</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">sat_dict</span> <span class="o">=</span> <span class="p">{</span>
+<span class="o">...</span>     <span class="s2">&quot;tosca_definitions_version&quot;</span><span class="p">:</span> <span class="s2">&quot;tosca_2_0&quot;</span><span class="p">,</span>
+<span class="o">...</span>     <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="p">[</span>
+<span class="o">...</span>         <span class="p">{</span>
+<span class="o">...</span>             <span class="s2">&quot;namespace&quot;</span><span class="p">:</span> <span class="s2">&quot;swch&quot;</span><span class="p">,</span>
+<span class="o">...</span>             <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://raw.githubusercontent.com/Swarmchestrate/tosca/refs/heads/main/profiles/eu.swarmchestrate/profile.yaml&quot;</span><span class="p">,</span>
+<span class="o">...</span>         <span class="p">}</span>
+<span class="o">...</span>     <span class="p">],</span>
+<span class="o">...</span>     <span class="s2">&quot;service_template&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="o">...</span>         <span class="s2">&quot;node_templates&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="o">...</span>             <span class="s2">&quot;myservice&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="o">...</span>                 <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;swch:Microservice&quot;</span><span class="p">,</span>
+<span class="o">...</span>                 <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="o">...</span>                     <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="s2">&quot;docker.io/istio/examples-bookinfo-details-v1:1.20.3&quot;</span><span class="p">,</span>
+<span class="o">...</span>                     <span class="s2">&quot;replicas&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+<span class="o">...</span>                 <span class="p">},</span>
+<span class="o">...</span>             <span class="p">}</span>
+<span class="o">...</span>         <span class="p">}</span>
+<span class="o">...</span>     <span class="p">},</span>
+<span class="o">...</span> <span class="p">}</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">sat</span> <span class="o">=</span> <span class="n">Sardou</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">sat_dict</span><span class="p">)</span>
+<span class="n">Processed</span> <span class="n">successfully</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>The template is not resolved at this point (i.e. statisfied requirements and created
+relationships) - that functionality is to come. If there are errors or warnings, they
+will be presented at this time.</p>
+<h2 id="exploring-the-template">Exploring the Template</h2>
+<p>Get the raw, uncompleted (original YAML) with the <code>raw</code> attribute.</p>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">sat</span><span class="o">.</span><span class="n">raw</span>
+<span class="p">{</span><span class="s1">&#39;tosca_definitions_version&#39;</span><span class="p">:</span> <span class="s1">&#39;tosca_2_0&#39;</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;stressng on Swarmchestrate&#39;</span><span class="p">,</span> <span class="s1">&#39;imports&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;namespace&#39;</span><span class="p">:</span> <span class="s1">&#39;swch&#39;</span> <span class="o">...</span>
+</code></pre></div>
+<p>You can traverse YAML maps using dot notation if needed (which leads to some unexpected behaviour,
+so this may not be a long-term feature):</p>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">sat</span><span class="o">.</span><span class="n">nodeTemplates</span>
+<span class="p">{</span><span class="s1">&#39;stressng&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;metadata&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;types&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;eu.swarmchestrate:0.1::Kubernetes.APIObject&#39;</span><span class="p">:</span> <span class="o">...</span>
+</code></pre></div>
+<p>Or at any point, you can get a regular Python dictionary:</p>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">sat</span><span class="o">.</span><span class="n">nodeTemplates</span><span class="o">.</span><span class="n">_to_dict</span><span class="p">()</span>
+<span class="p">{</span><span class="s1">&#39;stressng&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;metadata&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;types&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;eu.swarmchestrate:0.1::Kubernetes.APIObject&#39;</span><span class="p">:</span> <span class="o">...</span>
+</code></pre></div>
+<h2 id="applications">Applications</h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The functionality described here only works on Swarm Application Templates.</p>
+</div>
+<h3 id="policies">Policies</h3>
+<p>The policy getters below return dictionaries whose top-level keys are
+user-defined names and whose values are sub-dictionaries that vary
+by policy type. You might dump the returned dictionary to JSON or YAML.</p>
+<p>All policies that target specific Microservices (as opposed to a policy
+targeting the application as a whole) will contain a
+<a href="../policy/#targets"><code>targets</code> key</a> in their sub-dictionary.</p>
+<h4 id="reconfiguration">Reconfiguration</h4>
+<p>Grab the reconfiuration policies as a Python object with <code>get_reconfiguration()</code>.
+In addition to <code>targets</code>, <a href="../policy/#types.reconfiguration">the following keys</a>
+are present in the sub-dicts.</p>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">sat</span><span class="o">.</span><span class="n">get_reconfiguration</span><span class="p">()</span>
+<span class="p">{</span><span class="s1">&#39;frontend_reconfiguration&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;constants&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;cpu_util_threshold&#39;</span><span class="p">:</span> <span class="s1">&#39;80&#39;</span><span class="p">},</span> <span class="s1">&#39;rule&#39;</span><span class="p">:</span> <span class="s1">&#39;if cpu_util_prct &gt; cpu_util_threshold:</span><span class="se">\n</span><span class="s1">  scale_out(details_v1, productpage_v1)</span><span class="se">\n</span><span class="s1">else:</span><span class="se">\n</span><span class="s1">  pass</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;targets&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;details_v1&#39;</span><span class="p">,</span> <span class="s1">&#39;productpage_v1&#39;</span><span class="p">]},</span> <span class="o">...</span>
+</code></pre></div>
+<h4 id="quality-of-service-policies">Quality of Service Policies</h4>
+<p>Grab the QoS requirements as a Python object with <code>get_qos()</code>. In 
+addition to <code>targets</code>, specific QoS keys are present in the sub-dicts,
+along with a <code>type</code> key indicating the specific sub-type. You can view
+these details <a href="../policy/#types.qos">in the reference here</a>.</p>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">sat</span><span class="o">.</span><span class="n">get_qos</span><span class="p">()</span>
+<span class="p">{</span><span class="s1">&#39;bandwidth&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;priority&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="mi">800</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;eu.swarmchestrate:0.1::QoS.Performance.Bandwidth&#39;</span><span class="p">}</span> <span class="o">...</span>
+</code></pre></div>
+<h4 id="scheduling-policies">Scheduling Policies</h4>
+<p>Grab the scheduling policies as a Python object with <code>get_scheduling()</code>.
+Only <code>targets</code> and <code>type</code> key (indicating the specific sub-type) are
+present in the sub-dicts. Scheduling policy types <a href="../policy/#types.scheduling">can be seen here</a>.</p>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">sat</span><span class="o">.</span><span class="n">get_scheduling</span><span class="p">()</span>
+<span class="p">{</span><span class="s1">&#39;frontend_colocation&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;eu.swarmchestrate:0.1::Scheduling.Colocation&#39;</span><span class="p">,</span> <span class="s1">&#39;targets&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;details_v1&#39;</span><span class="p">,</span> <span class="s1">&#39;productpage_v1&#39;</span><span class="p">]}</span> <span class="o">...</span>
+</code></pre></div>
+<h3 id="resource-requirements">Resource Requirements</h3>
+<p>Grab the Resource requirements as a Python object with <code>get_requirements()</code>
+You could dump this to JSON or YAML.</p>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">sat</span><span class="o">.</span><span class="n">get_requirements</span><span class="p">()</span>
+<span class="p">{</span><span class="s1">&#39;details_v1&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;expression&#39;</span><span class="p">:</span> <span class="s2">&quot;lambda vals: ((vals[&#39;host.num-cpus&#39;] &gt;= 1) and (vals[&#39;host.mem-size&#39;] &gt;= 2) and (any(entry in vals[&#39;network.explicit-tcp-allow&#39;] for entry in [&#39;ALL&#39;, 80])))&quot;</span><span class="p">,</span> <span class="s1">&#39;colocated&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;productpage_v1&#39;</span><span class="p">],</span>  <span class="o">...</span>
+</code></pre></div>
+<h3 id="monitoring-details">Monitoring Details</h3>
+<p>Get the monitoring details, which include <code>metrics</code> and <code>slo-constraints</code> per
+Microservice, with the <code>get_monitoring()</code> function. Dump to YAML or JSON.</p>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">sat</span><span class="o">.</span><span class="n">get_monitoring</span><span class="p">()</span>
+<span class="p">{</span><span class="s1">&#39;details_v1&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;metrics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;raw&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;cpu_util_instance&#39;</span><span class="p">,</span> <span class="s1">&#39;sensor&#39;</span><span class="p">:</span> <span class="s1">&#39;Netdata&#39;</span><span class="p">,</span> <span class="s1">&#39;config&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;scope_contexts&#39;</span><span class="p">:</span> <span class="s1">&#39;k8s.cgroup.cpu&#39;</span><span class="p">,</span> <span class="s1">&#39;results-aggregation&#39;</span><span class="p">:</span> <span class="s1">&#39;SUM&#39;</span><span class="p">},</span> <span class="s1">&#39;collection_frequency&#39;</span><span class="p">:</span> <span class="s1">&#39;30 sec&#39;</span><span class="p">,</span> <span class="s1">&#39;collection_output&#39;</span><span class="p">:</span> <span class="s1">&#39;all&#39;</span><span class="p">}],</span> <span class="s1">&#39;composite&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;cpu_util_prct&#39;</span><span class="p">,</span> <span class="s1">&#39;formula&#39;</span><span class="p">:</span> <span class="s1">&#39;mean( cpu_util_instance )&#39;</span><span class="p">,</span> <span class="s1">&#39;collection_frequency&#39;</span><span class="p">:</span> <span class="s1">&#39;30 sec&#39;</span><span class="p">,</span> <span class="s1">&#39;collection_output&#39;</span><span class="p">:</span> <span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;window_type&#39;</span><span class="p">:</span> <span class="s1">&#39;sliding&#39;</span><span class="p">,</span> <span class="s1">&#39;window_size&#39;</span><span class="p">:</span> <span class="s1">&#39;5 min&#39;</span><span class="p">,</span> <span class="s1">&#39;grouping&#39;</span><span class="p">:</span> <span class="s1">&#39;per_zone&#39;</span><span class="p">}]},</span> <span class="s1">&#39;slo-constraints&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;cpu_utilization&#39;</span><span class="p">,</span> <span class="s1">&#39;metric&#39;</span><span class="p">:</span> <span class="s1">&#39;cpu_util_prct&#39;</span><span class="p">,</span> <span class="s1">&#39;operator&#39;</span><span class="p">:</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;threshold&#39;</span><span class="p">:</span> <span class="mf">80.0</span><span class="p">}}}</span>
+</code></pre></div>
+<h3 id="kubernetes-manifests">Kubernetes Manifests</h3>
+<p><strong>This functionality is now exposed by <a href="https://github.com/Swarmchestrate/k3s-client"><code>k3s-client</code></a></strong></p>
+<h2 id="capacities">Capacities</h2>
+<p>You can create a Sardou object from a CDT with the same approach as for SATs.</p>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">cdt</span> <span class="o">=</span> <span class="n">Sardou</span><span class="p">(</span><span class="s2">&quot;my_cap.yaml&quot;</span><span class="p">)</span>
+<span class="n">Processed</span> <span class="n">successfully</span><span class="p">:</span> <span class="n">my_cap</span><span class="o">.</span><span class="n">yaml</span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The below methods only work on Capacity Description Templates.</p>
+</div>
+<h3 id="capacity-details">Capacity Details</h3>
+<p>Given a CDT, Sardou can extract the capability details of each available flavour,
+as well as the <a href="../cdt/#cdt-overall-capacity">overall capacity</a>, if defined.</p>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">cdt</span><span class="o">.</span><span class="n">get_capacities</span><span class="p">()</span>
+<span class="p">{</span><span class="s1">&#39;cloud_flavours&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;m2-large&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;energy&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;consumption&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s1">&#39;energy-type&#39;</span><span class="p">:</span> <span class="s1">&#39;non-green&#39;</span><span class="p">,</span> <span class="s1">&#39;powered-type&#39;</span><span class="p">:</span> <span class="s1">&#39;mains-powered&#39;</span><span class="p">},</span>
+</code></pre></div>
+<p>The following top-level keys are possible, depending on the capacity:</p>
+<dl>
+<dt><code id="cap.cloud-flavours">cloud_flavours</code></dt>
+<dd>
+<p>Map of flavour definitions, keyed by flavour name with values specifying all
+<a href="../capacity/#capacity">defined <strong>capabilities</strong></a>.</p>
+</dd>
+<dt><code id="cap.cloud-capacity-raw">cloud_capacity_raw</code></dt>
+<dd>
+<p>Map of overall available countable resources, keyed by name according
+to <a href="../capacity/#overallcapacity">capabilities in OverallCapacity</a>,
+with integer values.</p>
+</dd>
+<dt><code id="cap.cloud-capacity-flavour">cloud_capacity_flavour</code></dt>
+<dd>
+<p>Map of overall available countable resources, keyed by names defined
+in <code>cloud_flavours</code> above, with integer values specifying number of instances.</p>
+</dd>
+<dt><code id="cap.edge-instances">edge_instances</code></dt>
+<dd>
+<p>Map of edge instance definitions keyed by edge name with values specifying all
+<a href="../capacity/#capacity">defined <strong>capabilities</strong></a>.</p>
+</dd>
+</dl>
+<h3 id="resource-description-templates">Resource Description Templates</h3>
+<p>You can generate a Resource Description Template (RDT) with a CDT and an
+accepted offer. An RDT is an internal template used to pass deployment
+configuration for the Swarm to the Cluster Builder component.</p>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">offer</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;ra-sztaki-offer.json&quot;</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">cdt</span><span class="o">.</span><span class="n">generate_rdt</span><span class="p">(</span><span class="n">selected_offer</span><span class="o">=</span><span class="n">offer</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="s2">&quot;sztaki-rdt.yaml&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>Which will generate an RDT at the given <code>output_path</code>.</p>
+<h2 id="resources">Resources</h2>
+<p>You can then create a new Sardou object from an RDT.</p>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">rdt</span> <span class="o">=</span> <span class="n">Sardou</span><span class="p">(</span><span class="s2">&quot;sztaki-rdt.yaml&quot;</span><span class="p">)</span>
+<span class="n">Processed</span> <span class="n">successfully</span><span class="p">:</span> <span class="n">sztaki</span><span class="o">-</span><span class="n">rdt</span><span class="o">.</span><span class="n">yaml</span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This method only works on Resource Description Templates.</p>
+</div>
+<h3 id="cluster-configuration-details">Cluster Configuration Details</h3>
+<p>Get the cluster configuration details for the resources as a Python object with <code>get_cluster()</code>
+You could dump this to JSON or YAML.</p>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">rdt</span><span class="o">.</span><span class="n">get_cluster</span><span class="p">()</span>
+<span class="p">{</span><span class="s1">&#39;ra-sztaki-cloud-hu_swarm2_details_v1_t2-large-ubuntu-uow&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;ami&#39;</span><span class="p">:</span> <span class="s1">&#39;ami-customuow&#39;</span><span class="p">,</span> <span class="s1">&#39;cloud&#39;</span><span class="p">:</span> <span class="s1">&#39;aws&#39;</span><span class="p">,</span> <span class="s1">&#39;custom_ingress_ports&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;from&#39;</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span> <span class="s1">&#39;protocol&#39;</span><span class="p">:</span> <span class="s1">&#39;TCP&#39;</span><span class="p">,</span> <span class="s1">&#39;to&#39;</span><span class="p">:</span> <span class="mi">80</span><span class="p">}],</span> <span class="s1">&#39;instance_type&#39;</span><span class="p">:</span> <span class="s1">&#39;t2.large&#39;</span><span class="p">,</span> <span class="s1">&#39;ssh_key&#39;</span><span class="p">:</span> <span class="s1">&#39;g-key&#39;</span><span class="p">,</span> <span class="s1">&#39;security_groups&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;0eb63f2b-b656-47a1-a0e7-3da0a993379e&#39;</span><span class="p">],</span> <span class="s1">&#39;ssh_user&#39;</span><span class="p">:</span> <span class="s1">&#39;ubuntu&#39;</span><span class="p">,</span> <span class="s1">&#39;node_labels&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;labels.swarmchestrate.eu/ms_id&#39;</span><span class="p">:</span> <span class="s1">&#39;details_v1&#39;</span><span class="p">}},</span> <span class="o">...</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>In addition to the properties of each <a href="../capacity/#cloudcapacity">cloud</a> or <a href="../capacity/#edgecapacity">edge</a> type, a <code>node_labels</code> key is present,
+with suggested Kubernetes labels to create on the node, following the
+prefix <code>labels.swarmchestrate.eu</code>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "content.code.annotate", "navigation.expand", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "toc.integrate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
