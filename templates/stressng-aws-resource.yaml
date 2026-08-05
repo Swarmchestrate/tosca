@@ -5,7 +5,6 @@ description: stressng on Swarmchestrate AWS
 imports:
 - namespace: swch
   url: https://raw.githubusercontent.com/Swarmchestrate/tosca/refs/heads/main/profiles/eu.swarmchestrate/profile.yaml
-  #url: file:///workspaces/tosca/profiles/eu.swarmchestrate/profile.yaml
 
 service_template:
 
@@ -19,15 +18,23 @@ service_template:
     stressng:
       type: swch:Microservice
       properties:
-        image: lorel/docker-stress-ng
-        args: ['--cpu', '0', '--cpu-method', 'pi', '-l', '20']
-        ports:
-        - port: 80
-          targetPort: 80
-          nodePort: 30080
-        - port: 443
-          targetPort: 443
-          nodePort: 30443
+        image: docker.io/gunjank05/stress-ng
+        replicas: 1
+        labels:
+          app: stressng
+          service: stressng
+        command:
+        - stress-ng
+        args:
+        - --cpu
+        - "1"
+        - --vm
+        - "1"
+        - --vm-bytes
+        - "256M"
+        - --timeout
+        - "3600s"
+        - --metrics-brief
       requirements:
       - host:
           node_filter:
@@ -37,7 +44,7 @@ service_template:
                   - 4
               - $equal:
                   - $get_property: [ SELF, TARGET, CAPABILITY, locality, city ]
-                  - budapest
+                  - london
               - $equal:
                   - $get_property: [ SELF, TARGET, CAPABILITY, resource, capacity-provider ]
-                  - SZTAKI
+                  - UOW
