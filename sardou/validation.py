@@ -7,6 +7,7 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 from ruamel.yaml import YAML
+from ruamel.yaml.error import YAMLError
 
 from .cache import resolve_imports
 
@@ -58,7 +59,7 @@ def prevalidate(input_data):
         try:
             text = input_data.read_text()
             data = yaml.load(_strip_blank_lines(text))
-        except Exception as e:
+        except (OSError, YAMLError) as e:
             logger.error(f"Error reading YAML file {input_data}: {e}")
             return False
     elif isinstance(input_data, dict):
@@ -71,7 +72,7 @@ def prevalidate(input_data):
             if isinstance(input_data, str):
                 input_data = _strip_blank_lines(input_data)
             data = yaml.load(input_data)
-        except Exception as e:
+        except YAMLError as e:
             logger.error(f"Error parsing YAML content: {e}")
             return False
 

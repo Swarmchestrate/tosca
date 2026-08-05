@@ -5,6 +5,8 @@ import sys
 import traceback
 from pathlib import Path
 
+from ruamel.yaml.error import YAMLError
+
 from sardou import Sardou
 
 
@@ -55,7 +57,7 @@ def main():
 
             if args.verbose:
                 print("Successfully parsed TOSCA template")
-        except Exception as e:
+        except (OSError, ValueError, TypeError, KeyError, YAMLError) as e:
             if args.verbose:
                 traceback.print_exc(file=sys.stderr)
             else:
