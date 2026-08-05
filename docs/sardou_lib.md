@@ -149,27 +149,9 @@ Microservice, with the `get_monitoring()` function. Dump to YAML or JSON.
 {'details_v1': {'metrics': {'raw': [{'name': 'cpu_util_instance', 'sensor': 'Netdata', 'config': {'scope_contexts': 'k8s.cgroup.cpu', 'results-aggregation': 'SUM'}, 'collection_frequency': '30 sec', 'collection_output': 'all'}], 'composite': [{'name': 'cpu_util_prct', 'formula': 'mean( cpu_util_instance )', 'collection_frequency': '30 sec', 'collection_output': 'all', 'window_type': 'sliding', 'window_size': '5 min', 'grouping': 'per_zone'}]}, 'slo-constraints': {'name': 'cpu_utilization', 'metric': 'cpu_util_prct', 'operator': '>', 'threshold': 80.0}}}
 ```
 
-### Kubernetes Manifests (manifestGenerator.py)
+### Kubernetes Manifests
 
-- Provides the function get_kubernetes_manifest(tosca_yaml: str, image_pull_secret: str = "test") -> list.
-- **Purpose**: Converts a TOSCA YAML template into Kubernetes manifests (Deployments + Services).
-- **Supported fields**: image, args, env, ports, volumes, nodeSelector, replicas, imagePullSecrets.
-- Automatically injects an external imagePullSecret if provided.
-
-**Input**:
-- A valid TOSCA YAML template as a string. 
-- Optional: name of an imagePullSecret to include in all generated Deployments.
-
-**Output:**
-- A list of dictionaries representing Kubernetes manifests ready to be serialized to YAML.
-
-#### Manifest Generation Script (run_manifest_generator.py)
-- Takes a single TOSCA YAML file and generates Kubernetes manifests as a multi-document YAML file (output.yaml).
-- Usage: update the TOSCA_FILE and OUTPUT_FILE variables in the script and run:
-
-```python
-python3 run_manifest_generator.py
-```
+**This functionality is now exposed by [`k3s-client`](https://github.com/Swarmchestrate/k3s-client)**
 
 ## Capacities
 
