@@ -310,6 +310,16 @@ node_types:
         entry_schema: PortRules
         required: false
         description: Egress port rules
+      overlay-network:
+        metadata:
+          alias: headscale
+        type: boolean
+        required: false
+        default: false
+        description: >
+          Whether instances need an overlay (mesh VPN) network to reach other
+          cloud/edge resources, for example when public or floating IPs are
+          limited or unavailable.
     capabilities:
       host:
         description: >
