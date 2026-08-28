@@ -419,6 +419,7 @@ node_types:
           SSH user for accessing the instance.
       ssh_key_path:
         metadata:
+          alias: ssh_key
           gui_name: capacity_new.ssh_key_path
         type: string
         required: false
