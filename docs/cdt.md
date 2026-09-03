@@ -21,15 +21,16 @@ description: AWS EC2 capacity in US East # (2)!
 
 metadata: # (3)!
   name: cap-aws-uow-us
+  cap_id: 8f14e45f-ceea-467a-9f0a-1e5d3c2b7a90 # (4)!
   author: University of Westminster
   date: 2026-01-12
   version: 0.1
   tags:
   - provider: aws
   - region: us-east-1
-  kind: CDT # (4)!
+  kind: CDT # (5)!
 
-imports: # (5)!
+imports: # (6)!
 - namespace: swch
   url: https://raw.githubusercontent.com/Swarmchestrate/tosca/refs/heads/main/profiles/eu.swarmchestrate/profile.yaml
 ```
@@ -37,8 +38,10 @@ imports: # (5)!
 1. This line indicates the TOSCA version and is **mandatory**.
 2. A `description` of the capacity is *recommended*.
 3. Providing `metadata` is *optional* - you may add additional custom fields.
-4. `kind` is entirely *optional*, but please do not create a custom field with this name.
-5. Importing the Swarmchestrate profile from this `url` is required. We recommend a namespace called `swch`.
+4. `cap_id` is the **CapID**, a UUID identifying this capacity. It is usually generated
+   rather than written by hand. Please do not create a custom field with this name.
+5. `kind` is entirely *optional*, but please also do not create a custom field with this name.
+6. Importing the Swarmchestrate profile from this `url` is required. We recommend a namespace called `swch`.
 
 ## Define a Base Resource Type (recommended)
 

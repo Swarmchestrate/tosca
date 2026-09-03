@@ -166,6 +166,18 @@ Processed successfully: my_cap.yaml
 
 	The below methods only work on Capacity Description Templates.
 
+### Capacity ID
+
+Given a CDT, Sardou can extract the CapID — the generated UUID identifying the
+capacity — from the template `metadata`.
+
+```python
+>>> cdt.get_cap_id()
+'5b1e0b4a-4e7f-4a5a-9a3f-0b6a3d5f9c21'
+```
+
+Returns `None` when the CDT declares no `cap_id` in its `metadata`.
+
 ### Capacity Details
 
 Given a CDT, Sardou can extract the capability details of each available flavour,
