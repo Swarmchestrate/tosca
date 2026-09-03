@@ -1,4 +1,5 @@
 _CAPACITY_KEY = "capacity"
+_CAP_ID_KEY = "cap_id"
 
 
 def _unwrap(value):
@@ -75,3 +76,12 @@ def extract_capacities(processed_nodes: dict) -> dict:
         capacities["cloud_capacity_flavour"] = capacity_by
 
     return capacities
+
+
+def extract_cap_id(metadata: dict) -> str | None:
+    """Return the CapID declared in a CDT's *metadata*.
+
+    The CapID is a generated UUID identifying the capacity. ``None`` is
+    returned when the CDT does not declare one.
+    """
+    return metadata.get(_CAP_ID_KEY) or None

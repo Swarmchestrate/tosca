@@ -3,7 +3,7 @@ from pathlib import Path
 
 from ruamel.yaml import YAML
 
-from .capacities import extract_capacities
+from .capacities import extract_cap_id, extract_capacities
 from .cluster import get_cluster as _get_cluster
 from .monitoring import extract_monitoring as _extract_monitoring
 from .policies import get_affinity as _get_affinity
@@ -126,6 +126,12 @@ class Sardou(DotDict):
     def get_capacities(self):
         nodes = self.nodeTemplates._to_dict()
         return extract_capacities(nodes)
+
+    @requires_kind(TemplateKind.CDT)
+    def get_cap_id(self):
+        if not hasattr(self, "metadata"):
+            return None
+        return extract_cap_id(self.metadata._to_dict())
 
     def generate_rdt(self, selected_offer, output_path="rdt.yaml"):
         return _generate_rdt(self, selected_offer, output_path=output_path)
