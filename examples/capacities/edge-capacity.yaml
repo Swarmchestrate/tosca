@@ -4,6 +4,7 @@ description: Fuelics Edges Capacity Def
 
 metadata:
   name: cap-edges-fuelics
+  cap_id: d286b2b4-cf57-497f-96d7-99e6f806701e
   author: University of Westminster
   date: 2026-02-18
   version: 0.1

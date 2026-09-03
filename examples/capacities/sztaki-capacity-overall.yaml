@@ -4,6 +4,7 @@ description: SZTAKI OpenStack Capacity Def
 
 metadata:
   name: cap-os-sztaki
+  cap_id: 060b8f68-a39b-4c77-9ab7-a695b94622f9
   author: University of Westminster
   date: 2026-02-05
   version: 0.1
