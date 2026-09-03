@@ -760,6 +760,55 @@ class TestExtractCapacities:
 
 
 # ---------------------------------------------------------------------------
+# capacities.py — extract_cap_id
+# ---------------------------------------------------------------------------
+
+
+class TestExtractCapId:
+    @pytest.fixture
+    def extract(self):
+        from sardou.capacities import extract_cap_id
+
+        return extract_cap_id
+
+    def test_returns_declared_uuid(self, extract):
+        cap_id = "5b1e0b4a-4e7f-4a5a-9a3f-0b6a3d5f9c21"
+        assert extract({"name": "cap-aws-uow-us", "cap_id": cap_id}) == cap_id
+
+    def test_missing_cap_id_returns_none(self, extract):
+        assert extract({"name": "cap-aws-uow-us"}) is None
+
+    def test_empty_metadata_returns_none(self, extract):
+        assert extract({}) is None
+
+    def test_empty_cap_id_returns_none(self, extract):
+        assert extract({"cap_id": ""}) is None
+
+    def test_name_is_not_used_as_fallback(self, extract):
+        assert extract({"name": "cap-aws-uow-us"}) is None
+
+    def _fake_cdt(self, metadata):
+        """A CDT-kind Sardou carrying *metadata* from the resolved template."""
+        from sardou.sardou import DotDict
+
+        fake = object.__new__(SardouInternal)
+        fake.kind = TemplateKind.CDT
+        if metadata is not None:
+            fake.metadata = DotDict(**metadata)
+        return fake
+
+    def test_get_cap_id_reads_resolved_metadata(self):
+        cap_id = "5b1e0b4a-4e7f-4a5a-9a3f-0b6a3d5f9c21"
+        assert self._fake_cdt({"cap_id": cap_id}).get_cap_id() == cap_id
+
+    def test_get_cap_id_without_cap_id_returns_none(self):
+        assert self._fake_cdt({"name": "cap-aws-uow-us"}).get_cap_id() is None
+
+    def test_get_cap_id_without_metadata_returns_none(self):
+        assert self._fake_cdt(None).get_cap_id() is None
+
+
+# ---------------------------------------------------------------------------
 # monitoring.py — extract_monitoring
 # ---------------------------------------------------------------------------
 
@@ -906,6 +955,13 @@ class TestSardouCDTAPI:
         fake.kind = TemplateKind.SAT
         with pytest.raises(TypeError):
             fake.get_capacities()
+
+    def test_get_cap_id_raises_on_sat(self, mode):
+        """get_cap_id() must raise TypeError when called on a SAT."""
+        fake = object.__new__(SardouInternal)
+        fake.kind = TemplateKind.SAT
+        with pytest.raises(TypeError):
+            fake.get_cap_id()
 
     def test_get_monitoring_raises_on_cdt(self, mode):
         """get_monitoring() must raise TypeError when called on a CDT."""
