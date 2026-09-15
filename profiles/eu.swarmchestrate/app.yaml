@@ -150,6 +150,26 @@ data_types:
         type: integer
         required: false
 
+  ResourceRequirements:
+    description: >
+      Compute resource requests and limits for a container, mirroring the
+      Kubernetes ResourceRequirements object.
+    properties:
+      requests:
+        type: map
+        required: false
+        entry_schema: string
+        description: >
+          Minimum resources the scheduler reserves for the container, keyed by
+          resource name (e.g. cpu: "500m", memory: "256Mi").
+      limits:
+        type: map
+        required: false
+        entry_schema: string
+        description: >
+          Maximum resources the container may use, keyed by resource name
+          (e.g. cpu: "1", memory: "512Mi").
+
   simple_volume:
     description: >
       Simple volume mapping supporting optional source and required target.
@@ -404,9 +424,8 @@ node_types:
 
       # Resources
       resources:
-        type: map
+        type: ResourceRequirements
         required: false
-        entry_schema: string
         description: >
           Resource requests and limits (e.g. cpu and memory) for the container.
 
