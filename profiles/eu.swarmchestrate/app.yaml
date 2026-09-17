@@ -70,6 +70,19 @@ metadata:
           type: Scheduling.Colocation
           gui_name: application_colocate
           links: target
+      # Policies written one per row. Each row is a whole policy: it names
+      # itself, sets its properties from its own columns, and lists the
+      # microservices it targets - so one reconfiguration rule can govern several
+      # microservices together.
+      row_policies:
+        reconfiguration:
+          type: Reconfiguration
+          gui_name: application_reconfiguration
+          name: name
+          targets: targets
+          properties:
+            rule: rule
+            constants: constants
 
 description: MiCADO Profile app type definitions
 
@@ -538,11 +551,15 @@ node_types:
             required: false
             description: Raw metrics
             entry_schema: RawMetric
+            metadata:
+              gui_name: application_raw_metric
           composite:
             type: list
             required: false
             description: Composite metrics
             entry_schema: CompositeMetric
+            metadata:
+              gui_name: application_composite_metric
       slo-constraints:
         type: SLO
           

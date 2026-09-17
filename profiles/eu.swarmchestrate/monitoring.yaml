@@ -19,19 +19,27 @@ data_types:
   RawMetric:
     properties:
       name:
+        metadata:
+          gui_name: application_raw_metric.name
         type: string
         required: true
         description: Name of the raw metric
       sensor:
+        metadata:
+          gui_name: application_raw_metric.sensor
         type: string
         required: true
         description: Sensor type
         default: Netdata
       collector_inst:
+        metadata:
+          gui_name: application_raw_metric.collector_inst
         type: string
         required: false
         description: Collector instance
       config:
+        metadata:
+          gui_name: application_raw_metric.config
         type: map
         required: true
         entry_schema: string
@@ -40,11 +48,15 @@ data_types:
             scope_contexts: k8s.cgroup.cpu
             results-aggregation: SUM
       collection_frequency:
+        metadata:
+          gui_name: application_raw_metric.collection_frequency
         type: string
         required: true
         description: Frequency of collection e.g. "30 sec"
         default: "30 sec"
       collection_output:
+        metadata:
+          gui_name: application_raw_metric.collection_output
         type: string
         required: true
         description: Output type e.g. "all"
@@ -55,33 +67,47 @@ data_types:
       Composite metric definition.
     properties:
       name:
+        metadata:
+          gui_name: application_composite_metric.name
         type: string
         required: true
         description: Name of the composite metric
       formula:
+        metadata:
+          gui_name: application_composite_metric.formula
         type: string
         required: true
         description: Formula for the composite metric e.g. mean( cpu_util_instance )
       collection_frequency:
+        metadata:
+          gui_name: application_composite_metric.collection_frequency
         type: string
         required: true
         description: Frequency of collection e.g. "30 sec"
         default: "30 sec"
       collection_output:
+        metadata:
+          gui_name: application_composite_metric.collection_output
         type: string
         required: true
         description: Output type e.g. "all"
         default: "all"
       window_type:
+        metadata:
+          gui_name: application_composite_metric.window_type
         type: string
         required: true
         description: Type of window e.g. "sliding"
         default: "sliding"
       window_size:
+        metadata:
+          gui_name: application_composite_metric.window_size
         type: string
         required: true
         description: Size of the window e.g. "5 min"
       grouping:
+        metadata:
+          gui_name: application_composite_metric.grouping
         type: string
         required: true
         description: >
