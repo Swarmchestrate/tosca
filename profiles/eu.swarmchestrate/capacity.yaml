@@ -390,24 +390,26 @@ node_types:
     description: >
       The Swarmchestrate Edge Capacity Node
     derived_from: Capacity
+    # Each node template is one device, so its address and how to reach it are
+    # bound per flavour row rather than once for the whole capacity.
     properties:
       ip:
         metadata:
           alias: edge_device_ip
-          gui_name: capacity_new.edge_ip
+          gui_name: capacity_instance_type.edge_ip
         type: string
         required: false
         description: IP of edge node        
       local_ip:
         metadata:
           alias: edge_device_local_ip
-          gui_name: capacity_new.edge_local_ip
+          gui_name: capacity_instance_type.edge_local_ip
         type: string
         required: false
         description: Local IP of edge node        
       ssh_port:
         metadata:
-          gui_name: capacity_new.ssh_port
+          gui_name: capacity_instance_type.ssh_port
         type: integer
         required: false
         description: >
@@ -415,7 +417,7 @@ node_types:
         default: 22
       ssh_user:
         metadata:
-          gui_name: capacity_new.ssh_user
+          gui_name: capacity_instance_type.ssh_user
         type: string
         required: false
         description: >
@@ -423,21 +425,21 @@ node_types:
       ssh_key_path:
         metadata:
           alias: ssh_key
-          gui_name: capacity_new.ssh_key_path
+          gui_name: capacity_instance_type.ssh_key_path
         type: string
         required: false
         description: >
           Path to the SSH key for accessing the instance.
       credentials:
         metadata:
-          gui_name: capacity_new.credentials
+          gui_name: capacity_instance_type.credentials
         type: map
         required: false
         description: Map of credentials (e.g. token, basic auth)
         entry_schema: string
       ssh_auth_method:
         metadata:
-          gui_name: capacity_new.ssh_auth_method
+          gui_name: capacity_instance_type.ssh_auth_method
         type: string
         required: false
         description: SSH authentication method (e.g. key, password)
