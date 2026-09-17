@@ -17,8 +17,8 @@ metadata:
   gui_bindings:
     capacity:
       metadata.name: capacity_new.name
-      # The CapID: a UUID identifying this capacity, which Sardou reads back
-      # with get_cap_id().
+      # The CapID: the identifier OptimusDB issues this capacity, starting
+      # cap-, which Sardou reads back with get_cap_id().
       metadata.cap_id: capacity_new.cap_id
       description: capacity_new.description
       node_template.name: capacity_instance_type.name
