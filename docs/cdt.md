@@ -21,7 +21,7 @@ description: AWS EC2 capacity in US East # (2)!
 
 metadata: # (3)!
   name: cap-aws-uow-us
-  cap_id: 8f14e45f-ceea-467a-9f0a-1e5d3c2b7a90 # (4)!
+  cap_id: cap-QmuWspQNNBng3K7oj84Fx2PoEcKaqKTDSHPF6XCnmqpQDC-ebb4a5a7-1f5c-44e4-b437-b7840b6107d7 # (4)!
   author: University of Westminster
   date: 2026-01-12
   version: 0.1
@@ -38,8 +38,9 @@ imports: # (6)!
 1. This line indicates the TOSCA version and is **mandatory**.
 2. A `description` of the capacity is *recommended*.
 3. Providing `metadata` is *optional* - you may add additional custom fields.
-4. `cap_id` is the **CapID**, a UUID identifying this capacity. It is usually generated
-   rather than written by hand. Please do not create a custom field with this name.
+4. `cap_id` is the **CapID**, the identifier OptimusDB issues this capacity: a string starting
+   `cap-`. Generate it with the OptimusDB API rather than writing one by hand. Please do not
+   create a custom field with this name.
 5. `kind` is entirely *optional*, but please also do not create a custom field with this name.
 6. Importing the Swarmchestrate profile from this `url` is required. We recommend a namespace called `swch`.
 

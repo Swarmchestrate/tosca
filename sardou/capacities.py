@@ -81,7 +81,7 @@ def extract_capacities(processed_nodes: dict) -> dict:
 def extract_cap_id(metadata: dict) -> str | None:
     """Return the CapID declared in a CDT's *metadata*.
 
-    The CapID is a generated UUID identifying the capacity. ``None`` is
-    returned when the CDT does not declare one.
+    The CapID is the identifier OptimusDB issues the capacity, a string
+    starting ``cap-``. ``None`` is returned when the CDT does not declare one.
     """
     return metadata.get(_CAP_ID_KEY) or None

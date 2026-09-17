@@ -168,12 +168,12 @@ Processed successfully: my_cap.yaml
 
 ### Capacity ID
 
-Given a CDT, Sardou can extract the CapID — the generated UUID identifying the
-capacity — from the template `metadata`.
+Given a CDT, Sardou can extract the CapID — the identifier OptimusDB issues the
+capacity, a string starting `cap-` — from the template `metadata`.
 
 ```python
 >>> cdt.get_cap_id()
-'5b1e0b4a-4e7f-4a5a-9a3f-0b6a3d5f9c21'
+'cap-QmfTV8FLQub4crViNdhzpzCG1v3y5kcCGngnU9a3EmeLjx-67010c20-dd9d-498b-bf64-e74d2344e91a'
 ```
 
 Returns `None` when the CDT declares no `cap_id` in its `metadata`.

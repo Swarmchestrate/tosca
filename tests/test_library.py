@@ -771,8 +771,8 @@ class TestExtractCapId:
 
         return extract_cap_id
 
-    def test_returns_declared_uuid(self, extract):
-        cap_id = "5b1e0b4a-4e7f-4a5a-9a3f-0b6a3d5f9c21"
+    def test_returns_declared_cap_id(self, extract):
+        cap_id = "cap-Qm175iT6BmPcpcnLCaSrMYgWPXFu6PPfPwwefj3BBV2LmK-5ccaf339-8680-44f0-8516-946f34549a81"
         assert extract({"name": "cap-aws-uow-us", "cap_id": cap_id}) == cap_id
 
     def test_missing_cap_id_returns_none(self, extract):
@@ -798,7 +798,7 @@ class TestExtractCapId:
         return fake
 
     def test_get_cap_id_reads_resolved_metadata(self):
-        cap_id = "5b1e0b4a-4e7f-4a5a-9a3f-0b6a3d5f9c21"
+        cap_id = "cap-Qm175iT6BmPcpcnLCaSrMYgWPXFu6PPfPwwefj3BBV2LmK-5ccaf339-8680-44f0-8516-946f34549a81"
         assert self._fake_cdt({"cap_id": cap_id}).get_cap_id() == cap_id
 
     def test_get_cap_id_without_cap_id_returns_none(self):
