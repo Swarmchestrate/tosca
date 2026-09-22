@@ -112,6 +112,7 @@ def tosca_to_ask_dict(tosca_dict):
             "expression": build_expression(node_filter),
             "colocated": representative_colocated.get(node_name, []),
             "properties": get_properties(relationship),
+            "count": req_data.get("count", 1),
         }
 
     return result

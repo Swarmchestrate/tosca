@@ -418,6 +418,32 @@ class TestToscaToAskDict:
         assert "colocated" in result["worker"]
         assert "vals['host.num-cpus'] >= 4" in result["worker"]["expression"]
 
+    def test_count_taken_from_requirement(self, to_ask):
+        tosca = {
+            "service_template": {
+                "node_templates": {
+                    "svc": {
+                        "requirements": [
+                            {"host": {"count": 3, "node_filter": {"$and": []}}}
+                        ]
+                    }
+                }
+            }
+        }
+        result = to_ask(tosca)
+        assert result["svc"]["count"] == 3
+
+    def test_count_defaults_to_one(self, to_ask):
+        tosca = {
+            "service_template": {
+                "node_templates": {
+                    "svc": {"requirements": [{"host": {"node_filter": {"$and": []}}}]}
+                }
+            }
+        }
+        result = to_ask(tosca)
+        assert result["svc"]["count"] == 1
+
     def test_colocated_empty_when_no_policies(self, to_ask):
         tosca = {
             "service_template": {
