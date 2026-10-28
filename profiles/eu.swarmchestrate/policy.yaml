@@ -183,3 +183,28 @@ policy_types:
     description: >
       Latency policy type
     derived_from: QoS
+
+  DigitalTwin:
+    derived_from: ApplicationPolicy
+    description: >
+      Simulation inputs for the Digital Twin library, which scores proposed
+      reconfigurations of this application before they are applied. Present
+      only for applications the twin has a simulation model for.
+    properties:
+      application_type:
+        type: string
+        required: true
+        description: >
+          Simulation model to use. Must be one of the application types
+          supported by the Digital Twin library.
+      prediction_horizon_min:
+        type: integer
+        required: true
+        description: >
+          Simulated period in minutes.
+      scaling_cooldown_ms:
+        type: integer
+        required: false
+        description: >
+          Minimum interval in milliseconds between reconfigurations in the
+          simulation.
