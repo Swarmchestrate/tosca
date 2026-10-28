@@ -128,9 +128,30 @@ def classify_template(template) -> TemplateKind:
     return TemplateKind.SAT
 
 
-def post_validate(tosca_dict) -> bool:
+def post_validate(tosca_dict, kind=None) -> bool:
     """Perform any post validation steps."""
+    if kind == TemplateKind.SAT:
+        validate_node_names(tosca_dict)
+
     return validate_reconfiguration(tosca_dict)
+
+
+def validate_node_names(tosca_dict) -> bool:
+    """Validate that no node template name contains a hyphen.
+
+    Only applies to SATs - capacities name their nodes after provider
+    flavours, which conventionally carry hyphens.
+    """
+    node_templates = tosca_dict.get("service_template", {}).get("node_templates", {})
+
+    offenders = sorted(name for name in node_templates if "-" in name)
+    if offenders:
+        raise ValueError(
+            f"As of Sardou v0.14.0, hyphens are disallowed in node template "
+            f"names: {offenders}. Use underscores instead."
+        )
+
+    return True
 
 
 def validate_reconfiguration(tosca_dict) -> bool:

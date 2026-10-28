@@ -256,6 +256,53 @@ class TestPostValidate:
 
 
 # ---------------------------------------------------------------------------
+# validation.py — validate_node_names
+# ---------------------------------------------------------------------------
+
+
+class TestValidateNodeNames:
+    @pytest.fixture
+    def validate(self):
+        from sardou.validation import validate_node_names
+
+        return validate_node_names
+
+    def _tosca(self, names):
+        return {
+            "service_template": {
+                "node_templates": {name: {"type": "X"} for name in names}
+            }
+        }
+
+    def test_no_node_templates_passes(self, validate):
+        assert validate({"service_template": {}}) is True
+
+    def test_underscored_names_pass(self, validate):
+        assert validate(self._tosca(["swarm", "details_v1"])) is True
+
+    def test_dashed_name_raises(self, validate):
+        with pytest.raises(ValueError, match="hyphens are disallowed"):
+            validate(self._tosca(["swarm", "noise-sensor1"]))
+
+    def test_error_lists_every_offender(self, validate):
+        with pytest.raises(ValueError, match=r"\['audio-class', 'noise-sensor1'\]"):
+            validate(self._tosca(["noise-sensor1", "swarm", "audio-class"]))
+
+    def test_post_validate_checks_names_for_a_sat(self):
+        from sardou.validation import post_validate
+
+        with pytest.raises(ValueError, match="hyphens are disallowed"):
+            post_validate(self._tosca(["noise-sensor1"]), TemplateKind.SAT)
+
+    def test_post_validate_allows_dashes_for_other_kinds(self):
+        from sardou.validation import post_validate
+
+        tosca = self._tosca(["m2-medium"])
+        assert post_validate(tosca, TemplateKind.CDT) is True
+        assert post_validate(tosca) is True
+
+
+# ---------------------------------------------------------------------------
 # requirements.py — extract_colocation_groups
 # ---------------------------------------------------------------------------
 

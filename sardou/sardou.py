@@ -101,7 +101,7 @@ class Sardou(DotDict):
 
         self.kind = classify_template(self)
         self.raw = DotDict(**raw)
-        post_validate(raw)
+        post_validate(raw, self.kind)
 
     def get_requirements(self):
         return tosca_to_ask_dict(self.raw._to_dict())
