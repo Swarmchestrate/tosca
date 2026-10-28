@@ -307,3 +307,15 @@ service_template:
           else:
             pass
       targets: [ reviews_v1, reviews_v2, reviews_v3 ]
+
+  - details_forecast:
+      type: swch:Forecast
+      properties:
+        metrics:
+        - cpu_util_prct
+        resolution: 30
+        forecast_duration: 1800
+        lookback_duration: 7200
+        retrain_interval: 1800
+        coverage: 0.95
+      targets: [ details_v1 ]
