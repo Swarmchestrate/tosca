@@ -79,6 +79,53 @@ policy_types:
         description: >
           The reconfiguration rule, expressed as a multi-line string.
 
+  Forecast:
+    derived_from: MicroservicePolicy
+    description: >
+      Policy type for predicting the future values of monitored metrics.
+    properties:
+      metrics:
+        type: list
+        required: true
+        entry_schema: string
+        description: >
+          Names of the metrics to predict, declared by the targeted microservices.
+      resolution:
+        type: integer
+        required: true
+        description: >
+          Interval in seconds that values are averaged into before prediction.
+      forecast_duration:
+        type: integer
+        required: true
+        description: >
+          How far ahead predictions are needed, in seconds.
+      lookback_duration:
+        type: integer
+        required: false
+        description: >
+          How much recent history each prediction is based on, in seconds.
+      history_duration:
+        type: integer
+        required: false
+        description: >
+          How much past data to retain for training, in seconds.
+      retrain_interval:
+        type: integer
+        required: false
+        description: >
+          How often the model is retrained, in seconds.
+      coverage:
+        type: float
+        required: false
+        description: >
+          Proportion of values falling inside the predicted interval, 0 to 1.
+      pipeline:
+        type: string
+        required: false
+        description: >
+          Forecasting pipeline to use, overriding the platform's choice.
+
   RegistryLogin:
     derived_from: ApplicationPolicy
     description: >

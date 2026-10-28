@@ -303,6 +303,70 @@ class TestValidateNodeNames:
 
 
 # ---------------------------------------------------------------------------
+# validation.py — validate_forecast
+# ---------------------------------------------------------------------------
+
+
+class TestValidateForecast:
+    @pytest.fixture
+    def validate(self):
+        from sardou.validation import validate_forecast
+
+        return validate_forecast
+
+    def _tosca(self, wanted, declared=("node_load",), targets=("audio_class",)):
+        return {
+            "service_template": {
+                "node_templates": {
+                    "audio_class": {
+                        "capabilities": {
+                            "metrics": {
+                                "properties": {
+                                    "composite": [{"name": name} for name in declared]
+                                }
+                            }
+                        }
+                    }
+                },
+                "policies": [
+                    {
+                        "load_forecast": {
+                            "type": "swch:Forecast",
+                            "properties": {"metrics": list(wanted)},
+                            "targets": list(targets),
+                        }
+                    }
+                ],
+            }
+        }
+
+    def test_no_policies_passes(self, validate):
+        assert validate({"service_template": {}}) is True
+
+    def test_declared_metric_passes(self, validate):
+        assert validate(self._tosca(["node_load"])) is True
+
+    def test_undeclared_metric_raises(self, validate):
+        with pytest.raises(ValueError, match=r"do not declare: \['node_temp'\]"):
+            validate(self._tosca(["node_load", "node_temp"]))
+
+    def test_raw_metrics_count_as_declared(self, validate):
+        tosca = self._tosca(["cpu_idle_instance"], declared=())
+        node = tosca["service_template"]["node_templates"]["audio_class"]
+        node["capabilities"]["metrics"]["properties"]["raw"] = [
+            {"name": "cpu_idle_instance"}
+        ]
+        assert validate(tosca) is True
+
+    def test_other_policy_types_ignored(self, validate):
+        tosca = self._tosca(["node_temp"])
+        tosca["service_template"]["policies"][0]["load_forecast"]["type"] = (
+            "swch:Reconfiguration"
+        )
+        assert validate(tosca) is True
+
+
+# ---------------------------------------------------------------------------
 # requirements.py — extract_colocation_groups
 # ---------------------------------------------------------------------------
 
@@ -561,6 +625,148 @@ class TestToscaToAskDict:
         fn = eval(result["svc"]["expression"])
         assert fn({"host.num-cpus": 4}) is True
         assert fn({"host.num-cpus": 1}) is False
+
+
+# ---------------------------------------------------------------------------
+# policies.py — get_affinity
+# ---------------------------------------------------------------------------
+
+
+class TestGetForecast:
+    @pytest.fixture
+    def get_forecast(self):
+        from sardou.policies import get_forecast
+
+        return get_forecast
+
+    def _nodes(self):
+        return {
+            "audio_class": {
+                "capabilities": {
+                    "metrics": {
+                        "properties": {
+                            "raw": [
+                                {
+                                    "name": "cpu_idle_instance",
+                                    "collection_frequency": "30 sec",
+                                }
+                            ],
+                            "composite": [
+                                {"name": "node_load", "collection_frequency": "30 sec"},
+                                {"name": "node_temp", "collection_frequency": "30 sec"},
+                            ],
+                        }
+                    }
+                }
+            },
+            "sensor": {
+                "capabilities": {
+                    "metrics": {
+                        "properties": {
+                            "raw": [
+                                {"name": "mem_used", "collection_frequency": "1 min"}
+                            ]
+                        }
+                    }
+                }
+            },
+        }
+
+    def _make_sat(self, properties, targets=("audio_class",), nodes=None):
+        from sardou.sardou import DotDict
+
+        wrapped = {}
+        for key, value in properties.items():
+            if isinstance(value, list):
+                wrapped[key] = {"$list": [{"$primitive": item} for item in value]}
+            else:
+                wrapped[key] = {"$primitive": value}
+
+        sat = object.__new__(DotDict)
+        sat.__dict__["policies"] = DotDict(
+            load_forecast={
+                "types": {"eu.swarmchestrate:0.1::Forecast": {}},
+                "properties": wrapped,
+            }
+        )
+        sat.__dict__["raw"] = DotDict(
+            service_template={
+                "policies": [{"load_forecast": {"targets": list(targets)}}],
+                "node_templates": self._nodes() if nodes is None else nodes,
+            }
+        )
+        return sat
+
+    def _result(self, get_forecast, targets=("audio_class",), **properties):
+        properties.setdefault("metrics", ["node_load", "node_temp"])
+        properties.setdefault("resolution", 30)
+        properties.setdefault("forecast_duration", 2880)
+        return get_forecast(self._make_sat(properties, targets))["load_forecast"]
+
+    def test_no_policies_returns_empty(self, get_forecast):
+        from sardou.sardou import DotDict
+
+        assert get_forecast(object.__new__(DotDict)) == {}
+
+    def test_named_metrics_converted_to_settings(self, get_forecast):
+        assert self._result(get_forecast) == {
+            "targets": ["audio_class"],
+            "prediction_target": ["node_load", "node_temp"],
+            "STANDARD_METRICS": ["cpu_idle_instance", "node_load", "node_temp"],
+            "data_frequency": "30s",
+            "poll_interval_seconds": 30.0,
+            "horizon": 96,
+        }
+
+    def test_raw_metric_can_be_predicted(self, get_forecast):
+        result = self._result(get_forecast, metrics=["cpu_idle_instance"])
+        assert result["prediction_target"] == ["cpu_idle_instance"]
+
+    def test_resolution_coarser_than_collection(self, get_forecast):
+        result = self._result(get_forecast, resolution=300)
+        assert result["data_frequency"] == "5m"
+        assert result["horizon"] == 9
+        assert result["poll_interval_seconds"] == 30.0
+
+    def test_optional_periods_converted_when_set(self, get_forecast):
+        result = self._result(
+            get_forecast,
+            lookback_duration=8640,
+            history_duration=86400,
+            retrain_interval=1800,
+            coverage=0.95,
+            pipeline="gmlp",
+        )
+        assert result["window"] == 288
+        assert result["parquet_train_size"] == 2880
+        assert result["retrain_frequency"] == "30m"
+        assert result["conf_q_alpha"] == 0.05
+        assert result["pipeline_type"] == "gmlp"
+
+    def test_retrain_interval_lowered_to_supported_cadence(self, get_forecast):
+        assert self._result(get_forecast, retrain_interval=1500)[
+            "retrain_frequency"
+        ] == ("20m")
+        assert self._result(get_forecast, retrain_interval=4000)[
+            "retrain_frequency"
+        ] == ("30m")
+        assert self._result(get_forecast, retrain_interval=30)["retrain_frequency"] == (
+            "1m"
+        )
+
+    def test_steps_are_floored_and_never_zero(self, get_forecast):
+        assert self._result(get_forecast, forecast_duration=40)["horizon"] == 1
+
+    def test_undeclared_metric_raises(self, get_forecast):
+        with pytest.raises(ValueError, match=r"do not declare: \['node_load'\]"):
+            self._result(get_forecast, targets=("sensor",), metrics=["node_load"])
+
+    def test_other_policy_types_ignored(self, get_forecast):
+        sat = self._make_sat({"resolution": 30, "forecast_duration": 2880})
+        sat.policies.load_forecast["types"] = {
+            "eu.swarmchestrate:0.1::Reconfiguration": {}
+        }
+        assert get_forecast(sat) == {}
 
 
 # ---------------------------------------------------------------------------
@@ -1148,8 +1354,12 @@ class TestSATTemplateOutput:
     def test_bookinfo_affinity_covers_all_microservices(self, bookinfo):
         affinity = bookinfo.get_affinity()
         expected = {
-            "details_v1", "ratings_v1", "reviews_v1",
-            "reviews_v2", "reviews_v3", "productpage_v1",
+            "details_v1",
+            "ratings_v1",
+            "reviews_v1",
+            "reviews_v2",
+            "reviews_v3",
+            "productpage_v1",
         }
         assert set(affinity.keys()) == expected
 
@@ -1180,9 +1390,9 @@ class TestSATTemplateOutput:
 
     def test_bookinfo_standalone_microservice_uses_own_label(self, bookinfo):
         affinity = bookinfo.get_affinity()
-        value = affinity["ratings_v1"]["requiredDuringSchedulingIgnoredDuringExecution"][
-            "nodeSelectorTerms"
-        ][0]["matchExpressions"][0]["values"][0]
+        value = affinity["ratings_v1"][
+            "requiredDuringSchedulingIgnoredDuringExecution"
+        ]["nodeSelectorTerms"][0]["matchExpressions"][0]["values"][0]
         assert value == "ratings_v1"
 
 
@@ -1379,5 +1589,5 @@ def _get_offer_res_id(offer, key):
         return offer[key]["res_id"]
     for ms_data in offer.values():
         if isinstance(ms_data, dict) and "ids" in ms_data.get(key, {}):
-                return ms_data[key]["ids"].get("res_id")
+            return ms_data[key]["ids"].get("res_id")
     return None

@@ -16,6 +16,8 @@ logger = logging.getLogger(__name__)
 
 COLOCATION_SUFFIX = "Scheduling.Colocation"
 RECONFIGURATION_SUFFIX = "Reconfiguration"
+FORECAST_SUFFIX = "Forecast"
+METRIC_GROUPS = ("raw", "composite")
 
 
 class TemplateKind(Enum):
@@ -132,8 +134,47 @@ def post_validate(tosca_dict, kind=None) -> bool:
     """Perform any post validation steps."""
     if kind == TemplateKind.SAT:
         validate_node_names(tosca_dict)
+        validate_forecast(tosca_dict)
 
     return validate_reconfiguration(tosca_dict)
+
+
+def validate_forecast(tosca_dict) -> bool:
+    """Validate that forecast metrics are declared by the targeted nodes.
+
+    A metric can only be predicted where it is collected, so every metric a
+    Forecast policy names appears in the monitoring declarations of at least
+    one microservice the policy targets.
+    """
+    template = tosca_dict.get("service_template", {})
+    node_templates = template.get("node_templates", {})
+
+    for policy in template.get("policies", []):
+        for name, data in policy.items():
+            if not str(data.get("type", "")).endswith(FORECAST_SUFFIX):
+                continue
+
+            targets = data.get("targets", []) or []
+            declared = set()
+            for target in targets:
+                capabilities = node_templates.get(target, {}).get("capabilities", {})
+                metrics = capabilities.get("metrics", {}).get("properties", {}) or {}
+                for group in METRIC_GROUPS:
+                    declared.update(
+                        metric.get("name")
+                        for metric in metrics.get(group) or []
+                        if metric.get("name")
+                    )
+
+            wanted = (data.get("properties", {}) or {}).get("metrics", []) or []
+            missing = sorted(set(wanted) - declared)
+            if missing:
+                raise ValueError(
+                    f"Forecast policy '{name}' names metrics that its targets "
+                    f"{sorted(targets)} do not declare: {missing}"
+                )
+
+    return True
 
 
 def validate_node_names(tosca_dict) -> bool:
