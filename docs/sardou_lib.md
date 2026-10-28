@@ -129,6 +129,20 @@ present in the sub-dicts. Scheduling policy types [can be seen here](policy.md#t
 {'frontend_colocation': {'type': 'eu.swarmchestrate:0.1::Scheduling.Colocation', 'targets': ['details_v1', 'productpage_v1']} ...
 ```
 
+#### Forecast Policies
+
+Grab the forecasting requirements with `get_forecast()`. Each policy is keyed
+by name and carries the settings the AI library configures itself with, so the
+periods a SAT declares arrive as the step counts and cadences that library
+expects. The metrics available as model input, and how often they are
+collected, come from the monitoring declarations of the policy's `targets`. The full
+[parameter mapping](forecasting.md) is documented separately.
+
+```python
+>>> sat.get_forecast()
+{'load_forecast': {'targets': ['audio_class'], 'prediction_target': ['node_load', 'node_temp'], 'STANDARD_METRICS': ['cpu_idle_instance', 'node_load', 'node_temp'], 'data_frequency': '30s', 'poll_interval_seconds': 30.0, 'horizon': 96}}
+```
+
 ### Resource Requirements
 
 Grab the Resource requirements as a Python object with `get_requirements()`

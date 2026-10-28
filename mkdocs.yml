@@ -28,6 +28,7 @@ nav:
   - Policy Spec: policy.md
   - Capacity Spec: capacity.md
   - Monitoring: monitoring.md
+  - Forecasting: forecasting.md
   - Sardou:
     - Overview: sardou.md
     - Working with Sardou: sardou_lib.md

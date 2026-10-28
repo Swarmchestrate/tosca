@@ -181,3 +181,153 @@ A full list of policies is available in the [SAT Policy Specification](policy.md
 3. Priorities are used when policies are in conflict. Higher priority policies take precedence.
 4. An tolerance allows for slippage either side of the defined target.
 5. Define a `target` when targeting a specific value (allowing for `tolerance`), or one or more `targets` when more nuance is needed.
+
+## Defining Reconfiguration Policies
+
+Where a QoS policy states a target, a Reconfiguration policy states how to
+reach it. The policy carries a `rule`, written in MiniZinc, which the platform
+solves to decide how many instances of your microservice run, and which nodes
+they run on.
+
+The rule is given the state of the system, and returns the arrangement it wants
+next:
+
+* `sys_node_count_max`, `sys_node_count_actual` and `sys_pod_count_max` bound
+  the problem.
+* `sys_mapping_actual` holds the current arrangement, one entry per pod, giving
+  the index of the node it runs on, or `0` for a pod that does not exist.
+* `sys_node_count_next` and `sys_mapping_next` are the answer, and are marked
+  `:: add_to_output` so the platform reads them back.
+
+Your own values reach the rule two ways. Anything in `constants` is yours to
+name, written as a string in the SAT and declared as a float in the rule.
+Monitored values arrive as arrays indexed by node, one entry per node, under the
+name of the metric itself, so the names in the rule match the metrics the
+microservice declares. A composite metric grouped `per_instance` gives exactly
+this shape.
+
+Three periods govern how often the policy acts, all in seconds. A full
+description of each is in the [SAT Policy Specification](policy.md).
+
+```yaml
+  # (1)!
+
+  policies:
+  - stressng_reconfiguration: # (2)!
+      type: swch:Reconfiguration
+      properties:
+        period_check_slo: 1 # (3)!
+        period_evaluation: 300
+        period_cooldown: 30
+        constants: # (4)!
+          threshold_max_node_load: "80.0"
+        rule: | # (5)!
+          % --- supplied by Swarmchestrate ---
+          int: sys_pod_count_max;
+          int: sys_node_count_max;
+          int: sys_node_count_actual;
+          array[1..sys_pod_count_max] of int: sys_mapping_actual;
+
+          % --- returned to Swarmchestrate ---
+          var 1..sys_node_count_max: sys_node_count_next :: add_to_output;
+          array[1..sys_pod_count_max] of var 0..sys_node_count_max:
+              sys_mapping_next :: add_to_output;
+
+          var 0..sys_pod_count_max: sys_pod_count_next =
+              sum(p in 1..sys_pod_count_max)(sys_mapping_next[p] > 0);
+          int: sys_pod_count_actual =
+              sum(p in 1..sys_pod_count_max)(sys_mapping_actual[p] > 0);
+
+          % --- declared above, under constants ---
+          float: threshold_max_node_load;
+
+          % --- collected by monitoring ---
+          array[1..sys_node_count_max] of float: node_load; % (6)!
+
+          % leave the number of nodes alone
+          constraint sys_node_count_next = sys_node_count_actual;
+
+          % keep at least one pod running
+          constraint sys_pod_count_next >= 1;
+
+          % at most one pod per node
+          constraint forall(i, j in 1..sys_pod_count_max where i < j)(
+              sys_mapping_next[i] = 0 \/ sys_mapping_next[j] = 0 \/
+              sys_mapping_next[i] != sys_mapping_next[j]
+          );
+
+          % add a pod while any node is overloaded and there is room
+          constraint (
+              exists(n in 1..sys_node_count_max)(
+                  node_load[n] > threshold_max_node_load)
+              /\ sys_pod_count_actual < sys_pod_count_max
+          ) -> sys_pod_count_next > sys_pod_count_actual;
+
+          % of the arrangements that satisfy the above, prefer the one that
+          % moves the fewest pods
+          var int: loss = sum(p in 1..sys_pod_count_max)(
+              bool2int(sys_mapping_next[p] != sys_mapping_actual[p]));
+
+          solve minimize loss; % (7)!
+      targets: # (8)!
+      - stressng
+```
+
+1. Continuation of the `policies` key above (not a new key).
+2. Name each policy. The name identifies it in logs and in the Sardou library.
+3. How often SLOs are checked, how often the rule is solved, and how long to wait after acting before acting again.
+4. Values you name yourself, quoted, and declared in the rule below.
+5. The rule is a block string, so indentation inside it is preserved.
+6. `node_load` is a composite metric declared by this microservice, grouped `per_instance`.
+7. Several arrangements usually satisfy the constraints. The loss function chooses between them.
+8. The microservices this policy reconfigures.
+
+Colocated microservices are reconfigured together, so Sardou rejects a SAT
+that splits a colocation group across two Reconfiguration policies.
+
+## Defining Forecasts
+
+A Forecast policy asks Swarmchestrate to predict the future values of metrics
+your microservices already collect, so that decisions can be taken before a
+threshold is reached. Each metric you name is declared in the `metrics`
+capability of one of the microservices the policy targets.
+
+Periods are given in seconds. `resolution` sets how finely values are averaged
+before being predicted, and `forecast_duration` how far ahead predictions are
+needed. The optional periods cover how much recent history each prediction
+considers, how much data is kept for training, and how often the model is
+retrained.
+
+All the metrics in one policy are predicted by a single model, so metrics that
+need different periods belong in separate policies.
+
+```yaml
+  # (1)!
+
+  policies:
+  - load_forecast: # (2)!
+      type: swch:Forecast
+      properties:
+        metrics: # (3)!
+        - node_load
+        - node_temp
+        resolution: 30 # (4)!
+        forecast_duration: 2880 # (5)!
+        lookback_duration: 8640 # (6)!
+        retrain_interval: 1800
+        coverage: 0.95 # (7)!
+      targets: # (8)!
+      - audio_class
+```
+
+1. Continuation of the `policies` key above (not a new key).
+2. Name each policy. The name identifies it in logs and in the Sardou library.
+3. The metrics to predict. These are the composite metrics the reconfiguration rule above consumes.
+4. Values are averaged into 30 second intervals, matching how often they are collected.
+5. Predictions are needed 48 minutes ahead.
+6. Each prediction considers the last 144 minutes.
+7. 95% of actual values should fall inside the predicted interval. Higher values widen it.
+8. The microservices this policy forecasts for.
+
+[Forecast parameters](forecasting.md) records how these periods reach the
+forecasting library.
