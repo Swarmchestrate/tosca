@@ -51,6 +51,22 @@ policy_types:
     description: >
       Policy type for reconfiguring an application at runtime.
     properties:
+      period_check_slo:
+        type: integer
+        required: false
+        description: >
+          Interval in seconds at which the SLO constraints are checked for
+          violations.
+      period_evaluation:
+        type: integer
+        required: false
+        description: >
+          Interval in seconds at which the reconfiguration rule is evaluated.
+      period_cooldown:
+        type: integer
+        required: false
+        description: >
+          Minimum interval in seconds between consecutive reconfigurations.
       constants:
         type: map
         required: false
